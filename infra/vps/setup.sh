@@ -2,6 +2,7 @@
 # PatentSonar — VPS bootstrap (Hostinger KVM 2, Ubuntu 24.04 LTS). Run once as root.
 # Usage: ssh root@<ip> 'bash -s' < infra/vps/setup.sh
 set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
 
 APP_USER=patentsonar
 APP_DIR=/opt/patentsonar
@@ -51,13 +52,23 @@ echo "== claude code (agent runtime)"
 sudo -u $APP_USER npm install -g @anthropic-ai/claude-code 2>/dev/null || npm install -g @anthropic-ai/claude-code
 
 echo "== systemd units"
-cp $APP_DIR/infra/systemd/*.service $APP_DIR/infra/systemd/*.timer /etc/systemd/system/
+cp $APP_DIR/infra/systemd/patentsonar-*.service $APP_DIR/infra/systemd/patentsonar-*.timer /etc/systemd/system/
+mkdir -p /etc/systemd/system/caddy.service.d
+cp $APP_DIR/infra/systemd/caddy-override.conf /etc/systemd/system/caddy.service.d/override.conf
 systemctl daemon-reload
 systemctl enable --now patentsonar-webhooks.service
 for t in patentsonar-ingest patentsonar-newsletter-build patentsonar-newsletter-send patentsonar-invoices patentsonar-report; do systemctl enable --now $t.timer; done
 
 echo "== caddy reverse proxy"
-cp $APP_DIR/infra/Caddyfile /etc/caddy/Caddyfile && systemctl reload caddy || systemctl restart caddy
+cp $APP_DIR/infra/Caddyfile /etc/caddy/Caddyfile
+if caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null 2>&1; then
+  systemctl restart caddy || echo "WARN: caddy failed to start; check: journalctl -xeu caddy"
+else
+  echo "WARN: Caddyfile invalid; site not served. Run: caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile"
+fi
 
 bash $APP_DIR/infra/vps/harden.sh
+echo "== status"
+systemctl is-active caddy patentsonar-webhooks || true
+systemctl list-timers 'patentsonar-*' --no-pager || true
 echo "== done. Fill /etc/patentsonar/env, then: systemctl restart patentsonar-webhooks && systemctl list-timers 'patentsonar-*'"

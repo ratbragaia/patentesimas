@@ -1,10 +1,23 @@
-# Replace patentsonar.com with the real domain. Caddy provisions TLS automatically.
-patentsonar.com, www.patentsonar.com {
-  root * /opt/patentsonar/site
-  file_server
-  handle /webhooks/* { reverse_proxy 127.0.0.1:8787 }
-  handle /unsubscribe { reverse_proxy 127.0.0.1:8787 }
-  handle /healthz { reverse_proxy 127.0.0.1:8787 }
-  encode gzip
-  header { Strict-Transport-Security "max-age=31536000" X-Content-Type-Options nosniff Referrer-Policy strict-origin-when-cross-origin }
+# Site address comes from SITE_ADDRESS in /etc/patentsonar/env (loaded by the caddy.service drop-in).
+# Unset => ":80" (plain HTTP on the IP) so Caddy does not hammer Let's Encrypt before DNS exists.
+# Once patentsonar.com points to this VPS: SITE_ADDRESS="patentsonar.com, www.patentsonar.com"
+{$SITE_ADDRESS::80} {
+	root * /opt/patentsonar/site
+	encode gzip
+	handle /webhooks/* {
+		reverse_proxy 127.0.0.1:8787
+	}
+	handle /unsubscribe {
+		reverse_proxy 127.0.0.1:8787
+	}
+	handle /healthz {
+		reverse_proxy 127.0.0.1:8787
+	}
+	handle {
+		file_server
+	}
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
 }
