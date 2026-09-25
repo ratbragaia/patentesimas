@@ -1,8 +1,8 @@
 {
-  "name": "rarefree-intelligence",
+  "name": "patentsonar-intelligence",
   "version": "0.1.0",
   "private": true,
-  "description": "RareFree Intelligence - autonomous patent-intelligence subscription on rare-earth-free permanent magnets",
+  "description": "PatentSonar - autonomous patent-intelligence subscription on rare-earth-free permanent magnets",
   "type": "module",
   "engines": { "node": ">=22" },
   "scripts": {

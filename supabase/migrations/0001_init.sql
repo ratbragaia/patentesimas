@@ -1,28 +1,28 @@
--- RareFree Intelligence — company memory schema
+-- PatentSonar — company memory schema
 -- Apply with: psql "$SUPABASE_DB_URL" -f supabase/migrations/0001_init.sql
--- All tables live in schema `rf`. Service-role key only; no anon access.
+-- All tables live in schema `ps`. Service-role key only; no anon access.
 
 create extension if not exists pgcrypto;
-create schema if not exists rf;
-set search_path to rf, public;
+create schema if not exists ps;
+set search_path to ps, public;
 
 -- ---------- utilities ----------
-create or replace function rf.set_updated_at() returns trigger language plpgsql as $$
+create or replace function ps.set_updated_at() returns trigger language plpgsql as $$
 begin new.updated_at = now(); return new; end $$;
 
 -- ---------- CRM: accounts, contacts, leads ----------
-create type rf.account_segment as enum (
+create type ps.account_segment as enum (
   'magnet_producer','automaker','emotor','wind','defense_aerospace','materials_chemicals',
   'consumer_electronics','industrial_motors','research_institute','investor','other');
-create type rf.lead_stage as enum (
+create type ps.lead_stage as enum (
   'identified','researched','contacted','replied','qualified','trial','negotiation','won','lost','do_not_contact');
 
-create table rf.accounts (
+create table ps.accounts (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   domain text,
   country char(2),
-  segment rf.account_segment not null default 'other',
+  segment ps.account_segment not null default 'other',
   priority char(1) check (priority in ('A','B','C')) default 'B',
   why_they_care text,
   evidence_urls text[] default '{}',
@@ -30,11 +30,11 @@ create table rf.accounts (
   updated_at timestamptz not null default now(),
   unique (name)
 );
-create trigger accounts_updated before update on rf.accounts for each row execute function rf.set_updated_at();
+create trigger accounts_updated before update on ps.accounts for each row execute function ps.set_updated_at();
 
-create table rf.contacts (
+create table ps.contacts (
   id uuid primary key default gen_random_uuid(),
-  account_id uuid references rf.accounts(id) on delete cascade,
+  account_id uuid references ps.accounts(id) on delete cascade,
   full_name text,
   title text,
   email text,
@@ -46,13 +46,13 @@ create table rf.contacts (
   updated_at timestamptz not null default now(),
   unique (email)
 );
-create trigger contacts_updated before update on rf.contacts for each row execute function rf.set_updated_at();
+create trigger contacts_updated before update on ps.contacts for each row execute function ps.set_updated_at();
 
-create table rf.leads (
+create table ps.leads (
   id uuid primary key default gen_random_uuid(),
-  account_id uuid not null references rf.accounts(id) on delete cascade,
-  contact_id uuid references rf.contacts(id) on delete set null,
-  stage rf.lead_stage not null default 'identified',
+  account_id uuid not null references ps.accounts(id) on delete cascade,
+  contact_id uuid references ps.contacts(id) on delete set null,
+  stage ps.lead_stage not null default 'identified',
   owner_agent text default 'prospecting',
   next_action text,
   next_action_at timestamptz,
@@ -60,23 +60,23 @@ create table rf.leads (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger leads_updated before update on rf.leads for each row execute function rf.set_updated_at();
-create index on rf.leads (stage, next_action_at);
+create trigger leads_updated before update on ps.leads for each row execute function ps.set_updated_at();
+create index on ps.leads (stage, next_action_at);
 
 -- Suppression list: honoured before ANY outbound email.
-create table rf.do_not_contact (
+create table ps.do_not_contact (
   email text primary key,
   domain text,
   reason text not null,      -- 'unsubscribed' | 'complaint' | 'bounce' | 'requested' | 'legal'
   created_at timestamptz not null default now()
 );
-create index on rf.do_not_contact (domain);
+create index on ps.do_not_contact (domain);
 
 -- ---------- Outreach ----------
-create table rf.outreach_messages (
+create table ps.outreach_messages (
   id uuid primary key default gen_random_uuid(),
-  lead_id uuid references rf.leads(id) on delete cascade,
-  contact_id uuid references rf.contacts(id) on delete cascade,
+  lead_id uuid references ps.leads(id) on delete cascade,
+  contact_id uuid references ps.contacts(id) on delete cascade,
   direction text not null check (direction in ('outbound','inbound')),
   sequence_step int,
   subject text,
@@ -86,14 +86,14 @@ create table rf.outreach_messages (
   sent_at timestamptz,
   created_at timestamptz not null default now()
 );
-create index on rf.outreach_messages (contact_id, created_at);
+create index on ps.outreach_messages (contact_id, created_at);
 
 -- ---------- Customers & subscriptions ----------
-create type rf.subscription_status as enum ('trialing','active','past_due','paused','canceled');
+create type ps.subscription_status as enum ('trialing','active','past_due','paused','canceled');
 
-create table rf.customers (
+create table ps.customers (
   id uuid primary key default gen_random_uuid(),
-  account_id uuid references rf.accounts(id),
+  account_id uuid references ps.accounts(id),
   legal_name text not null,
   billing_email text not null,
   country char(2),
@@ -102,9 +102,9 @@ create table rf.customers (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger customers_updated before update on rf.customers for each row execute function rf.set_updated_at();
+create trigger customers_updated before update on ps.customers for each row execute function ps.set_updated_at();
 
-create table rf.plans (
+create table ps.plans (
   code text primary key,                 -- 'analyst' | 'team' | 'enterprise'
   name text not null,
   price_usd_month numeric(10,2) not null,
@@ -116,11 +116,11 @@ create table rf.plans (
   active boolean not null default true
 );
 
-create table rf.subscriptions (
+create table ps.subscriptions (
   id uuid primary key default gen_random_uuid(),
-  customer_id uuid not null references rf.customers(id) on delete cascade,
-  plan_code text not null references rf.plans(code),
-  status rf.subscription_status not null,
+  customer_id uuid not null references ps.customers(id) on delete cascade,
+  plan_code text not null references ps.plans(code),
+  status ps.subscription_status not null,
   paddle_subscription_id text unique,
   current_period_start timestamptz,
   current_period_end timestamptz,
@@ -128,12 +128,12 @@ create table rf.subscriptions (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger subscriptions_updated before update on rf.subscriptions for each row execute function rf.set_updated_at();
+create trigger subscriptions_updated before update on ps.subscriptions for each row execute function ps.set_updated_at();
 
 -- Recipients of the newsletter (customer seats). Suppression is checked at send time.
-create table rf.subscribers (
+create table ps.subscribers (
   id uuid primary key default gen_random_uuid(),
-  subscription_id uuid not null references rf.subscriptions(id) on delete cascade,
+  subscription_id uuid not null references ps.subscriptions(id) on delete cascade,
   email text not null,
   full_name text,
   active boolean not null default true,
@@ -143,7 +143,7 @@ create table rf.subscribers (
 );
 
 -- ---------- Billing events (idempotency) ----------
-create table rf.billing_events (
+create table ps.billing_events (
   event_id text primary key,             -- Paddle event_id (or our idempotency key)
   event_type text not null,
   occurred_at timestamptz,
@@ -153,11 +153,11 @@ create table rf.billing_events (
   created_at timestamptz not null default now()
 );
 
-create table rf.invoices (
+create table ps.invoices (
   id uuid primary key default gen_random_uuid(),
   idempotency_key text not null unique,  -- e.g. paddle transaction id
-  customer_id uuid not null references rf.customers(id),
-  subscription_id uuid references rf.subscriptions(id),
+  customer_id uuid not null references ps.customers(id),
+  subscription_id uuid references ps.subscriptions(id),
   paddle_transaction_id text unique,
   amount_usd numeric(12,2) not null,
   amount_brl numeric(12,2),
@@ -170,9 +170,9 @@ create table rf.invoices (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger invoices_updated before update on rf.invoices for each row execute function rf.set_updated_at();
+create trigger invoices_updated before update on ps.invoices for each row execute function ps.set_updated_at();
 
-create table rf.spend_approvals (
+create table ps.spend_approvals (
   id uuid primary key default gen_random_uuid(),
   description text not null,
   amount_usd numeric(12,2) not null,
@@ -183,7 +183,7 @@ create table rf.spend_approvals (
 );
 
 -- ---------- Patent data (the product) ----------
-create table rf.ingest_runs (
+create table ps.ingest_runs (
   id uuid primary key default gen_random_uuid(),
   source text not null check (source in ('patentsview','epo_ops','bigquery')),
   window_start date not null,
@@ -197,7 +197,7 @@ create table rf.ingest_runs (
 );
 
 -- One row per publication (application or grant), any office. Source of truth for QA.
-create table rf.patent_publications (
+create table ps.patent_publications (
   publication_number text primary key,        -- normalised: CC-NUMBER-KIND e.g. US-12345678-B2
   country_code char(2) not null,
   kind_code text,
@@ -217,14 +217,14 @@ create table rf.patent_publications (
   matched_terms text[] default '{}',           -- which niche terms/CPCs matched
   first_seen_at timestamptz not null default now()
 );
-create index on rf.patent_publications (publication_date desc);
-create index on rf.patent_publications (family_id);
-create index on rf.patent_publications using gin (cpc_codes);
+create index on ps.patent_publications (publication_date desc);
+create index on ps.patent_publications (family_id);
+create index on ps.patent_publications using gin (cpc_codes);
 
 -- Deduplicated families with editorial layer.
-create table rf.patent_families (
+create table ps.patent_families (
   family_id text primary key,
-  representative_publication text references rf.patent_publications(publication_number),
+  representative_publication text references ps.patent_publications(publication_number),
   earliest_priority_date date,
   offices char(2)[] default '{}',
   technology_bucket text,                      -- 'iron_nitride' | 'mnbi' | 'mnal' | 'ferrite' | 'feni_l10' | 're_lean' | 'motor_topology' | 'other'
@@ -234,10 +234,10 @@ create table rf.patent_families (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger families_updated before update on rf.patent_families for each row execute function rf.set_updated_at();
+create trigger families_updated before update on ps.patent_families for each row execute function ps.set_updated_at();
 
 -- ---------- Content ----------
-create table rf.issues (
+create table ps.issues (
   id uuid primary key default gen_random_uuid(),
   issue_number int not null unique,
   kind text not null default 'weekly' check (kind in ('weekly','monthly_report','special')),
@@ -254,12 +254,12 @@ create table rf.issues (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger issues_updated before update on rf.issues for each row execute function rf.set_updated_at();
+create trigger issues_updated before update on ps.issues for each row execute function ps.set_updated_at();
 
-create table rf.deliveries (
+create table ps.deliveries (
   id uuid primary key default gen_random_uuid(),
-  issue_id uuid not null references rf.issues(id) on delete cascade,
-  subscriber_id uuid not null references rf.subscribers(id) on delete cascade,
+  issue_id uuid not null references ps.issues(id) on delete cascade,
+  subscriber_id uuid not null references ps.subscribers(id) on delete cascade,
   provider_message_id text,
   status text not null default 'queued' check (status in ('queued','sent','bounced','complained','failed')),
   sent_at timestamptz,
@@ -267,7 +267,7 @@ create table rf.deliveries (
 );
 
 -- ---------- Task queue (orchestrator memory) ----------
-create table rf.tasks (
+create table ps.tasks (
   id uuid primary key default gen_random_uuid(),
   agent text not null,                          -- market-research | prospecting | sales | production | finance | reporting | orchestrator
   title text not null,
@@ -282,11 +282,11 @@ create table rf.tasks (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger tasks_updated before update on rf.tasks for each row execute function rf.set_updated_at();
-create index on rf.tasks (status, priority, due_at);
+create trigger tasks_updated before update on ps.tasks for each row execute function ps.set_updated_at();
+create index on ps.tasks (status, priority, due_at);
 
 -- ---------- Audit log ----------
-create table rf.audit_log (
+create table ps.audit_log (
   id bigserial primary key,
   actor text not null,
   action text not null,
@@ -297,25 +297,25 @@ create table rf.audit_log (
 );
 
 -- ---------- Views ----------
-create view rf.v_active_recipients as
+create view ps.v_active_recipients as
   select s.id as subscriber_id, s.email, s.full_name, s.unsubscribe_token, sub.plan_code, c.legal_name
-  from rf.subscribers s
-  join rf.subscriptions sub on sub.id = s.subscription_id
-  join rf.customers c on c.id = sub.customer_id
+  from ps.subscribers s
+  join ps.subscriptions sub on sub.id = s.subscription_id
+  join ps.customers c on c.id = sub.customer_id
   where s.active and sub.status in ('trialing','active','past_due')
-    and not exists (select 1 from rf.do_not_contact d where d.email = s.email);
+    and not exists (select 1 from ps.do_not_contact d where d.email = s.email);
 
-create view rf.v_funnel as
-  select stage, count(*) as n from rf.leads group by stage;
+create view ps.v_funnel as
+  select stage, count(*) as n from ps.leads group by stage;
 
-create view rf.v_mrr as
+create view ps.v_mrr as
   select coalesce(sum(p.price_usd_month * sub.seats),0) as mrr_usd, count(*) as active_subscriptions
-  from rf.subscriptions sub join rf.plans p on p.code = sub.plan_code
+  from ps.subscriptions sub join ps.plans p on p.code = sub.plan_code
   where sub.status in ('active','past_due');
 
 -- ---------- RLS: lock everything to service role ----------
 do $$ declare t record; begin
-  for t in select tablename from pg_tables where schemaname = 'rf' loop
-    execute format('alter table rf.%I enable row level security', t.tablename);
+  for t in select tablename from pg_tables where schemaname = 'ps' loop
+    execute format('alter table ps.%I enable row level security', t.tablename);
   end loop;
 end $$;

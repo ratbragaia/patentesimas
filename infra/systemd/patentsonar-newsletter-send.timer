@@ -1,8 +1,8 @@
 [Unit]
-Description=Timer — RareFree invoices
+Description=Timer — PatentSonar newsletter-send
 
 [Timer]
-OnCalendar=*-*-* 07:00:00
+OnCalendar=Wed *-*-* 13:00:00
 Persistent=true
 RandomizedDelaySec=300
 

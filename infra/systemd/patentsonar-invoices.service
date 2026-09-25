@@ -1,0 +1,13 @@
+[Unit]
+Description=PatentSonar — invoices
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=patentsonar
+WorkingDirectory=/opt/patentsonar
+EnvironmentFile=/etc/patentsonar/env
+ExecStart=/bin/bash -lc 'npx tsx src/cli.ts invoices issue'
+StandardOutput=append:/var/log/patentsonar/invoices.log
+StandardError=append:/var/log/patentsonar/invoices.log

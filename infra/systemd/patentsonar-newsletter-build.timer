@@ -1,5 +1,5 @@
 [Unit]
-Description=Timer — RareFree newsletter-build
+Description=Timer — PatentSonar newsletter-build
 
 [Timer]
 OnCalendar=Tue *-*-* 06:00:00

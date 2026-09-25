@@ -8,6 +8,9 @@ import { notifyFounder } from "../reporting/telegram.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
+/** First coverage stream. PatentSonar is the company; streams are technology verticals (ADR 0006). */
+export const STREAM_NAME = "Rare-Earth-Free Magnets";
+
 export interface FamilyRow {
   family_id: string; representative_publication: string; earliest_priority_date: string | null; offices: string[];
   technology_bucket: string; analyst_summary: string | null; triage_status: string;
@@ -36,7 +39,7 @@ const BUCKET_LABEL: Record<string, string> = {
 /** Deterministic markdown skeleton. The production agent adds analyst_summary per family beforehand. */
 export function renderIssueMarkdown(issueNumber: number, periodStart: string, periodEnd: string, fams: FamilyRow[]): string {
   const lines: string[] = [];
-  lines.push(`# RareFree Intelligence — Issue #${issueNumber}`);
+  lines.push(`# PatentSonar · ${STREAM_NAME} — Issue #${issueNumber}`);
   lines.push(`Coverage period: ${periodStart} to ${periodEnd}. ${fams.length} new patent families across ${new Set(fams.flatMap((f) => f.offices)).size} offices.`);
   lines.push("");
   const byBucket = new Map<string, FamilyRow[]>();
@@ -102,7 +105,7 @@ export async function buildWeeklyIssue(periodStart: string, periodEnd: string): 
   const qa = runQa(markdown, (known ?? []) as KnownPublication[]);
   const html = renderIssueHtml(markdown, "{{UNSUBSCRIBE_URL}}"); // per-recipient substitution at send time
   await db().from("issues").upsert({
-    issue_number: issueNumber, kind: "weekly", title: `RareFree Intelligence #${issueNumber}`,
+    issue_number: issueNumber, kind: "weekly", title: `PatentSonar · ${STREAM_NAME} #${issueNumber}`,
     period_start: periodStart, period_end: periodEnd, markdown, html,
     family_ids: fams.map((f) => f.family_id), qa_passed: qa.passed, qa_report: qa,
     status: qa.passed ? "ready" : "qa_failed",

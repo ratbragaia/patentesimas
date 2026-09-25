@@ -1,6 +1,6 @@
-# Replace rarefree.com with the real domain. Caddy provisions TLS automatically.
-rarefree.com, www.rarefree.com {
-  root * /opt/rarefree/site
+# Replace patentsonar.com with the real domain. Caddy provisions TLS automatically.
+patentsonar.com, www.patentsonar.com {
+  root * /opt/patentsonar/site
   file_server
   handle /webhooks/* { reverse_proxy 127.0.0.1:8787 }
   handle /unsubscribe { reverse_proxy 127.0.0.1:8787 }

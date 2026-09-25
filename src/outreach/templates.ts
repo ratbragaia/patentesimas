@@ -6,7 +6,7 @@ export const OUTREACH_TEMPLATES = {
 
 {{personal_hook}}
 
-I run RareFree Intelligence, a weekly patent-intelligence briefing focused only on rare-earth-free and rare-earth-lean permanent magnets (iron nitride, Mn–Bi, Mn–Al, advanced ferrites, L10 FeNi) and RE-free motor designs. Each issue deduplicates international families, covers CN/JP/KR filings in English, and adds a plain-language note on what each family means competitively. Every number is pulled from USPTO, EPO and Google Patents records, never inferred.
+I run PatentSonar, a weekly patent-intelligence briefing focused only on rare-earth-free and rare-earth-lean permanent magnets (iron nitride, Mn–Bi, Mn–Al, advanced ferrites, L10 FeNi) and RE-free motor designs. Each issue deduplicates international families, covers CN/JP/KR filings in English, and adds a plain-language note on what each family means competitively. Every number is pulled from USPTO, EPO and Google Patents records, never inferred.
 
 Would a sample issue be useful for your team? I can send this week's edition, no strings attached.
 

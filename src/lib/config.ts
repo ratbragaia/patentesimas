@@ -2,9 +2,9 @@ import { z } from "zod";
 
 const schema = z.object({
   NODE_ENV: z.string().default("development"),
-  COMPANY_NAME: z.string().default("RareFree Intelligence"),
+  COMPANY_NAME: z.string().default("PatentSonar"),
   COMPANY_POSTAL_ADDRESS: z.string().default(""),
-  PUBLIC_SITE_URL: z.string().default("https://rarefree.com"),
+  PUBLIC_SITE_URL: z.string().default("https://patentsonar.com"),
   SPEND_CAP_USD_PER_ACTION: z.coerce.number().default(50),
   SPEND_CAP_USD_PER_MONTH: z.coerce.number().default(300),
 
@@ -25,7 +25,7 @@ const schema = z.object({
   POSTMARK_SERVER_TOKEN: z.string().optional(),
   POSTMARK_BROADCAST_STREAM: z.string().default("newsletter"),
   POSTMARK_TRANSACTIONAL_STREAM: z.string().default("outbound"),
-  EMAIL_FROM: z.string().default("RareFree Intelligence <newsletter@rarefree.com>"),
+  EMAIL_FROM: z.string().default("PatentSonar <newsletter@patentsonar.com>"),
   OUTREACH_FROM: z.string().optional(),
 
   TELEGRAM_BOT_TOKEN: z.string().optional(),

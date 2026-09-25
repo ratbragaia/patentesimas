@@ -1,6 +1,6 @@
 # ADR 0002 — Fiscal parameters for service export (PENDING accountant)
 
-Date: 2026-09-25 · Status: **pending** — invoices stay `pending` in `rf.invoices` until filled.
+Date: 2026-09-25 · Status: **pending** — invoices stay `pending` in `ps.invoices` until filled.
 
 Research (`docs/research/04-compliance-and-payments.md` §5): a Simples Nacional ME/EPP excludes
 ISS, PIS, COFINS, ICMS and IPI from the DAS on export revenue (LC 123 art. 18 §14); IRPJ/CSLL still

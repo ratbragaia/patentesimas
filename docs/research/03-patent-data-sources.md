@@ -1,4 +1,4 @@
-# 03 - Patent Data Sources: Technical Specification for the RareFree Intelligence Data Layer
+# 03 - Patent Data Sources: Technical Specification for the PatentSonar Data Layer
 
 **Date:** 2026-09-25
 **Owner:** Data engineering
@@ -230,7 +230,7 @@ Table size is roughly 0.9 TB (2018 figure, larger now) [V/S], so **never `SELECT
 
 ### 3.3 Cost model
 
-Free tier: **1 TB of query processing per month and 10 GB storage** without a credit card (BigQuery sandbox) [V/S, BigQuery pricing and third-party summaries]; on-demand price beyond that USD 6.25 per TiB scanned [S, 2026 pricing summaries]. Budget: a weekly query touching `publication_number, family_id, country_code, kind_code, publication_date, cpc, title_localized, abstract_localized, assignee_harmonized` scans an estimated 150-250 GB; four runs a month stay inside the free tier only if we **materialise a niche subset once** and query the subset thereafter (recommended: create `rarefree.publications_niche` refreshed after each quarterly upstream update).
+Free tier: **1 TB of query processing per month and 10 GB storage** without a credit card (BigQuery sandbox) [V/S, BigQuery pricing and third-party summaries]; on-demand price beyond that USD 6.25 per TiB scanned [S, 2026 pricing summaries]. Budget: a weekly query touching `publication_number, family_id, country_code, kind_code, publication_date, cpc, title_localized, abstract_localized, assignee_harmonized` scans an estimated 150-250 GB; four runs a month stay inside the free tier only if we **materialise a niche subset once** and query the subset thereafter (recommended: create `patentsonar.publications_niche` refreshed after each quarterly upstream update).
 
 ### 3.4 Example SQL
 

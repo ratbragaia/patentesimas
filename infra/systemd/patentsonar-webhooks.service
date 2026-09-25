@@ -1,0 +1,17 @@
+[Unit]
+Description=PatentSonar — webhook server (Paddle, Postmark, unsubscribe)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=patentsonar
+WorkingDirectory=/opt/patentsonar
+EnvironmentFile=/etc/patentsonar/env
+ExecStart=/bin/bash -lc 'npx tsx src/webhooks/server.ts'
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/patentsonar/webhooks.log
+StandardError=append:/var/log/patentsonar/webhooks.log
+
+[Install]
+WantedBy=multi-user.target

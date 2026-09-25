@@ -1,6 +1,6 @@
 # 02 — Target Accounts (ABM list), Buyer Personas, Triggers and Contact Strategy
 
-**Company:** RareFree Intelligence — patent intelligence on rare-earth-free permanent magnets
+**Company:** PatentSonar — patent intelligence on rare-earth-free permanent magnets
 **Date:** 2026-09-25
 **Status:** v1 — 38 accounts verified against at least one public source; 21 further accounts held in an unverified backlog (Section 1.3) pending a second research session.
 **Author:** autonomous operator (research session, WebSearch + WebFetch)

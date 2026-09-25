@@ -1,6 +1,6 @@
-# Privacy Policy — RareFree Intelligence (DRAFT, under legal review)
+# Privacy Policy — PatentSonar (DRAFT, under legal review)
 
-**Controller.** RareFree Intelligence, CNPJ [●], [address], privacy@rarefree.com. We have not appointed an EU representative or DPO; we will do so if our processing requires it under Art. 27 / Art. 37 GDPR.
+**Controller.** PatentSonar, CNPJ [●], [address], privacy@patentsonar.com. We have not appointed an EU representative or DPO; we will do so if our processing requires it under Art. 27 / Art. 37 GDPR.
 
 **What we process and why**
 
@@ -15,7 +15,7 @@ We do not use tracking pixels for individual open tracking in the newsletter. We
 
 **Processors.** Supabase (database, EU or US region [●]), Postmark / ActiveCampaign (email delivery, US), Paddle (payments, UK/US), NFe.io (Brazilian invoicing), Hostinger (server hosting, [region]), Anthropic (AI assistance in drafting content; no personal data of readers is sent to the model beyond what is needed to draft replies). International transfers rely on the EU Standard Contractual Clauses or adequacy decisions where applicable.
 
-**Your rights.** Access, rectification, erasure, restriction, portability, objection (including to legitimate-interest marketing at any time) and, in Brazil, the rights in Art. 18 LGPD. Email privacy@rarefree.com; we respond within 30 days. You may complain to your supervisory authority (for Brazil, the ANPD).
+**Your rights.** Access, rectification, erasure, restriction, portability, objection (including to legitimate-interest marketing at any time) and, in Brazil, the rights in Art. 18 LGPD. Email privacy@patentsonar.com; we respond within 30 days. You may complain to your supervisory authority (for Brazil, the ANPD).
 
 **Opt-out.** Every marketing email includes a one-click opt-out. Opting out adds your address to a suppression list we check before every send.
 

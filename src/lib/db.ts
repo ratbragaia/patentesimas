@@ -1,15 +1,15 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { require } from "./config.js";
 
-type Client = SupabaseClient<any, "rf", any, any, any>;
+type Client = SupabaseClient<any, "ps", any, any, any>;
 let client: Client | undefined;
 
-/** Service-role client bound to schema `rf`. Only the VPS ever holds this key. */
+/** Service-role client bound to schema `ps`. Only the VPS ever holds this key. */
 export function db(): Client {
   if (!client) {
-    client = createClient<any, "rf">(require("SUPABASE_URL"), require("SUPABASE_SERVICE_ROLE_KEY"), {
+    client = createClient<any, "ps">(require("SUPABASE_URL"), require("SUPABASE_SERVICE_ROLE_KEY"), {
       auth: { persistSession: false },
-      db: { schema: "rf" },
+      db: { schema: "ps" },
     });
   }
   return client;

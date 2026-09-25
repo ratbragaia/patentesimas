@@ -15,7 +15,7 @@ export async function buildWeeklyReport(): Promise<string> {
   ]);
   const f = Object.fromEntries((funnel.data ?? []).map((r: any) => [r.stage, r.n]));
   const lines = [
-    `📊 RareFree Intelligence — weekly report (${new Date().toISOString().slice(0, 10)})`,
+    `📊 PatentSonar — weekly report (${new Date().toISOString().slice(0, 10)})`,
     ``,
     `Revenue: MRR USD ${Number(mrr.data?.mrr_usd ?? 0).toFixed(0)} · active subs ${mrr.data?.active_subscriptions ?? 0}`,
     `Invoices this week: ${(invoices.data ?? []).length} (USD ${(invoices.data ?? []).reduce((s: number, i: any) => s + Number(i.amount_usd), 0).toFixed(0)})`,

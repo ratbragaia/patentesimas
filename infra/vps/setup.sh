@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# RareFree Intelligence — VPS bootstrap (Hostinger KVM 2, Ubuntu 24.04 LTS). Run once as root.
+# PatentSonar — VPS bootstrap (Hostinger KVM 2, Ubuntu 24.04 LTS). Run once as root.
 # Usage: ssh root@<ip> 'bash -s' < infra/vps/setup.sh
 set -euo pipefail
 
-APP_USER=rarefree
-APP_DIR=/opt/rarefree
+APP_USER=patentsonar
+APP_DIR=/opt/patentsonar
 REPO_URL="${REPO_URL:-https://github.com/ratbragaia/patentesimas.git}"
 BRANCH="${BRANCH:-main}"
 
@@ -36,16 +36,16 @@ fi
 
 echo "== app user + dirs"
 id -u $APP_USER >/dev/null 2>&1 || useradd --system --create-home --shell /bin/bash $APP_USER
-mkdir -p $APP_DIR /etc/rarefree /var/log/rarefree
-chown -R $APP_USER:$APP_USER $APP_DIR /var/log/rarefree
-chmod 750 /etc/rarefree
+mkdir -p $APP_DIR /etc/patentsonar /var/log/patentsonar
+chown -R $APP_USER:$APP_USER $APP_DIR /var/log/patentsonar
+chmod 750 /etc/patentsonar
 
 echo "== clone / update repo"
 if [ ! -d $APP_DIR/.git ]; then sudo -u $APP_USER git clone --branch "$BRANCH" "$REPO_URL" $APP_DIR; fi
 cd $APP_DIR && sudo -u $APP_USER git pull --ff-only && sudo -u $APP_USER npm ci --omit=dev --no-audit --no-fund && sudo -u $APP_USER npm install --no-save tsx >/dev/null
 
 echo "== env file (fill in from the handoff package)"
-[ -f /etc/rarefree/env ] || { cp $APP_DIR/.env.example /etc/rarefree/env; chown root:$APP_USER /etc/rarefree/env; chmod 640 /etc/rarefree/env; }
+[ -f /etc/patentsonar/env ] || { cp $APP_DIR/.env.example /etc/patentsonar/env; chown root:$APP_USER /etc/patentsonar/env; chmod 640 /etc/patentsonar/env; }
 
 echo "== claude code (agent runtime)"
 sudo -u $APP_USER npm install -g @anthropic-ai/claude-code 2>/dev/null || npm install -g @anthropic-ai/claude-code
@@ -53,11 +53,11 @@ sudo -u $APP_USER npm install -g @anthropic-ai/claude-code 2>/dev/null || npm in
 echo "== systemd units"
 cp $APP_DIR/infra/systemd/*.service $APP_DIR/infra/systemd/*.timer /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now rarefree-webhooks.service
-for t in rarefree-ingest rarefree-newsletter-build rarefree-newsletter-send rarefree-invoices rarefree-report; do systemctl enable --now $t.timer; done
+systemctl enable --now patentsonar-webhooks.service
+for t in patentsonar-ingest patentsonar-newsletter-build patentsonar-newsletter-send patentsonar-invoices patentsonar-report; do systemctl enable --now $t.timer; done
 
 echo "== caddy reverse proxy"
 cp $APP_DIR/infra/Caddyfile /etc/caddy/Caddyfile && systemctl reload caddy || systemctl restart caddy
 
 bash $APP_DIR/infra/vps/harden.sh
-echo "== done. Fill /etc/rarefree/env, then: systemctl restart rarefree-webhooks && systemctl list-timers 'rarefree-*'"
+echo "== done. Fill /etc/patentsonar/env, then: systemctl restart patentsonar-webhooks && systemctl list-timers 'patentsonar-*'"

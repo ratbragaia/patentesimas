@@ -45,7 +45,7 @@ export async function issuePendingInvoices(): Promise<number> {
       const body = {
         borrower: { name: inv.customers.legal_name, email: inv.customers.billing_email, federalTaxNumber: null,
           address: { country: inv.customers.country ?? "USA" } },
-        cityServiceCode: "<from accountant>", description: `Patent intelligence subscription — RareFree Intelligence. Paddle transaction ${inv.paddle_transaction_id}. USD ${inv.amount_usd} @ PTAX ${rate}`,
+        cityServiceCode: "<from accountant>", description: `Patent intelligence subscription — PatentSonar. Paddle transaction ${inv.paddle_transaction_id}. USD ${inv.amount_usd} @ PTAX ${rate}`,
         servicesAmount: amountBrl,
         externalId: inv.idempotency_key, // NFe.io echoes this back; prevents duplicates on their side too
       };

@@ -1,0 +1,13 @@
+[Unit]
+Description=PatentSonar — newsletter-send
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=patentsonar
+WorkingDirectory=/opt/patentsonar
+EnvironmentFile=/etc/patentsonar/env
+ExecStart=/bin/bash -lc 'npx tsx src/cli.ts newsletter send-latest'
+StandardOutput=append:/var/log/patentsonar/newsletter-send.log
+StandardError=append:/var/log/patentsonar/newsletter-send.log

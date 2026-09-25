@@ -1,7 +1,7 @@
-# RareFree Intelligence — Competitor Landscape, Willingness-to-Pay and Pricing Recommendation
+# PatentSonar — Competitor Landscape, Willingness-to-Pay and Pricing Recommendation
 
 **Report date:** 2026-09-25
-**Prepared for:** RareFree Intelligence (paid subscription: weekly newsletter + monthly reports on rare-earth-free permanent-magnet patents — Fe16N2 iron nitride, MnBi, MnAl, advanced ferrites, L10 FeNi tetrataenite)
+**Prepared for:** PatentSonar (paid subscription: weekly newsletter + monthly reports on rare-earth-free permanent-magnet patents — Fe16N2 iron nitride, MnBi, MnAl, advanced ferrites, L10 FeNi tetrataenite)
 **Target buyers:** IP and R&D departments at automakers, EV motor makers, wind-turbine OEMs, defense contractors, magnet/materials companies
 **Proposed entry price under review:** US$200/month
 
@@ -36,7 +36,7 @@
 | **Cypris** (AI research platform) | Pricing not found. Publishes a free "Rare-Earth-Free Magnet Patent Landscape / outlook in 2026" insight piece. | AI-driven patent and literature search; free thought-leadership content on RE-free magnets | R&D, innovation teams |
 | **PatSnap content marketing** | Free. Blog article "Rare earth-free magnets 2026: MnBi and Fe16N2". | One-off landscape summary used as lead generation | R&D/IP |
 
-**Take-away:** Magic Number is the only vendor found that sells *sector-specific, subscription-based* patent intelligence at a published price, and it charges **$500/month per sector (~$6,000/yr)** — 2.5x the proposed RareFree entry price. Whether Magic Number currently offers a magnets sector was not confirmed (uncertain).
+**Take-away:** Magic Number is the only vendor found that sells *sector-specific, subscription-based* patent intelligence at a published price, and it charges **$500/month per sector (~$6,000/yr)** — 2.5x the proposed PatentSonar entry price. Whether Magic Number currently offers a magnets sector was not confirmed (uncertain).
 
 ### 1.3 Magnet / rare-earth market-intelligence publishers (adjacent, mostly supply-chain and price focused)
 
@@ -51,7 +51,7 @@
 | **Fastmarkets** | Weekly rare-earth prices (NdPr, Dy, Tb), expanded heavy-RE suite in Europe, new metal prices | Not listed | Price-reporting agency model. |
 | **MarketsandMarkets** | "Permanent Magnet Market … Global Forecast to 2030" (published 2025-07-24) | **$4,950 single-user; $8,150 corporate license** | Generic market-sizing report; headline **$88.51B by 2030** for all permanent magnets. |
 | **Everest Group** | "Rare-Earth-Free Permanent Magnets for Energy and Mobility Systems" (2025) | Not retrieved | One of very few titles specifically on RE-free magnets. |
-| **Innovate UK Business Connect** | "Rare Earth Permanent Magnet Alternatives Innovation Landscape Report" and "Rare Earth Permanent Magnet Manufacturing Innovation Landscape Report" (July 2025) | **Free PDFs** | Publicly funded landscape — a free substitute buyers will compare RareFree against. |
+| **Innovate UK Business Connect** | "Rare Earth Permanent Magnet Alternatives Innovation Landscape Report" and "Rare Earth Permanent Magnet Manufacturing Innovation Landscape Report" (July 2025) | **Free PDFs** | Publicly funded landscape — a free substitute buyers will compare PatentSonar against. |
 
 **Take-away:** none of the incumbents' rare-earth services are patent-centric; they sell prices, tonnage and supply-chain forecasts. Patent intelligence on the *substitutes* is a gap between the patent-tool vendors (generic, expensive, self-serve) and the commodity-intelligence houses (deep, but not about IP).
 
@@ -135,7 +135,7 @@ The volume (roughly 50–70 new families a year plus prosecution events, litigat
 - **US response:** multi-agency financing, a **$110/kg NdPr price floor**, guaranteed offtake, "Project Vault", and bilateral frameworks with Australia, Japan, Malaysia and Saudi Arabia (CSIS). The IEA framed the episode as "supply concentration risks become reality".
 - IDTechEx called 2025 "a defining year for the rare earth magnet market".
 
-**Implication for RareFree:** the buyer's pain is now board-level (production stoppages), the substitute technology has a funded, dated industrialization path (Niron 2027/2028), and the patent record is where competitors' and suppliers' intentions surface 18 months before products. That is the conjunction a paid intelligence product needs. The risk is timing: if RE supply normalizes in 2027, urgency (and renewal rates) could fall.
+**Implication for PatentSonar:** the buyer's pain is now board-level (production stoppages), the substitute technology has a funded, dated industrialization path (Niron 2027/2028), and the patent record is where competitors' and suppliers' intentions surface 18 months before products. That is the conjunction a paid intelligence product needs. The risk is timing: if RE supply normalizes in 2027, urgency (and renewal rates) could fall.
 
 ## 5. Pricing recommendation
 
@@ -143,7 +143,7 @@ The volume (roughly 50–70 new families a year plus prosecution events, litigat
 
 **Yes, modestly — for the stated corporate buyers.** Evidence:
 1. The only directly comparable product (Magic Number Patent Forecast, per-sector curated patent intelligence) lists at **$500/month**.
-2. Corporate IP teams already spend **$10K–$30K/yr** for entry seats on PatBase, PatSnap or Orbit and reportedly **$2,400–$3,600+/user/yr** at the very bottom of Derwent — RareFree at $2,400/yr would be priced like a single low-end database seat while delivering interpreted intelligence.
+2. Corporate IP teams already spend **$10K–$30K/yr** for entry seats on PatBase, PatSnap or Orbit and reportedly **$2,400–$3,600+/user/yr** at the very bottom of Derwent — PatentSonar at $2,400/yr would be priced like a single low-end database seat while delivering interpreted intelligence.
 3. Even generic market-sizing PDFs sell at **$4,950–$8,150** per copy.
 
 However, $200/month is *not* absurdly low, because: (a) free substitutes exist (IUK landscape, Cypris/PatSnap articles, Lens saved-search alerts); (b) the audience is narrow, so early volume matters more than margin; (c) individual-paid newsletters in adjacent deep tech top out around $1,000/yr. The right move is to keep a low-friction individual tier near the current price and add team/enterprise tiers where the real budget sits.
@@ -162,13 +162,13 @@ However, $200/month is *not* absurdly low, because: (a) free substitutes exist (
 
 ### 5.3 Positioning statement
 
-RareFree Intelligence is the only continuously updated patent-intelligence service dedicated to rare-earth-free permanent magnets. Every week our analysts read every new iron-nitride, MnBi, MnAl, advanced-ferrite and FeNi-tetrataenite patent family worldwide, normalize the assignees behind Chinese, Japanese and university filings, and connect the claims to what matters commercially — Niron's 2027 Sartell ramp, Toyota's and TDK's material programs, China's magnet export controls, and the US price-floor and loan programs. IP and R&D teams at automakers, motor makers, wind OEMs and defense primes get claim-level early warning and a monthly strategic read-out for less than the cost of a single generic database seat, without hiring a landscape consultancy or wading through 20,000 rare-earth families to find the 60 that matter.
+PatentSonar is the only continuously updated patent-intelligence service dedicated to rare-earth-free permanent magnets. Every week our analysts read every new iron-nitride, MnBi, MnAl, advanced-ferrite and FeNi-tetrataenite patent family worldwide, normalize the assignees behind Chinese, Japanese and university filings, and connect the claims to what matters commercially — Niron's 2027 Sartell ramp, Toyota's and TDK's material programs, China's magnet export controls, and the US price-floor and loan programs. IP and R&D teams at automakers, motor makers, wind OEMs and defense primes get claim-level early warning and a monthly strategic read-out for less than the cost of a single generic database seat, without hiring a landscape consultancy or wading through 20,000 rare-earth families to find the 60 that matter.
 
 ### 5.4 Three strongest differentiators versus free Google Patents alerts
 
-1. **Google Patents has no monitoring layer.** It offers no native saved-search e-mail alerts, no notification when an assignee files or a legal status changes; users must bolt on Google Alerts or Google Scholar, which miss most non-English filings and all prosecution events. RareFree delivers analyst-curated alerts within days of publication, including CN/JP/KR families with normalized assignee names (e.g., the two University of Minnesota name variants that split 136 families in the public landscape).
-2. **Interpretation, not retrieval.** A raw alert gives a title and abstract; RareFree gives the "so-what": which claims cover coercivity-enhancing dopants for Fe16N2, whether a MnBi claim reads on traction-motor temperatures, which university filings are licensed to which startup, and how the filing relates to funding and policy events (Niron's $150M DoW loan, China's Announcement 61).
-3. **A single materials-specific taxonomy across patents, funding and policy.** No free source combines patent families with the supply-chain and funding record; the commodity houses (Adamas, Benchmark, Argus, Wood Mackenzie) track prices and tonnes but not IP, and the patent platforms track IP but not the market. RareFree's weekly/monthly cadence, restricted to one high-stakes niche, is a product neither side has shipped.
+1. **Google Patents has no monitoring layer.** It offers no native saved-search e-mail alerts, no notification when an assignee files or a legal status changes; users must bolt on Google Alerts or Google Scholar, which miss most non-English filings and all prosecution events. PatentSonar delivers analyst-curated alerts within days of publication, including CN/JP/KR families with normalized assignee names (e.g., the two University of Minnesota name variants that split 136 families in the public landscape).
+2. **Interpretation, not retrieval.** A raw alert gives a title and abstract; PatentSonar gives the "so-what": which claims cover coercivity-enhancing dopants for Fe16N2, whether a MnBi claim reads on traction-motor temperatures, which university filings are licensed to which startup, and how the filing relates to funding and policy events (Niron's $150M DoW loan, China's Announcement 61).
+3. **A single materials-specific taxonomy across patents, funding and policy.** No free source combines patent families with the supply-chain and funding record; the commodity houses (Adamas, Benchmark, Argus, Wood Mackenzie) track prices and tonnes but not IP, and the patent platforms track IP but not the market. PatentSonar's weekly/monthly cadence, restricted to one high-stakes niche, is a product neither side has shipped.
 
 ## 6. Open questions and next research steps
 

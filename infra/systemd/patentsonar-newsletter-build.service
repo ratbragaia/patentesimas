@@ -1,0 +1,13 @@
+[Unit]
+Description=PatentSonar — newsletter-build
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=patentsonar
+WorkingDirectory=/opt/patentsonar
+EnvironmentFile=/etc/patentsonar/env
+ExecStart=/bin/bash -lc 'npx tsx src/cli.ts newsletter build $(date -d 'last monday -7 days' +%F) $(date -d 'last sunday' +%F)'
+StandardOutput=append:/var/log/patentsonar/newsletter-build.log
+StandardError=append:/var/log/patentsonar/newsletter-build.log

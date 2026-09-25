@@ -1,8 +1,8 @@
 [Unit]
-Description=Timer — RareFree report
+Description=Timer — PatentSonar ingest
 
 [Timer]
-OnCalendar=Fri *-*-* 18:00:00
+OnCalendar=Mon *-*-* 06:00:00
 Persistent=true
 RandomizedDelaySec=300
 

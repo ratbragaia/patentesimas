@@ -18,5 +18,5 @@ Date: 2026-09-25 · Status: accepted, with two confirmations pending
    route at onboarding. Sandbox integration is built and tested against signature verification.
 2. USD receiving account: Wise Business if the entity is a Ltda/SLU; otherwise Payoneer (native
    Paddle payout) as primary.
-3. Every completed Paddle transaction creates exactly one `rf.invoices` row keyed by transaction id;
+3. Every completed Paddle transaction creates exactly one `ps.invoices` row keyed by transaction id;
    NFS-e is issued in BRL at PTAX of the day (see ADR 0002 for the pending fiscal parameters).
