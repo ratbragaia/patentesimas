@@ -1,0 +1,17 @@
+[Unit]
+Description=RareFree Intelligence — webhook server (Paddle, Postmark, unsubscribe)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=rarefree
+WorkingDirectory=/opt/rarefree
+EnvironmentFile=/etc/rarefree/env
+ExecStart=/bin/bash -lc 'npx tsx src/webhooks/server.ts'
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/rarefree/webhooks.log
+StandardError=append:/var/log/rarefree/webhooks.log
+
+[Install]
+WantedBy=multi-user.target

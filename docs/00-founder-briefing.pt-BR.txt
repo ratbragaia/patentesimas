@@ -1,0 +1,158 @@
+BRIEFING — RAREFREE INTELLIGENCE
+Empresa autônoma operada por agente(s) Claude Code
+=================================================
+
+REGRA MAIS IMPORTANTE
+----------------------
+Nenhuma decisão de negócio deste projeto pode usar informações pessoais,
+histórico, habilidades ou preferências do fundador. Todas as escolhas devem
+vir de pesquisa de mercado real feita pelo próprio agente. O fundador cuida
+apenas do que exige identidade, cartão ou assinatura legal (listado abaixo).
+Todo o resto — achar clientes, vender, produzir, cobrar, conferir, fechar,
+reportar — é do agente, sozinho.
+
+O QUE A EMPRESA VENDE
+----------------------
+Produto: assinatura mensal de inteligência de patentes (newsletter semanal +
+relatórios) sobre patentes de ímãs produzidos sem terras raras (rare-earth-free
+magnets — iron nitride, MnBi, ferrite avançada, etc).
+
+Por que esse nicho:
+- Mercado real e aquecido: corrida global por alternativas a terras raras por
+  causa de risco de cadeia de suprimentos (dependência da China). Exemplo
+  concreto: Niron Magnetics (EUA) recebeu compromisso condicional de US$150
+  milhões do Departamento de Guerra dos EUA (ago/2026) e tem entre seus
+  investidores GM, Stellantis, Samsung, Magna, Volvo.
+- Compradores-alvo: departamentos de PI/P&D de montadoras, fabricantes de
+  turbina eólica, fabricantes de motores elétricos, empresas de defesa e
+  materiais — todos "grandes indústrias" com orçamento e motivo estratégico
+  real pra pagar.
+- 100% digital, zero fabricação/logística. O próprio agente produz o conteúdo.
+- Recorrente, preço de entrada alto (bom pra operação enxuta).
+
+Preço: a partir de US$200/mês por assinante (avaliar se está subprecificado
+frente à concorrência — Clarivate/Derwent, Patsnap etc. cobram bem mais por
+inteligência de PI dedicada; considerar tiers mais caros com alerta
+personalizado/portfolio watch).
+
+Escopo geográfico: mundial. Idioma padrão do negócio: INGLÊS (site,
+newsletter, contratos, toda comunicação com cliente).
+
+Diferencial necessário (importante — sem isso não há motivo pra alguém pagar
+em vez de usar um alerta gratuito do Google Patents):
+- Deduplicar famílias de patentes internacionais
+- Cobrir e (eventualmente) traduzir depósitos chineses/japoneses/coreanos
+- Análise estratégica em linguagem clara, não só lista de títulos
+- Nunca inventar número de patente, data ou reivindicação — sempre puxar de
+  API oficial, nunca "lembrar" ou inferir.
+
+NOME E MARCA
+-------------
+RareFree Intelligence
+Domínio a registrar: rarefree.com (checar disponibilidade real no ato da
+compra; alternativas .io / .ai)
+
+ESTRUTURA SOCIETÁRIA E FISCAL — decisão já tomada
+---------------------------------------------------
+- CNPJ brasileiro, ME/EPP no Simples Nacional (fundador está resolvendo com
+  contador — MEI foi descartado por ter teto de R$81 mil/ano, baixo demais).
+- Receita majoritariamente exportação de serviço em USD.
+
+INFRAESTRUTURA TÉCNICA — decisões já tomadas
+-----------------------------------------------
+Servidor:
+- VPS dedicada na Hostinger, SEPARADA da VPS pessoal que já roda n8n do
+  fundador (não misturar workload/credenciais).
+- Plano: KVM 2 (2 vCPU, 8GB RAM, 100GB NVMe), Ubuntu 24.04 LTS. Escalar para
+  KVM 4 se o volume de agentes em paralelo exigir.
+
+Banco de dados / memória persistente:
+- Supabase — projeto novo e dedicado (não reaproveitar projeto pessoal do
+  fundador). Guarda leads, clientes, faturas, conteúdo, fila de tarefas.
+  É a "memória" real da empresa, fora de qualquer sessão individual de
+  Claude Code.
+
+Acesso Anthropic / Claude Code:
+- Assinatura Pro já ativa. Suficiente pra FASE DE VALIDAÇÃO, mas numa
+  operação 24/7 com múltiplos subagentes vai bater no teto semanal com
+  frequência (auto-continue segura até o reset, mas gera pausas).
+- Ligar "extra usage" (pay-as-you-go) em claude.ai/settings/usage como
+  válvula de escape.
+- Plano de evolução: migrar para Max quando a receita recorrente justificar.
+- Conta GitHub (organização) para versionar código, scripts e as instruções
+  operacionais do agente (CLAUDE.md).
+
+Fontes de dados de patente (produto):
+- USPTO PatentsView API (gratuita)
+- EPO Open Patent Services / OPS (registro gratuito)
+- Google Cloud + BigQuery (Google Patents Public Data)
+- Fora do escopo inicial (avaliar depois se necessário): tradução automática
+  de depósitos estrangeiros, Lens.org.
+
+Pagamento, cobrança e nota fiscal:
+- Paddle como Merchant of Record (lida com imposto/VAT global, foco em
+  B2B/enterprise). Lemon Squeezy foi descartado: foi comprada pela Stripe em
+  2024 e está sendo migrada para o produto próprio da Stripe (Stripe Managed
+  Payments, em preview desde fev/2026) — risco de plataforma em transição.
+- Wise Business como conta multi-moeda de apoio (segurar/converter USD).
+- NFe.io (ou equivalente indicado pelo contador) para emissão automática de
+  nota fiscal de exportação de serviço a cada venda.
+
+E-mail e alertas:
+- Postmark para outreach E entrega da newsletter (lista de assinantes é
+  pequena e de alto valor, não precisa de plataforma de newsletter dedicada
+  — fica numa tabela no Supabase).
+- SPF/DKIM/DMARC configurados no domínio.
+- Bot no Telegram para alertas e relatório semanal ao fundador (visibilidade,
+  não aprovação prévia).
+
+Documentos jurídicos:
+- Termos de Serviço, Política de Privacidade (atenção a GDPR — haverá
+  clientes europeus) e Política de assinatura/reembolso: rascunho feito por
+  IA, mas precisa de revisão rápida de advogado antes de publicar. Não
+  publicar compromisso jurídico vinculante sem esse crivo.
+
+GUARDRAILS OPERACIONAIS
+-------------------------
+- Teto de gasto por ação sem aprovação/log.
+- Contratos e política de reembolso usam templates fixos — o agente não
+  improvisa cláusula jurídica na hora de fechar cliente.
+- Toda comunicação fria de outreach precisa ter opção de opt-out/unsubscribe
+  (compliance internacional: GDPR, CAN-SPAM, LGPD).
+- Operações de cobrança devem ser idempotentes (nunca cobrar duas vezes se
+  uma sessão cair no meio do processo).
+- Relatório semanal automático pro fundador — visibilidade, não é gate de
+  aprovação.
+
+ESTRUTURA DE AGENTES SUGERIDA
+--------------------------------
+Um orquestrador + subagentes especializados:
+1. Pesquisa de mercado — valida/ajusta o nicho continuamente
+2. Prospecção — encontra empresas-alvo (ABM, não spam em massa)
+3. Vendas — conduz conversa por e-mail, negocia, fecha
+4. Produção — gera a newsletter/relatório, com QA antes de enviar
+5. Financeiro — cria assinatura no Paddle, emite NF-e via NFe.io, concilia
+   pagamentos, cobra inadimplência
+6. Relatórios — compila funil e financeiro, manda resumo semanal via
+   Telegram
+
+PACOTE DE HANDOFF (o que o fundador está reunindo pra entregar)
+-------------------------------------------------------------------
+- Chave SSH da VPS + IP
+- Acesso DNS do domínio
+- Login/token do GitHub
+- Credenciais Claude Code
+- Connection string + service role key do Supabase
+- Chaves USPTO, EPO OPS, GCP
+- Credenciais Paddle, Wise, NFe.io
+- Chave da API do Postmark + token do bot do Telegram
+- Confirmação do CNPJ aberto
+
+PRÓXIMO PASSO
+---------------
+Assim que o pacote de handoff acima estiver completo, o próximo Claude deve:
+1. Configurar a VPS (Node.js, git, Claude Code, systemd, hardening básico)
+2. Validar o nicho com pesquisa de mercado real (concorrência, disposição a
+   pagar, lista inicial de empresas-alvo)
+3. Montar o schema do Supabase (leads, clientes, faturas, conteúdo, tarefas)
+4. Construir o site inicial e o primeiro ciclo de prospecção/produção

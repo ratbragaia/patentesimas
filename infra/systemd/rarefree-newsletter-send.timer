@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer — RareFree newsletter-send
+
+[Timer]
+OnCalendar=Wed *-*-* 13:00:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

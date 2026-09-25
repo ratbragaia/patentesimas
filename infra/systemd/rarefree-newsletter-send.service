@@ -1,0 +1,13 @@
+[Unit]
+Description=RareFree Intelligence — newsletter-send
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=rarefree
+WorkingDirectory=/opt/rarefree
+EnvironmentFile=/etc/rarefree/env
+ExecStart=/bin/bash -lc 'npx tsx src/cli.ts newsletter send-latest'
+StandardOutput=append:/var/log/rarefree/newsletter-send.log
+StandardError=append:/var/log/rarefree/newsletter-send.log

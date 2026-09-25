@@ -1,0 +1,10 @@
+# Replace rarefree.com with the real domain. Caddy provisions TLS automatically.
+rarefree.com, www.rarefree.com {
+  root * /opt/rarefree/site
+  file_server
+  handle /webhooks/* { reverse_proxy 127.0.0.1:8787 }
+  handle /unsubscribe { reverse_proxy 127.0.0.1:8787 }
+  handle /healthz { reverse_proxy 127.0.0.1:8787 }
+  encode gzip
+  header { Strict-Transport-Security "max-age=31536000" X-Content-Type-Options nosniff Referrer-Policy strict-origin-when-cross-origin }
+}
