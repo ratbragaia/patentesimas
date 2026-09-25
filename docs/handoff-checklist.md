@@ -10,8 +10,8 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 4 | GitHub organisation + this repo transferred/mirrored; deploy key on VPS | `infra/vps/setup.sh` REPO_URL | ⬜ |
 | 5 | Claude Code credentials on the VPS (Pro now; enable extra usage) | `/etc/rarefree/env` | ⬜ |
 | 6 | Supabase project (dedicated): URL, service role key, DB connection string | `SUPABASE_*` | ⬜ |
-| 7 | PatentsView API key (free, form on search.patentsview.org) | `PATENTSVIEW_API_KEY` | ⬜ |
-| 8 | EPO OPS consumer key/secret (free registration, developer portal) | `EPO_OPS_*` | ⬜ |
+| 7 | PatentsView API key (free; request via the PatentsView support portal at patentsview-support.atlassian.net; 45 req/min) | `PATENTSVIEW_API_KEY` | ⬜ |
+| 8 | EPO OPS consumer key/secret (register at developers.epo.org → My Apps; free tier ~4 GB/week) — **primary data source** | `EPO_OPS_*` | ⬜ |
 | 9 | GCP project with BigQuery enabled + service-account JSON | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | ⬜ |
 | 10 | Paddle seller account (verify Brazil eligibility first — see research 04) + webhook secret | `PADDLE_*` | ⬜ |
 | 11 | USD receiving account (Wise Business or alternative per research 04) | Paddle payout settings | ⬜ |

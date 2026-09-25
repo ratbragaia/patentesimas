@@ -5,6 +5,7 @@
  */
 import { require } from "../lib/config.js";
 import { http, httpJson } from "../lib/http.js";
+import { log } from "../lib/log.js";
 import { normalizePublicationNumber, normalizeCpc, toIsoDate } from "./normalize.js";
 import { NICHE, classify } from "./query.js";
 import type { Publication } from "./types.js";
@@ -24,18 +25,46 @@ async function accessToken(): Promise<string> {
   return token.value;
 }
 
-async function ops<T>(path: string, accept = "application/json"): Promise<T> {
-  const res = await http(`${BASE}${path}`, { headers: { Authorization: `Bearer ${await accessToken()}`, Accept: accept } });
+/**
+ * Parse `X-Throttling-Control: idle (retrieval=green:200, search=yellow:20, ...)`.
+ * Returns per-service colour and per-minute allowance so callers can pace themselves.
+ */
+export function parseThrottling(header: string | null): Record<string, { colour: string; perMinute: number }> {
+  const out: Record<string, { colour: string; perMinute: number }> = {};
+  if (!header) return out;
+  for (const m of header.matchAll(/(\w+)=(green|yellow|red|black):(\d+)/g)) out[m[1]!] = { colour: m[2]!, perMinute: Number(m[3]) };
+  return out;
+}
+
+let lastThrottle: Record<string, { colour: string; perMinute: number }> = {};
+export function lastThrottlingState() { return lastThrottle; }
+
+async function ops<T>(path: string, accept = "application/json", extraHeaders: Record<string, string> = {}, retried = false): Promise<T> {
+  const service = path.includes("/search") ? "search" : path.includes("/family") || path.includes("/legal") ? "inpadoc" : "retrieval";
+  const t = lastThrottle[service];
+  if (t && (t.colour === "red" || t.colour === "black")) {
+    const wait = t.colour === "black" ? 60_000 : Math.ceil(60_000 / Math.max(t.perMinute, 1));
+    log.warn("OPS throttled; pacing", { service, colour: t.colour, wait });
+    await new Promise((r) => setTimeout(r, wait));
+  }
+  const res = await http(`${BASE}${path}`, { headers: { Authorization: `Bearer ${await accessToken()}`, Accept: accept, ...extraHeaders } });
+  lastThrottle = { ...lastThrottle, ...parseThrottling(res.headers.get("x-throttling-control")) };
+  const weeklyUsed = Number(res.headers.get("x-registeredquotaperweek-used") ?? 0);
+  if (weeklyUsed > 3.2 * 1024 ** 3) log.warn("OPS weekly quota above 80% of the conservative 4 GB plan", { weeklyUsed });
+  if (res.status === 401 && !retried) { token = undefined; return ops<T>(path, accept, extraHeaders, true); }
   if (res.status === 404) return {} as T; // OPS returns 404 for "no results"
+  if (res.status === 403 && res.headers.get("x-rejection-reason")) throw new Error(`OPS quota rejected: ${res.headers.get("x-rejection-reason")}`);
   if (!res.ok) throw new Error(`OPS ${res.status}: ${(await res.text()).slice(0, 300)}`);
   return (await res.json()) as T;
 }
 
 /** CQL for the niche. pd = publication date. ti/ab = title/abstract. cpc = classification. */
 export function buildOpsCql(from: string, to: string): string {
-  const kw = NICHE.keywords.slice(0, 25).map((k) => `"${k.replace(/"/g, "")}"`).join(" or ");
-  const cpc = NICHE.cpcInclude.map((c) => `cpc=${c.replace("/", "/")}`).join(" or ");
-  return `pd within "${from.replace(/-/g, "")} ${to.replace(/-/g, "")}" and ((ti=(${kw}) or ab=(${kw})) or (${cpc}))`;
+  // Operators uppercase; `pd within` (the >=/<= form raises CLIENT.FuzzyDateRanges); `ta` = title+abstract.
+  // Kept short: OPS caps a query at 2,000 hits and long CQL strings are rejected. Everything is re-scored by classify().
+  const kw = NICHE.keywords.slice(0, 22).map((k) => `ta="${k.replace(/"/g, "")}"`).join(" OR ");
+  const cpc = NICHE.cpcInclude.filter((c) => !c.startsWith("C22C38") && !c.startsWith("H02K1/27")).map((c) => `cpc=${c}`).join(" OR ");
+  return `pd within "${from.replace(/-/g, "")} ${to.replace(/-/g, "")}" AND ((${kw}) OR (${cpc}))`;
 }
 
 // OPS JSON is deeply nested with "$" text nodes; helpers keep it readable.
@@ -53,7 +82,7 @@ export async function fetchOpsPublications(from: string, to: string): Promise<Pu
   const cql = encodeURIComponent(buildOpsCql(from, to));
   for (let start = 1; start <= 2000; start += 100) {
     const range = `${start}-${Math.min(start + 99, 2000)}`;
-    const res = await ops<any>(`/rest-services/published-data/search/biblio?q=${cql}&Range=${range}`);
+    const res = await ops<any>(`/rest-services/published-data/search/biblio?q=${cql}`, "application/json", { "X-OPS-Range": range });
     const docs = arr<any>(res?.["ops:world-patent-data"]?.["ops:biblio-search"]?.["ops:search-result"]?.["exchange-documents"])
       .flatMap((e: any) => arr<any>(e?.["exchange-document"]));
     for (const d of docs) {

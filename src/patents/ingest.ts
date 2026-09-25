@@ -8,13 +8,18 @@ import type { Publication } from "./types.js";
 
 export interface IngestWindow { from: string; to: string }
 
-/** Watermark: last successful window end per source, else 14 days back (overlap is safe: upserts). */
+/**
+ * Window = [min(last successful window_end, today-21d), today]. DOCDB loads some offices late, so we
+ * always re-scan three weeks; upserts ignore duplicates, and "new" is decided by first_seen_at, not by
+ * publication date (docs/research/03-patent-data-sources.md §6.3).
+ */
 export async function computeWindow(source: string, today = new Date()): Promise<IngestWindow> {
   const { data } = await db().from("ingest_runs").select("window_end").eq("source", source).eq("status", "succeeded")
     .order("window_end", { ascending: false }).limit(1).maybeSingle();
   const to = today.toISOString().slice(0, 10);
-  const fallback = new Date(today); fallback.setDate(fallback.getDate() - 14);
-  const from = data?.window_end ?? fallback.toISOString().slice(0, 10);
+  const lookback = new Date(today); lookback.setDate(lookback.getDate() - 21);
+  const lb = lookback.toISOString().slice(0, 10);
+  const from = data?.window_end && data.window_end < lb ? data.window_end : lb;
   return { from, to };
 }
 
@@ -43,12 +48,17 @@ async function runSource(source: "patentsview" | "epo_ops", fetcher: (w: IngestW
   }
 }
 
-/** Weekly ingest: all configured sources, then family enrichment + grouping. */
+/**
+ * Weekly ingest. Source roles (ADR 0005): EPO OPS is the primary detector of new publications for
+ * US/EP/WO/CN/JP/KR (DOCDB is weekly). PatentsView refreshes quarterly and is migrating to the USPTO
+ * Open Data Portal, so it is enrichment/QA for US documents (assignee disambiguation, cpc_current,
+ * claims), not the detector. BigQuery (quarterly) is back-fill and landscape counts.
+ */
 export async function ingestAll(): Promise<void> {
   const c = config();
   const all: Publication[] = [];
-  if (c.PATENTSVIEW_API_KEY) all.push(...(await runSource("patentsview", (w) => fetchPatentsViewGrants(w.from, w.to))));
   if (c.EPO_OPS_CONSUMER_KEY) all.push(...(await runSource("epo_ops", (w) => fetchOpsPublications(w.from, w.to))));
+  if (c.PATENTSVIEW_API_KEY) all.push(...(await runSource("patentsview", (w) => fetchPatentsViewGrants(w.from, w.to))));
   // BigQuery results are loaded by `cli ingest bigquery <file.json>` because the bq CLI runs the SQL.
 
   // Fill missing family ids via OPS (US grants from PatentsView have none).

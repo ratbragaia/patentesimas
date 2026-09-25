@@ -20,7 +20,12 @@ export async function loadIssueFamilies(periodStart: string, periodEnd: string):
     .select("family_id, representative_publication, earliest_priority_date, offices, technology_bucket, analyst_summary, triage_status, pub:patent_publications!representative_publication(publication_number,title,abstract,applicants,publication_date,country_code,kind_code)")
     .eq("triage_status", "include");
   if (error) throw new Error(error.message);
-  return (data as unknown as FamilyRow[]).filter((f) => f.pub && f.pub.publication_date >= periodStart && f.pub.publication_date <= periodEnd);
+  // A family is "new" if no member was cited in an already-sent issue (first-seen rule, research 03 §6.3).
+  const { data: sent } = await db().from("issues").select("family_ids").eq("status", "sent");
+  const cited = new Set((sent ?? []).flatMap((i: any) => i.family_ids ?? []));
+  const lateCutoff = new Date(periodStart); lateCutoff.setDate(lateCutoff.getDate() - 21);
+  const late = lateCutoff.toISOString().slice(0, 10);
+  return (data as unknown as FamilyRow[]).filter((f) => f.pub && !cited.has(f.family_id) && f.pub.publication_date >= late && f.pub.publication_date <= periodEnd);
 }
 
 const BUCKET_LABEL: Record<string, string> = {
@@ -51,7 +56,7 @@ export function renderIssueMarkdown(issueNumber: number, periodStart: string, pe
     }
   }
   lines.push("---");
-  lines.push("All patent data is sourced from USPTO PatentsView, EPO Open Patent Services and Google Patents Public Data. Numbers link to the official record. This newsletter is information, not legal advice.");
+  lines.push("Data: Source: PatentsView, www.patentsview.org (CC BY 4.0); Google Patents Public Data by IFI CLAIMS Patent Services and Google (CC BY 4.0); EPO Open Patent Services bibliographic data. Numbers link to the official record. Abstracts marked (machine translation) are not authoritative. This newsletter is information, not legal advice.");
   return lines.join("\n");
 }
 
