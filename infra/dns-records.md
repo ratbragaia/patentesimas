@@ -1,4 +1,7 @@
-# DNS records (main domain: patentsonar.com — verify availability at purchase; fallbacks .io / .ai)
+# DNS records (main domain: patentsonar.com, registered at Cloudflare 2026-09-25)
+
+In Cloudflare keep the A records **DNS only (grey cloud)**: Caddy on the VPS issues the Let's Encrypt
+certificate itself. Turning the orange proxy on later is fine once SSL mode is "Full (strict)".
 
 | Type | Host | Value | Purpose |
 |---|---|---|---|

@@ -6,7 +6,7 @@ Only items requiring identity, card or legal signature. Status is updated by the
 |---|---|---|---|
 | 1 | CNPJ opened (ME/EPP, Simples Nacional) + accountant's fiscal parameters for service export (NFS-e service code, ISS treatment, CNAE) | `docs/decisions/0002-fiscal-parameters.md` | ⬜ |
 | 2 | Hostinger VPS (dedicated, Ubuntu 24.04): **IP 2.25.249.69**, keys `founder-notebook` + `patentsonar-agent` installed. Agent private key still to be added as environment secret `VPS_SSH_PRIVATE_KEY` | `infra/vps/setup.sh` (ADR 0007) | ✅ bootstrapped + hardened 2026-09-25; both keys verified. Pending: agent key as env secret, `/etc/patentsonar/env` |
-| 3 | Domain purchased: **patentsonar.com** (+ .io/.ai/.co defensively; fallbacks PriorAtlas / PatentNorth per ADR 0006) + DNS access | `infra/dns-records.md` | ⬜ |
+| 3 | Domain **patentsonar.com** bought at Cloudflare Registrar 2026-09-25 (+ .io/.ai/.co optional). DNS: A @ and A www → 2.25.249.69, DNS-only | `infra/dns-records.md` | ✅ bought · DNS pending |
 | 4 | GitHub organisation + this repo transferred/mirrored; deploy key on VPS | `infra/vps/setup.sh` REPO_URL | ⬜ |
 | 5 | Claude Code credentials on the VPS (Pro now; enable extra usage) | `/etc/patentsonar/env` | ⬜ |
 | 6 | Supabase project (dedicated): URL, service role key, DB connection string | `SUPABASE_*` | ⬜ |
