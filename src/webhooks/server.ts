@@ -12,6 +12,8 @@ import { db, audit } from "../lib/db.js";
 import { timingSafeEqual } from "node:crypto";
 import { runJob } from "../ops/jobs.js";
 import { parseSampleRequest, recordSampleRequest, hashIp, RateLimiter } from "../site/sample-request.js";
+import { handleTelegramUpdate } from "../reporting/founder-inbox.js";
+import { telegramWebhookSecret } from "../reporting/telegram.js";
 import { parseInbound, recordInbound } from "../email/inbound.js";
 
 function tokenOk(header: string | undefined): boolean {
@@ -80,6 +82,18 @@ export function startServer(port = config().WEBHOOK_PORT) {
         if (ev.RecordType === "SpamComplaint") await suppress(ev.Email, "complaint");
         if (ev.RecordType === "SubscriptionChange" && ev.SuppressSending) await suppress(ev.Recipient, "unsubscribed");
         res.writeHead(200); res.end("ok"); return;
+      }
+
+      if (req.method === "POST" && url.pathname === "/webhooks/telegram") {
+        // Founder → bot (ADR 0013). Telegram echoes the secret we registered with setWebhook.
+        const given = req.headers["x-telegram-bot-api-secret-token"] as string | undefined;
+        let expected: string; try { expected = telegramWebhookSecret(); } catch { res.writeHead(503); res.end("telegram not configured"); return; }
+        const a = Buffer.from(given ?? ""); const b = Buffer.from(expected);
+        if (a.length !== b.length || !timingSafeEqual(a, b)) { res.writeHead(401); res.end("unauthorized"); return; }
+        const raw = await readBody(req);
+        if (raw.length > 64_000) { res.writeHead(200); res.end("ignored"); return; }
+        const outcome = await handleTelegramUpdate(JSON.parse(raw));
+        res.writeHead(200); res.end(outcome); return; // always 200: Telegram retries anything else
       }
 
       if (req.method === "POST" && url.pathname === "/webhooks/inbound") {

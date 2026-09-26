@@ -65,5 +65,9 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
 - [x] Headless runs: `patentsonar-agent.timer` (weekdays 07/10/13/16/19 UTC) → `infra/agent/run.sh`. Enable with
       `sudo bash infra/vps/setup.sh` (idempotent) or `sudo systemctl start patentsonar-agent.timer` until next reboot.
 
+## 4b. Founder channel and watchdog (ADR 0013)
+- [ ] `bash infra/vps/ops.sh cli telegram setup` → `"ok":true`; founder sends `/status` to @patentsonar_bot and gets the numbers back.
+- [ ] Cloud routine "PatentSonar watchdog" exists at claude.ai/code (daily, fresh session, runs `ops.sh status` + `ops.sh agent-health`).
+
 ## 5. Operating rhythm
 Once 1–3 are done, follow `docs/runbooks/weekly-cycle.md`. Report to the founder weekly via Telegram.

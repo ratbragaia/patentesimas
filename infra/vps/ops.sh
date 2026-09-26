@@ -2,7 +2,7 @@
 # Call the VPS ops endpoint over HTTPS from a claude.ai cloud session (environment "PatentSonar").
 # Needs OPS_TOKEN in the cloud environment variables (same value as OPS_TOKEN in /etc/patentsonar/env).
 # Usage: bash infra/vps/ops.sh <job> [args...]
-#   jobs: status | logs <unit> [n] | env-keys | git-pull | npm-ci | test | migrate | caddy-sync | site-check | ssh-check | restart [unit] | cli <subcommand...> | sql-count
+#   jobs: status | logs <unit> [n] | env-keys | git-pull | npm-ci | test | migrate | caddy-sync | site-check | agent-health | ssh-check | restart [unit] | cli <subcommand...> | sql-count
 set -euo pipefail
 [ -n "${OPS_TOKEN:-}" ] || { echo "OPS_TOKEN not set in this environment"; exit 2; }
 JOB="${1:?job}"; shift || true

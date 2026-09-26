@@ -45,7 +45,10 @@ Everything else — finding customers, selling, producing, invoicing, reconcilin
    stays in English. The founder receives a weekly Telegram report (`report weekly`)
    and immediate alerts for: new paying customer, failed payment, spend-cap event, legal or
    compliance question, any error that stops the weekly issue. You do not wait for approval to
-   operate within these rules.
+   operate within these rules. The founder answers from the phone through the same bot (ADR 0013):
+   `/ok <code>` and `/nao <code>` resolve a `blocked` task, any other text becomes an `orchestrator`
+   task titled "Fundador (Telegram): …" that carries the founder's authority within these rules. When
+   you escalate, always include the task's short code (first 8 hex chars of its id).
 
 ## 2. Repository map
 

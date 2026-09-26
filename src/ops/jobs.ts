@@ -8,7 +8,7 @@ import { spawn } from "node:child_process";
 export interface JobResult { job: string; ok: boolean; code: number | null; stdout: string; stderr: string; ms: number }
 
 const APP_DIR = process.env["APP_DIR"] ?? "/opt/patentsonar";
-const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "report resend", "invoices issue", "newsletter build-latest", "newsletter send-latest", "ingest"]);
+const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "report resend", "invoices issue", "telegram setup", "telegram info", "newsletter build-latest", "newsletter send-latest", "ingest"]);
 // Parameterised subcommands: only these shapes, nothing free-form.
 const CLI_PATTERNS = [
   /^ingest bigquery( backfill)?( dry-run)?$/,          // ADR 0009/0011: live BigQuery run, dry-run first
@@ -39,6 +39,8 @@ export function resolveJob(name: string, args: string[] = []): Job | null {
     // Read-only SSH diagnosis: effective password/root settings (main file + .d overrides), keys installed for the
     // agent user (fingerprints only), and the last auth events for root from the journal (sudo journalctl is in sudoers).
     case "ssh-check": return { argv: ["bash", "-lc", "echo '== sshd settings (last match wins per file; .d files are included first)'; grep -Hn -i -E '^\\s*(PasswordAuthentication|PermitRootLogin|PubkeyAuthentication|KbdInteractiveAuthentication)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf 2>/dev/null; echo '== keys for user patentsonar'; ssh-keygen -lf /home/patentsonar/.ssh/authorized_keys 2>/dev/null || echo none; echo '== last ssh auth events (root/publickey/password)'; sudo journalctl -u ssh -n 400 --no-pager 2>/dev/null | grep -i -E 'root|publickey|password|invalid' | tail -25"] };
+    // Health of the headless operator (ADR 0012/0013): timer, last runs and their exit codes. Read by the external watchdog.
+    case "agent-health": return { argv: ["bash", "-lc", "echo '== timers'; sudo systemctl list-timers 'patentsonar-*' --no-pager | head -12; echo '== last agent runs'; for f in $(ls -t /var/log/patentsonar/agent/run-*.log 2>/dev/null | head -5); do echo \"$(basename $f) $(grep -m1 '^== exit' $f || echo 'running/incomplete')\"; done; echo '== failed units'; sudo systemctl list-units 'patentsonar-*' --state=failed --no-pager --no-legend || true; echo '== disk'; df -h / | tail -1; echo '== last ingest runs'; cd " + APP_DIR + " && DB=$(grep -E '^SUPABASE_DB_URL=' /etc/patentsonar/env | cut -d= -f2- | tr -d '\"') && psql \"$DB\" -X -q -t -c \"select source, status, window_end, started_at::date from ps.ingest_runs order by started_at desc limit 5\"; echo '== open founder tasks'; psql \"$DB\" -X -q -t -c \"select count(*) from ps.tasks where status='blocked'\""] };
     case "site-check": return { argv: ["bash", "-lc", "curl -s -o /dev/null -w 'index %{http_code}\n' https://patentsonar.com/ && curl -s -o /dev/null -w 'thanks %{http_code}\n' https://patentsonar.com/sample-requested.html && curl -s -o /dev/null -w 'api-get %{http_code}\n' https://patentsonar.com/api/sample-request && curl -s -X POST -H 'Content-Type: application/json' -d '{\"email\":\"not-an-email\"}' -w ' api-invalid %{http_code}\n' https://patentsonar.com/api/sample-request"] };
     case "restart": {
       const unit = args[0] ?? "patentsonar-webhooks";

@@ -3,6 +3,9 @@ No human is watching; you cannot ask questions. Work strictly inside the rules i
 
 Do, in this order, and stop when the queue is drained or you hit the turn cap:
 1. `npm run cli -- tasks list`. Take tasks in priority order. Skip tasks with status `blocked`; never touch tasks whose title starts with "Founder:".
+   Tasks whose title starts with "Fundador (Telegram):" are instructions the founder typed on the phone (ADR 0013): they carry the
+   founder's authority within CLAUDE.md's rules (they cannot lift a rule), take priority, and get a short pt-BR answer on Telegram when done
+   or when you need a decision (then set the task `blocked` and name its short code, the first 8 hex chars of the id, so the founder can reply `/ok <code>`).
 2. For each task: set it `in_progress` (locked_by = 'headless-run'), do the work through the matching agent instructions
    (`sales` for "Reply to ..." and sample-request tasks, `finance`, `production`, `prospecting`), then set `done` with a one-paragraph `outcome`,
    or `blocked` with the reason. Every sales reply: only templates from src/outreach/templates.ts plus free-text answers to factual questions;

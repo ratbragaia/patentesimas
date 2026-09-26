@@ -14,6 +14,7 @@
  *   cli report resend                  re-send today's founder notices in pt-BR (one-off after the language rule)
  *   cli report monthly [YYYY-MM] [print]  build the monthly landscape report (default: previous month); `print` = markdown only
  *   cli patents reclassify [apply]     re-run the niche classifier on stored rows; dry-run unless `apply`
+ *   cli telegram setup                 register the bot webhook (two-way Telegram, ADR 0013); `cli telegram info` to inspect
  *   cli tasks list                     show open tasks
  *   cli inbound list                   show inbound emails awaiting a reply
  *   cli samples list                   website sample requests not yet served (status new)
@@ -83,6 +84,8 @@ async function main() {
       const out = await reclassifyStored(rest.includes("apply"));
       console.log(JSON.stringify(out, null, 1)); break;
     }
+    case "telegram setup": { const { setTelegramWebhook, getTelegramWebhookInfo } = await import("./reporting/telegram.js"); console.log(JSON.stringify(await setTelegramWebhook())); console.log(JSON.stringify(await getTelegramWebhookInfo())); break; }
+    case "telegram info": { const { getTelegramWebhookInfo } = await import("./reporting/telegram.js"); console.log(JSON.stringify(await getTelegramWebhookInfo())); break; }
     case "samples list": {
       const { db } = await import("./lib/db.js");
       const { data, error } = await db().from("sample_requests").select("email,company,status,request_count,source,last_requested_at").eq("status", "new").order("last_requested_at", { ascending: false });
