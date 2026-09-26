@@ -141,13 +141,18 @@ export async function ingestBigQuery(opts: { mode: BigQueryMode; dryRun?: boolea
     await audit("production", "ingest_bigquery", "ingest_runs", run!.id, { mode: opts.mode, ...w, rows: res.rows, onTopic: res.pubs.length, inserted, families, bytes, path: res.path });
     const out: BigQueryIngestResult = { ...base, dryRun: false, bytes, rows: res.rows, onTopic: res.pubs.length, inserted, families, path: res.path };
     log.info("bigquery ingest ok", { ...out });
-    if (opts.mode === "backfill") await notifyFounder(`🗄️ BigQuery ${BQ_BACKFILL_YEARS}-year backfill loaded (${w.from}..${w.to}): ${res.rows} candidates → ${res.pubs.length} on-topic, ${inserted} new publications, ${families} families. ${(bytes / 1e9).toFixed(0)} GB processed; month total ${((monthBytes + bytes) / 1e9).toFixed(0)} GB (free tier 1000 GB, on-demand charge this run ≈ USD ${estimatedUsd}).`);
+    if (opts.mode === "backfill") await notifyFounder(backfillMessage(w, res.rows, res.pubs.length, inserted, families, bytes, monthBytes + bytes, estimatedUsd));
     return out;
   } catch (err) {
     await db().from("ingest_runs").update({ status: "failed", error: String(err), finished_at: new Date().toISOString() }).eq("id", run!.id);
     log.error("bigquery ingest failed", { mode: opts.mode, err: String(err) });
     throw err;
   }
+}
+
+/** Founder-facing (pt-BR). Also used by `report resend`. */
+export function backfillMessage(w: IngestWindow, rows: number, onTopic: number, inserted: number, families: number, bytes: number, monthBytes: number, usd: number): string {
+  return `🗄️ Backfill BigQuery de ${BQ_BACKFILL_YEARS} anos carregado (${w.from} a ${w.to}): ${rows} candidatos → ${onTopic} no escopo, ${inserted} publicações novas, ${families} famílias. ${(bytes / 1e9).toFixed(0)} GB processados; total do mês ${(monthBytes / 1e9).toFixed(0)} GB (faixa gratuita 1000 GB; custo desta execução ≈ US$ ${usd}).`;
 }
 
 export async function rebuildFamilies(pubs: Publication[]): Promise<number> {

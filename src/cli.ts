@@ -10,7 +10,8 @@
  *   cli newsletter send <issue#>       send a QA-passed issue (idempotent)
  *   cli newsletter send-latest         send the most recent issue in status 'ready' 
  *   cli invoices issue                 issue pending NFS-e via NFe.io
- *   cli report weekly                  send founder report to Telegram
+ *   cli report weekly                  send founder report to Telegram (pt-BR)
+ *   cli report resend                  re-send today's founder notices in pt-BR (one-off after the language rule)
  *   cli report monthly [YYYY-MM] [print]  build the monthly landscape report (default: previous month); `print` = markdown only
  *   cli patents reclassify [apply]     re-run the niche classifier on stored rows; dry-run unless `apply`
  *   cli tasks list                     show open tasks
@@ -62,6 +63,7 @@ async function main() {
     }
     case "invoices issue": { const { issuePendingInvoices } = await import("./invoicing/nfeio.js"); console.log({ issued: await issuePendingInvoices() }); break; }
     case "report weekly": { const { sendWeeklyReport } = await import("./reporting/weekly.js"); await sendWeeklyReport(); break; }
+    case "report resend": { const { resendFounderNotices } = await import("./reporting/resend.js"); console.log((await resendFounderNotices()).length + " mensagens enviadas"); break; }
     case "report monthly": {
       const { buildMonthlyReport, previewMonthlyReport, previousMonth } = await import("./content/landscape.js");
       const month = rest.find((a) => /^\d{4}-\d{2}$/.test(a)) ?? previousMonth(new Date());

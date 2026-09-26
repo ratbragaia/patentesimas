@@ -199,6 +199,11 @@ export function renderLandscapeMarkdown(s: LandscapeStats): string {
   return L.join("\n");
 }
 
+/** Founder-facing (pt-BR). Also used by `report resend`. */
+export function landscapeReadyMessage(month: string, issueNumber: number, monthFamilies: number, families12: number): string {
+  return `📈 Relatório de paisagem ${monthLabel(month)} pronto (issue ${issueNumber}): ${monthFamilies} famílias novas no mês, ${families12} nos últimos doze meses. Passou no QA. Envio a assinantes só manual (newsletter send ${issueNumber}).`;
+}
+
 // ---------- persistence ----------
 export async function loadLandscapeRows(): Promise<{ pubs: LandscapePub[]; fams: LandscapeFamily[] }> {
   const pubs: LandscapePub[] = []; const fams: LandscapeFamily[] = [];
@@ -238,7 +243,7 @@ export async function buildMonthlyReport(month: string): Promise<{ issueNumber: 
   }, { onConflict: "issue_number" });
   if (error) throw new Error(`issues upsert: ${error.message}`);
   await audit("production", "monthly_report_built", "issues", String(issueNumber), { month, qa, families: stats.monthFamilies });
-  if (!qa.passed) await notifyFounder(`❌ Landscape report ${monthLabel(month)} failed QA: ${qa.unknown.length} unknown numbers, ${qa.dateMismatches.length} date mismatches. Not published.`);
-  else await notifyFounder(`📈 Landscape report ${monthLabel(month)} ready (issue ${issueNumber}): ${stats.monthFamilies} new families in the month, ${stats.families12} over twelve months. Sent to subscribers only by hand (newsletter send ${issueNumber}).`);
+  if (!qa.passed) await notifyFounder(`❌ Relatório de paisagem ${monthLabel(month)} falhou no QA: ${qa.unknown.length} números desconhecidos, ${qa.dateMismatches.length} datas divergentes. Não publicado.`);
+  else await notifyFounder(landscapeReadyMessage(month, issueNumber, stats.monthFamilies, stats.families12));
   return { issueNumber, qaPassed: qa.passed, families: stats.monthFamilies, markdown };
 }

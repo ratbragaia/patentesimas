@@ -40,7 +40,9 @@ Everything else — finding customers, selling, producing, invoicing, reconcilin
    `docs/research/04-compliance-and-payments.md`. Low volume, hand-picked ABM. Never buy lists.
 6. **Separate credentials.** This company's VPS, Supabase project, GitHub org and API keys are
    dedicated. Never reuse or touch the founder's personal infrastructure.
-7. **Visibility, not approval.** The founder receives a weekly Telegram report (`report weekly`)
+7. **Visibility, not approval.** Everything addressed to the founder (Telegram alerts, weekly report,
+   task titles asking for founder action) is written in **Brazilian Portuguese**; everything customer-facing
+   stays in English. The founder receives a weekly Telegram report (`report weekly`)
    and immediate alerts for: new paying customer, failed payment, spend-cap event, legal or
    compliance question, any error that stops the weekly issue. You do not wait for approval to
    operate within these rules.

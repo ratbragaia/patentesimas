@@ -1,7 +1,7 @@
 import { db } from "../lib/db.js";
 import { notifyFounder } from "./telegram.js";
 
-/** Weekly founder report: funnel, revenue, production, incidents. Visibility only. */
+/** Weekly founder report (pt-BR, founder-facing): funnel, revenue, production, incidents. Visibility only. */
 export async function buildWeeklyReport(): Promise<string> {
   const since = new Date(Date.now() - 7 * 86400_000).toISOString();
   const [funnel, mrr, issues, runs, invoices, spend, tasks] = await Promise.all([
@@ -14,19 +14,20 @@ export async function buildWeeklyReport(): Promise<string> {
     db().from("tasks").select("agent,status").in("status", ["pending", "blocked"]),
   ]);
   const f = Object.fromEntries((funnel.data ?? []).map((r: any) => [r.stage, r.n]));
+  const n = (issues.data ?? []).map((i: any) => `#${i.issue_number} ${i.status}`).join(", ");
   const lines = [
-    `📊 PatentSonar — weekly report (${new Date().toISOString().slice(0, 10)})`,
+    `📊 PatentSonar — relatório semanal (${new Date().toISOString().slice(0, 10)})`,
     ``,
-    `Revenue: MRR USD ${Number(mrr.data?.mrr_usd ?? 0).toFixed(0)} · active subs ${mrr.data?.active_subscriptions ?? 0}`,
-    `Invoices this week: ${(invoices.data ?? []).length} (USD ${(invoices.data ?? []).reduce((s: number, i: any) => s + Number(i.amount_usd), 0).toFixed(0)})`,
+    `Receita: MRR US$ ${Number(mrr.data?.mrr_usd ?? 0).toFixed(0)} · assinaturas ativas ${mrr.data?.active_subscriptions ?? 0}`,
+    `Notas fiscais na semana: ${(invoices.data ?? []).length} (US$ ${(invoices.data ?? []).reduce((s: number, i: any) => s + Number(i.amount_usd), 0).toFixed(0)})`,
     ``,
-    `Funnel: identified ${f.identified ?? 0} · contacted ${f.contacted ?? 0} · replied ${f.replied ?? 0} · qualified ${f.qualified ?? 0} · trial ${f.trial ?? 0} · won ${f.won ?? 0} · lost ${f.lost ?? 0}`,
+    `Funil: identificados ${f.identified ?? 0} · contatados ${f.contacted ?? 0} · responderam ${f.replied ?? 0} · qualificados ${f.qualified ?? 0} · em teste ${f.trial ?? 0} · ganhos ${f.won ?? 0} · perdidos ${f.lost ?? 0}`,
     ``,
-    `Production: ${(issues.data ?? []).map((i: any) => `#${i.issue_number} ${i.status}`).join(", ") || "no issue activity"}`,
-    `Ingest: ${(runs.data ?? []).map((r: any) => `${r.source} ${r.status} (${r.fetched} fetched / ${r.inserted} new)`).join("; ") || "none"}`,
+    `Produção: ${n || "nenhuma edição movimentada"}`,
+    `Ingestão: ${(runs.data ?? []).map((r: any) => `${r.source} ${r.status === "succeeded" ? "ok" : r.status} (${r.fetched} lidos / ${r.inserted} novos)`).join("; ") || "nenhuma"}`,
     ``,
-    `Spend-cap events: ${(spend.data ?? []).length}${(spend.data ?? []).map((s: any) => `\n  - ${s.description}: USD ${s.amount_usd}`).join("")}`,
-    `Open tasks: ${(tasks.data ?? []).length}`,
+    `Eventos de teto de gasto: ${(spend.data ?? []).length}${(spend.data ?? []).map((s: any) => `\n  - ${s.description}: US$ ${s.amount_usd}`).join("")}`,
+    `Tarefas abertas: ${(tasks.data ?? []).length}`,
   ];
   return lines.join("\n");
 }

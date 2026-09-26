@@ -41,7 +41,7 @@ export async function handlePaddleEvent(ev: PaddleEvent): Promise<boolean> {
       case "transaction.completed":
         await onTransactionCompleted(ev.data); break;
       case "transaction.payment_failed":
-        await notifyFounder(`⚠️ Payment failed for customer ${ev.data?.customer_id} (transaction ${ev.data?.id}). Dunning task created.`);
+        await notifyFounder(`⚠️ Pagamento falhou: cliente ${ev.data?.customer_id} (transação ${ev.data?.id}). Tarefa de cobrança criada para o agente finance.`);
         await db().from("tasks").insert({ agent: "finance", title: `Dunning: transaction ${ev.data?.id}`, payload: { transaction_id: ev.data?.id, customer_id: ev.data?.customer_id }, priority: 2 });
         break;
       default: break;
@@ -59,7 +59,7 @@ async function ensureCustomer(paddleCustomerId: string, email?: string, name?: s
   if (data) return data.id as string;
   const { data: created, error } = await db().from("customers").insert({ paddle_customer_id: paddleCustomerId, legal_name: name ?? email ?? paddleCustomerId, billing_email: email ?? "", country }).select("id").single();
   if (error) throw new Error(error.message);
-  await notifyFounder(`🎉 New customer: ${name ?? email ?? paddleCustomerId}`);
+  await notifyFounder(`🎉 Novo cliente pagante: ${name ?? email ?? paddleCustomerId}`);
   return created.id as string;
 }
 

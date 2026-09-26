@@ -135,7 +135,7 @@ export async function buildWeeklyIssue(periodStart: string, periodEnd: string): 
     status: qa.passed ? "ready" : "qa_failed",
   }, { onConflict: "issue_number" });
   await audit("production", "issue_built", "issues", String(issueNumber), { qa });
-  if (!qa.passed) await notifyFounder(`❌ Issue #${issueNumber} failed QA: ${qa.unknown.length} unknown numbers, ${qa.dateMismatches.length} date mismatches. Not sent.`);
-  else await notifyFounder(`✅ Issue #${issueNumber} ready (${fams.length} families). Sends on schedule.`);
+  if (!qa.passed) await notifyFounder(`❌ Edição #${issueNumber} falhou no QA: ${qa.unknown.length} números desconhecidos, ${qa.dateMismatches.length} datas divergentes. Não será enviada.`);
+  else await notifyFounder(`✅ Edição #${issueNumber} pronta (${fams.length} famílias). Envio na quarta, no horário programado.`);
   return { issueNumber, qaPassed: qa.passed };
 }

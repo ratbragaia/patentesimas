@@ -96,10 +96,14 @@ export async function recordSampleRequest(input: SampleRequestInput, meta: Recor
     }
   } catch (err) { log.error("sample request follow-up failed", { id: row.id, err: String(err) }); }
 
-  const { PUBLIC_SITE_URL } = config();
-  const flag = meta.freemail ? " · free-mail address" : "";
-  await notifyFounder(row.is_new
-    ? `📩 Sample request: ${input.email}${input.company ? ` · ${input.company}` : ""}${flag}\nQueued for sales (tasks). ${PUBLIC_SITE_URL}`
-    : `📩 Repeat sample request (#${row.request_count}): ${input.email}${input.company ? ` · ${input.company}` : ""}${flag}`);
+  await notifyFounder(sampleRequestMessage(input.email, input.company || null, meta.freemail, row.is_new, row.request_count));
   return result;
+}
+
+/** Founder-facing (pt-BR). Also used by `report resend`. */
+export function sampleRequestMessage(email: string, company: string | null, freemail: boolean, isNew: boolean, count: number): string {
+  const who = `${email}${company ? ` · ${company}` : ""}${freemail ? " · e-mail gratuito (gmail etc.)" : ""}`;
+  return isNew
+    ? `📩 Pedido de amostra pelo site: ${who}\nTarefa criada para o agente de vendas. ${config().PUBLIC_SITE_URL}`
+    : `📩 Pedido de amostra repetido (nº ${count}): ${who}`;
 }

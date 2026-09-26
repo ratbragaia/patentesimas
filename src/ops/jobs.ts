@@ -8,7 +8,7 @@ import { spawn } from "node:child_process";
 export interface JobResult { job: string; ok: boolean; code: number | null; stdout: string; stderr: string; ms: number }
 
 const APP_DIR = process.env["APP_DIR"] ?? "/opt/patentsonar";
-const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "invoices issue", "newsletter build-latest", "newsletter send-latest", "ingest"]);
+const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "report resend", "invoices issue", "newsletter build-latest", "newsletter send-latest", "ingest"]);
 // Parameterised subcommands: only these shapes, nothing free-form.
 const CLI_PATTERNS = [
   /^ingest bigquery( backfill)?( dry-run)?$/,          // ADR 0009/0011: live BigQuery run, dry-run first

@@ -15,5 +15,5 @@ export async function guardSpend(description: string, amountUsd: number, vendor?
     .select("id")
     .single();
   await audit("agent", "spend_cap_exceeded", "spend_approvals", data?.id, { description, amountUsd, vendor });
-  await notifyFounder(`⚠️ Spend above cap: ${description} — USD ${amountUsd.toFixed(2)} (${vendor ?? "n/a"}). Logged id ${data?.id}.`);
+  await notifyFounder(`⚠️ Gasto acima do teto: ${description}. US$ ${amountUsd.toFixed(2)} (${vendor ?? "n/a"}). Registrado em spend_approvals, id ${data?.id}.`);
 }
