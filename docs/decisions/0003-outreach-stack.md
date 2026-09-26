@@ -23,3 +23,27 @@ and would take the paid newsletter down with it.
 ## Consequences
 `OUTREACH_FROM` and the outreach tool API key are added to the handoff list; the founder buys the
 second domain. Postmark webhook handler already suppresses bounces/complaints.
+
+## Amendment 2026-09-26 — no paid outreach tool at launch
+
+The founder judged US$37–39/month for Instantly/Smartlead too much before the first customer. The
+volume rule already in place (hand-picked ABM, ≤ 25 first-touch emails per day, ≤ 30 per mailbox) does
+not need a sequencing tool; what those tools add (warm-up, rotation, reply detection) can be done by our
+own code and a manual ramp at this scale.
+
+**Launch stack (≈ US$1/month + domain):**
+- Second domain for outreach (~US$10/year at Cloudflare Registrar), as before, for reputation isolation.
+- **One mailbox on Zoho Mail Lite: US$1/user/month** (US$12/year), with IMAP/SMTP and custom domain
+  ([Zoho Mail pricing](https://www.zoho.com/mail/zohomail-pricing.html)). Google Workspace Business Starter
+  is the alternative at ~US$7–8.40/user/month, or BRL 33 in Brazil
+  ([Google Workspace pricing](https://workspace.google.com/pricing)). Zoho's free plan is web-only (no
+  IMAP/SMTP), so it cannot be driven by the agent.
+- Sending and replies by the agent through SMTP/IMAP (`src/outreach/`, to build: sender with
+  `checkOutreach()` gate, IMAP poll for replies into `ps.outreach_messages`, suppression on any
+  unsubscribe). SPF/DKIM/DMARC on the outreach domain configured by the agent.
+- Manual warm-up ramp: week 1 ≤ 5/day (mostly to our own and known addresses), week 2 ≤ 10, week 3 ≤ 20,
+  then the 25/day cap. Bounce rate > 3% or any spam complaint pauses sending for the week.
+
+**Upgrade trigger:** move to Instantly/Smartlead only when a second mailbox is needed (sustained > 25
+qualified first touches per day) or after the first paying customer, whichever comes first. Recorded as a
+future `spend_approvals`-free change (below the per-action cap) but decided by the founder, not the agent.
