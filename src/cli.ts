@@ -2,7 +2,7 @@
 /**
  * Operations entry point, called by systemd timers and by the orchestrator.
  *   cli ingest                         weekly ingest from all configured sources
- *   cli ingest bigquery [dry-run]      monthly BigQuery run (trailing 60 days) through the REST API, ADR 0009
+ *   cli ingest bigquery [dry-run]      on-demand BigQuery run (45-day window, same as Monday's ingest), ADR 0009
  *   cli ingest bigquery backfill [dry-run]  one-off five-year landscape backfill (same scan cost), ADR 0011
  *   cli ingest bigquery <file.json>    load rows exported by `bq query --format=json`
  *   cli newsletter build <from> <to>   build weekly issue for period (ISO dates) + QA
@@ -33,19 +33,16 @@ async function main() {
   switch (`${cmd} ${sub ?? ""}`.trim()) {
     case "ingest": { const { ingestAll } = await import("./patents/ingest.js"); await ingestAll(); break; }
     case "ingest bigquery": {
-      const { ingestBigQuery } = await import("./patents/ingest.js");
+      const { ingestBigQuery, upsertPublications, rebuildFamilies } = await import("./patents/ingest.js");
       const file = rest.find((a) => a.endsWith(".json"));
       if (file) {
-        const { upsertPublications, rebuildFamilies } = await import("./patents/ingest.js");
-        const { mapBigQueryRow } = await import("./patents/bigquery.js");
-        // `bq query --format=json` on a multi-statement script (DECLARE ...) nests the last result set: [[{...}]]
-        let rows = JSON.parse(readFileSync(file, "utf8")) as any[];
-        while (Array.isArray(rows) && rows.length === 1 && Array.isArray(rows[0])) rows = rows[0];
-        const pubs = rows.map(mapBigQueryRow).filter((p): p is NonNullable<typeof p> => !!p);
+        const { unwrapBqJson, mapBigQueryRows } = await import("./patents/bigquery.js");
+        const rows = unwrapBqJson(JSON.parse(readFileSync(file, "utf8")));
+        const pubs = mapBigQueryRows(rows);
         const n = await upsertPublications(pubs); const fams = await rebuildFamilies(pubs);
         log.info("bigquery file loaded", { rows: rows.length, onTopic: pubs.length, inserted: n, families: fams }); break;
       }
-      const mode = rest.includes("backfill") ? "backfill" : "monthly";
+      const mode = rest.includes("backfill") ? "backfill" : "weekly";
       const out = await ingestBigQuery({ mode, dryRun: rest.includes("dry-run") });
       console.log(JSON.stringify({ ...out, gb: +(out.bytes / 1e9).toFixed(1), monthGb: +(out.monthBytes / 1e9).toFixed(1) })); break;
     }

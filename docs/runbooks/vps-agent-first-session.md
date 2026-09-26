@@ -37,7 +37,7 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
 
 ## 3. First product cycle (as soon as EPO OPS key exists)
 - [ ] (BigQuery half done 2026-09-26: 815 candidates → 81 on-topic, 76 families, CN 57 / US 10 / EP 8 / KR 4 / WO 2;
-      EPO OPS half waits for the key) Backfill: temporarily run `npm run ingest` with a 90-day window (edit `computeWindow` fallback or
+      EPO OPS half waits for the key; BigQuery now runs weekly inside `ingest`, ADR 0009) Backfill: temporarily run `npm run ingest` with a 90-day window (edit `computeWindow` fallback or
       insert an `ingest_runs` row) and check `ps.patent_publications` counts by office.
 - [ ] Triage families (`production` agent instructions) and write analyst notes for `include` ones.
 - [ ] `npm run newsletter:build -- <from> <to>`; QA must pass. Save the markdown of issue #0 to
@@ -45,7 +45,7 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
 - [ ] Send issue #0 to the founder's own address only (create a test customer/subscriber) once Postmark exists.
 
 ## 3b. Monthly landscape report (ADR 0011)
-- [ ] `bash infra/vps/ops.sh cli ingest bigquery backfill dry-run` then without `dry-run` (one-off five-year history, ~268 GB, free tier).
+- [ ] `bash infra/vps/ops.sh cli ingest bigquery backfill dry-run` then without `dry-run` (one-off five-year history, ~268 GB).
 - [ ] `bash infra/vps/ops.sh cli report monthly 2026-08 print` → review → `cli report monthly 2026-08`; commit the markdown to `docs/samples/`.
 
 ## 4. Go-to-market prep (in parallel, no credentials needed)

@@ -11,4 +11,4 @@ Weekly steps:
 3. For each `include`, write `analyst_summary`: 2–4 sentences in plain English: what is claimed, why it matters competitively (who else works there, what it enables), what to watch. Cite only the representative publication number.
 4. `npm run newsletter:build -- <from> <to>`; read the QA report; fix and rebuild until `qa_passed`. Never edit the QA code to make it pass.
 5. Notify the founder with the preview (the CLI does this). Sending happens on the Wednesday timer only if status is `ready`.
-Monthly (ADR 0011): first Monday `npm run cli -- ingest bigquery` (dry-run gate is automatic), next day `npm run cli -- report monthly` (previous month; `print` to preview). Review the `monthly_report` issue (YYYYMM), add analyst notes to the month's `include` families and rebuild if needed; send with `newsletter send YYYYMM` only after review.
+Monthly (ADR 0011): the day after the month's first Monday ingest, `npm run cli -- report monthly` (previous month; `print` to preview). Review the `monthly_report` issue (YYYYMM), add analyst notes to the month's `include` families and rebuild if needed; send with `newsletter send YYYYMM` only after review.

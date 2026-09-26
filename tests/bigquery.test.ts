@@ -1,15 +1,39 @@
 import { describe, it, expect } from "vitest";
 import { generateKeyPairSync, createVerify } from "node:crypto";
-import { buildServiceAccountJwt, convertRows, stripDeclares, mapBigQueryRow, BQ_MAX_BYTES_BILLED } from "../src/patents/bigquery.js";
+import { unwrapBqJson, mapBigQueryRows, mapBigQueryRow, buildServiceAccountJwt, convertRows, stripDeclares, BQ_LOOKBACK_DAYS, BQ_MAX_BYTES_BILLED, BQ_BACKFILL_YEARS } from "../src/patents/bigquery.js";
 
-describe("bigquery client", () => {
+const row = {
+  publication_number: "CN-120000001-A", country_code: "CN", kind_code: "A", family_id: "99001",
+  title_en: "Iron nitride permanent magnet and preparation method", abstract_en: "A rare-earth-free Fe16N2 magnet with high coercivity.",
+  cpc_codes: ["H01F 1/047", "C01B21/06"], applicants: ["Example Univ"], inventors: ["A Person"],
+  priority_date: "2025-03-01", filing_date: "2025-03-01", publication_date: "2026-08-20", grant_date: null, application_number: "CN-202510000001-A",
+};
+
+describe("bigquery source (row handling)", () => {
+  it("unwraps the nested result of a DECLARE script", () => expect(unwrapBqJson([[row]])).toEqual([row]));
+  it("accepts a flat array", () => expect(unwrapBqJson([row])).toEqual([row]));
+  it("rejects non-arrays", () => expect(() => unwrapBqJson({ error: "x" })).toThrow());
+  it("maps an on-topic row and normalises cpc", () => {
+    const [p] = mapBigQueryRows([row]);
+    expect(p?.publication_number).toBe("CN-120000001-A");
+    expect(p?.source).toBe("bigquery");
+    expect(p?.cpc_codes).toEqual(["H01F1/047", "C01B21/06"]);
+    expect(p?.matched_terms.length).toBeGreaterThan(0);
+  });
+  it("drops rows without English text or matching terms (JP/DE gap, ADR 0009)", () => {
+    expect(mapBigQueryRows([{ ...row, publication_number: "JP-2026000001-A", country_code: "JP", title_en: null, abstract_en: null, cpc_codes: [] }])).toEqual([]);
+    expect(mapBigQueryRow({ publication_number: "US-1-A", country_code: "US", title_en: "Bicycle bell", abstract_en: "", cpc_codes: ["B62J3/00"], publication_date: "2026-08-04" })).toBeNull();
+  });
+  it("window, cap and backfill horizon match ADR 0009/0011", () => { expect(BQ_LOOKBACK_DAYS).toBe(45); expect(BQ_MAX_BYTES_BILLED).toBe(300_000_000_000); expect(BQ_BACKFILL_YEARS).toBe(5); });
+});
+
+describe("bigquery REST client", () => {
   it("signs a service-account JWT the token endpoint can verify", () => {
     const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
     const jwt = buildServiceAccountJwt({ client_email: "sa@p.iam.gserviceaccount.com", private_key: privateKey.export({ type: "pkcs8", format: "pem" }) as string }, "https://www.googleapis.com/auth/bigquery", 1_700_000_000);
     const [h, c, s] = jwt.split(".") as [string, string, string];
     expect(JSON.parse(Buffer.from(h, "base64url").toString())).toEqual({ alg: "RS256", typ: "JWT" });
-    const claims = JSON.parse(Buffer.from(c, "base64url").toString());
-    expect(claims).toMatchObject({ iss: "sa@p.iam.gserviceaccount.com", aud: "https://oauth2.googleapis.com/token", iat: 1_700_000_000, exp: 1_700_003_600 });
+    expect(JSON.parse(Buffer.from(c, "base64url").toString())).toMatchObject({ iss: "sa@p.iam.gserviceaccount.com", aud: "https://oauth2.googleapis.com/token", iat: 1_700_000_000, exp: 1_700_003_600 });
     const v = createVerify("RSA-SHA256"); v.update(`${h}.${c}`);
     expect(v.verify(publicKey, Buffer.from(s, "base64url"))).toBe(true);
   });
@@ -26,10 +50,4 @@ describe("bigquery client", () => {
     const sql = stripDeclares("DECLARE window_start DATE DEFAULT @window_start;\nDECLARE window_end   DATE DEFAULT @window_end;\nSELECT 1 WHERE d BETWEEN @window_start AND @window_end");
     expect(sql).not.toMatch(/DECLARE/); expect(sql).toContain("@window_start");
   });
-  it("maps a niche row and drops off-topic rows", () => {
-    const p = mapBigQueryRow({ publication_number: "US-12345678-B2", country_code: "US", kind_code: "B2", family_id: "77", title_en: "Iron nitride permanent magnet", abstract_en: "Fe16N2 bulk magnet", cpc_codes: ["H01F1/047"], applicants: ["NIRON MAGNETICS INC"], inventors: [], publication_date: "2026-08-04" });
-    expect(p?.source).toBe("bigquery"); expect(p?.matched_terms).toContain("iron nitride");
-    expect(mapBigQueryRow({ publication_number: "US-1-A", country_code: "US", title_en: "Bicycle bell", abstract_en: "", cpc_codes: ["B62J3/00"], publication_date: "2026-08-04" })).toBeNull();
-  });
-  it("keeps the ADR 0009 cap", () => expect(BQ_MAX_BYTES_BILLED).toBe(300_000_000_000));
 });

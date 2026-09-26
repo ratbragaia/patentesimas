@@ -38,6 +38,7 @@ const schema = z.object({
   EPO_OPS_CONSUMER_KEY: z.string().optional(),
   EPO_OPS_CONSUMER_SECRET: z.string().optional(),
   GCP_PROJECT_ID: z.string().optional(),
+  GOOGLE_APPLICATION_CREDENTIALS: z.string().optional(),
 
   PADDLE_API_KEY: z.string().optional(),
   PADDLE_WEBHOOK_SECRET: z.string().optional(),

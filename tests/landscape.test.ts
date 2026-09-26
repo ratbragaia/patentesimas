@@ -61,3 +61,16 @@ describe("date helpers", () => {
     expect(() => monthBounds("2026-8")).toThrow();
   });
 });
+
+describe("bigquery cost gate", async () => {
+  const { bigQueryIncrementalUsd, bigQueryWindow } = await import("../src/patents/ingest.js");
+  it("charges only the bytes beyond the free tier", () => {
+    expect(bigQueryIncrementalUsd(0, 268e9)).toBe(0);
+    expect(bigQueryIncrementalUsd(804e9, 268e9)).toBe(0.45);
+    expect(bigQueryIncrementalUsd(1200e9, 268e9)).toBe(1.68);
+  });
+  it("windows: 45 days weekly, five years backfill", () => {
+    expect(bigQueryWindow("weekly", new Date("2026-09-28T06:00:00Z"))).toEqual({ from: "2026-08-14", to: "2026-09-28" });
+    expect(bigQueryWindow("backfill", new Date("2026-09-26T00:00:00Z"))).toEqual({ from: "2021-09-26", to: "2026-09-26" });
+  });
+});

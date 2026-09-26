@@ -1,6 +1,7 @@
--- Google Patents Public Data (BigQuery). Run MONTHLY with the window parameters (see cost note below).
+-- Google Patents Public Data (BigQuery). Run WEEKLY (Monday ingest) with a 45-day trailing window (ADR 0009).
 -- Cost (measured 2026-09-26): ~268 GB per run regardless of window (table is not partitioned; the scan is
--- driven by the columns read). Free tier 1 TB/month => run MONTHLY with a trailing window, never weekly.
+-- driven by the columns read). ~1.15 TB/month at weekly cadence => ~US$1/month above the free tier; capped
+-- per run by --maximum_bytes_billed in src/patents/bigquery.ts.
 -- Dates are INT64 yyyymmdd with 0 for 'unknown' => NULLIF before parsing (see ADR 0009).
 -- Covers CN/JP/KR/WO with English `title_localized`/`abstract_localized` when available.
 DECLARE window_start DATE DEFAULT @window_start;

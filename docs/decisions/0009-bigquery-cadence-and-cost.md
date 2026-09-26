@@ -1,7 +1,7 @@
-# ADR 0009 — BigQuery (Google Patents Public Data): monthly cadence, cost cap, known gaps
+# ADR 0009 — BigQuery (Google Patents Public Data): weekly cadence, 45-day window, cost cap, known gaps
 
 - **Date:** 2026-09-26
-- **Status:** accepted
+- **Status:** accepted (revised the same day: monthly → weekly, see Decision)
 - **Relates to:** ADR 0005 (data-source roles), ADR 0008 (PatentsView deferred)
 
 ## Context
@@ -37,23 +37,31 @@ US 187/187; WO 43/43; EP 131 titles / 55 abstracts; KR 55 titles / 0 abstracts; 
 
 ## Options
 
-1. Weekly BigQuery runs (as the SQL header originally said): exceeds the free tier, still misses
-   the Asian lag.
-2. **Monthly BigQuery run with a trailing 60-day window** (upsert is idempotent, so re-scanning
-   the overlap is free of side effects), plus a hard `--maximum_bytes_billed` cap. Weekly
-   freshness comes from EPO OPS once its key exists.
-3. Materialise a partitioned copy of the table in our project: one-off ~268 GB scan per refresh,
-   then cheap partitioned reads; storage cost and refresh complexity not justified at this stage.
+1. Weekly BigQuery run with a trailing window (~1.15 TB/month, about US$1/month above the free tier).
+2. Monthly BigQuery run with a trailing 60-day window (~0.27 TB/month, free). First choice of the day.
+3. Materialise a partitioned copy of the table in our project: one-off ~268 GB scan per refresh, then
+   cheap partitioned reads; storage cost and refresh complexity not justified at this stage.
 
 ## Decision
 
-Option 2.
-- BigQuery runs **once a month**, window = last 60 days, `--maximum_bytes_billed=300000000000`
-  (300 GB; a run that would exceed it fails instead of spending). Trigger: the monthly report
-  cycle, or on demand via `bq query ... < src/patents/bigquery.sql | npm run cli -- ingest bigquery`.
-- Spend: within the free tier (~0.27 TB/month) → no `spend_approvals` row needed. Any change that
-  pushes a run above 1 TB/month requires one.
-- EPO OPS stays the weekly source (ADR 0005/0008). PatentsView remains deferred.
+Option 1 (weekly). Option 2 was taken first and reversed the same day after the founder asked whether a
+monthly run contradicts a weekly product. It does: the issue builder accepts a family only if its
+publication date is at most 21 days before the issue period (first-seen rule, research 03 §6.3). With a
+monthly run, a CN/KR publication that reaches the dataset 3-4 weeks late could wait another 3 weeks for
+the next run, fall outside the 21-day rule and never appear in any issue. For CN, BigQuery is today the
+only source with English text, so the loss would be silent. The saving was ~US$1/month, far below the
+spend cap. Optimising for the free tier at the expense of the weekly promise was the wrong trade.
+
+- BigQuery runs **every Monday inside `cli ingest`** (`src/patents/bigquery.ts`, source `bigquery` in
+  `ingest_runs`), window = last **45 days** (KR lag ~26 days + 21-day issue rule), cap
+  `--maximum_bytes_billed=300000000000` per run. Upserts are idempotent, so re-scanning the overlap is free
+  of side effects. A BigQuery failure is logged and does not stop the other sources.
+- Expected volume ~1.15 TB/month => ~US$1/month on-demand charges. Recorded here; a change that would push
+  the monthly BigQuery bill above `SPEND_CAP_USD_PER_MONTH` requires a `spend_approvals` row.
+- EPO OPS stays the weekly detector for "published this week" (ADR 0005/0008); the dataset's own 1-4 week
+  lag does not change with cadence. PatentsView remains deferred.
+- A JSON export can still be loaded by hand: `bq query --format=json ... < src/patents/bigquery.sql`, then
+  `cli ingest bigquery <file.json>`.
 
 ## Known gap and follow-up (task in `ps.tasks`)
 
