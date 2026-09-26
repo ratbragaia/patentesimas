@@ -54,17 +54,38 @@ is not partitioned and cost follows the columns read. A five-year window therefo
    (runbook `weekly-cycle.md`, monthly row). Until a systemd timer is added, the orchestrator triggers
    it through the ops channel.
 
+6. **Classifier tightened, stored rows re-classified.** The backfill exposed two defects in
+   `classify()`: short chemical tokens matched as substrings (`NiCoCuMnAl` catalysts → "MnAl"), and a
+   bare "rare-earth-free" phrase admitted aluminium alloys, catalysts and drugs. Short keywords now match
+   as tokens, and a keyword-only hit needs magnet / electric-machine context (`MAGNET_CONTEXT_RE`) or an
+   included CPC. `cli patents reclassify [apply]` re-runs the classifier on stored rows so a fix reaches
+   data loaded before it; families an analyst marked `include` are never dropped, and `triage_status` /
+   `analyst_summary` survive the family rebuild.
+
 ## Consequences
 
-- Five-year backfill adds roughly 1.5–2 k on-topic publications (extrapolating 81 per 90 days),
-  which enter `ps.patent_families` as `new`. Triage stays focused on families published in the
-  current window; historic families feed counts only.
+- Five-year backfill (run 2026-09-26): 25,878 candidate rows → 1,600 on-topic under the old classifier
+  → **1,094 publications in 652 families** after the two re-classification passes (102 + 404 rows
+  removed; 375 empty families deleted). Historic families enter as `new` and feed counts only; triage
+  stays focused on the current window and on the families a report prints.
 - `ps.ingest_runs` gains `bytes_processed` and `mode`; the weekly founder report can show the month's
-  BigQuery position from `ps.v_bigquery_month`.
+  BigQuery position from `ps.v_bigquery_month`. Runs before 2026-09-26 have no bytes recorded.
+- Analyst triage remains the quality gate for anything printed: the August 2026 listing still shows a
+  ferrite-particle termite tracer, which only a human marks `exclude`. Task queued (migration 0007).
+- Applicant names: most CN rows carry an empty `assignee_harmonized` ("applicant not recorded"), which
+  weakens the applicant table. Task queued (migration 0007) to evaluate the raw `assignee` field and the
+  research dataset before changing the SQL (a changed query text is a cache miss: one more 268 GB scan).
 
 ## Evidence
 
 - Tests: `tests/bigquery.test.ts` (JWT verified with the public key, row conversion, DECLARE stripping,
   row mapping), `tests/landscape.test.ts` (aggregation, quarter series, QA pass, table HTML).
-- First live backfill and first report: outcomes recorded in `docs/runbooks/vps-agent-first-session.md`
-  §3 and in `docs/samples/` once run.
+- Live runs 2026-09-26 (ops channel): dry-run 267.7 GB for the five-year window (identical to 45 days);
+  first REST run 267.7 GB billed, job `job_aloxM_pvnOGSPpcikewIl38Kwhgu`, 25,878 rows; the failed first
+  load also triggered one `bq` CLI scan (268 GB) before the fallback was narrowed to query errors; the
+  two re-runs after fixes were cache hits (0 bytes). September 2026 BigQuery total ≈ 1.07 TB before the
+  2026-09-28 Monday run (≈ US$0.45 on demand so far, ≈ US$2.1 after Monday; ADR 0009 accepted ~US$1/month,
+  the overage this month comes from the one-off backfill and the fallback scan).
+- First report: `ps.issues` 202608 (`monthly_report`, QA passed, status `ready`, 13 families in August,
+  115 over twelve months). Markdown: `docs/samples/landscape-2026-08.md`. Not sent: no subscribers yet
+  and triage pending.

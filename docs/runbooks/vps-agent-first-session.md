@@ -45,8 +45,11 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
 - [ ] Send issue #0 to the founder's own address only (create a test customer/subscriber) once Postmark exists.
 
 ## 3b. Monthly landscape report (ADR 0011)
-- [ ] `bash infra/vps/ops.sh cli ingest bigquery backfill dry-run` then without `dry-run` (one-off five-year history, ~268 GB).
-- [ ] `bash infra/vps/ops.sh cli report monthly 2026-08 print` → review → `cli report monthly 2026-08`; commit the markdown to `docs/samples/`.
+- [x] (2026-09-26, cloud session) `cli ingest bigquery backfill`: 25,878 candidates → 1,094 publications / 652 families after
+      `cli patents reclassify apply` (classifier tightened, ADR 0011 §6).
+- [x] (2026-09-26) `cli report monthly 2026-08` → issue 202608 `ready`, QA passed; markdown in `docs/samples/landscape-2026-08.md`.
+- [ ] Production agent: triage the 13 August families (task in `ps.tasks`), rebuild with `cli report monthly 2026-08`,
+      then the report is the second sales sample next to issue #0. Send to subscribers only with `newsletter send 202608`.
 
 ## 4. Go-to-market prep (in parallel, no credentials needed)
 - [x] Load the 38 verified accounts from `docs/research/02-target-accounts.md` into `ps.accounts`. (2026-09-26,
