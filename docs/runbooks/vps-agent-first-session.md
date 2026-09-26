@@ -29,6 +29,9 @@ Work through this list top to bottom; tick items by editing this file and commit
 - [x] Telegram bot token (@BotFather) + founder chat id. Then `npm run report:weekly` must deliver.
       (done 2026-09-26: chat id captured from `getUpdates` after the founder's `/start`; test report delivered)
 - [ ] GCP project + service account for BigQuery (ADR 0008: now the second data source, needed for US claims text and back-fill).
+      (2026-09-26: key + env installed, `gcloud` activated as the SA. Blocked on IAM: SA needs `roles/bigquery.jobUser`;
+      the SA cannot self-grant. Retest: `bq --project_id=patentsonar-prod query --use_legacy_sql=false --dry_run
+      --parameter=window_start:DATE:<from> --parameter=window_end:DATE:<to> < src/patents/bigquery.sql`)
 - [ ] Postmark server token + DNS records (`infra/dns-records.md`), Paddle sandbox, NFe.io, outreach mailbox.
 Append each as `KEY=value` to `/etc/patentsonar/env`, then `sudo systemctl restart patentsonar-webhooks`.
 Status 2026-09-26: all five requested from the founder (Portuguese message, first VPS session); each is a
