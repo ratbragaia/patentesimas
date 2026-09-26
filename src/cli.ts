@@ -76,9 +76,10 @@ async function main() {
     }
     case "tasks list": {
       const { db } = await import("./lib/db.js");
-      const { data, error } = await db().from("tasks").select("agent,title,status,priority,due_at").in("status", ["pending", "in_progress", "blocked"]).order("priority");
+      const { data, error } = await db().from("tasks").select("id,agent,title,status,priority,due_at").in("status", ["pending", "in_progress", "blocked"]).order("priority");
       if (error) throw new Error(`tasks query failed: ${error.code} ${error.message}${error.hint ? ` (${error.hint})` : ""}`);
-      console.table(data ?? []); break;
+      // `code` = first 8 hex chars of the id: what `tasks ask` and the Telegram buttons use.
+      console.table((data ?? []).map(({ id, ...t }: any) => ({ code: String(id).replace(/-/g, "").slice(0, 8), ...t }))); break;
     }
     case "patents reclassify": {
       const { reclassifyStored } = await import("./patents/reclassify.js");
