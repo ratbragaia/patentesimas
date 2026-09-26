@@ -1,4 +1,27 @@
 import { z } from "zod";
+import { existsSync, readFileSync } from "node:fs";
+
+/**
+ * systemd units get credentials via EnvironmentFile=/etc/patentsonar/env. Interactive runs
+ * (`npm run cli ...`) do not, so load the same file as a fallback: existing process.env wins,
+ * lines are KEY=value, `#` lines are ignored, surrounding quotes are stripped.
+ */
+export const ENV_FILE = process.env.PATENTSONAR_ENV_FILE ?? "/etc/patentsonar/env";
+export function loadEnvFile(path = ENV_FILE, env: NodeJS.ProcessEnv = process.env): void {
+  if (!existsSync(path)) return;
+  for (const raw of readFileSync(path, "utf8").split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq <= 0) continue;
+    const key = line.slice(0, eq).trim();
+    let value = line.slice(eq + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    if (env[key] === undefined) env[key] = value;
+  }
+}
 
 const schema = z.object({
   NODE_ENV: z.string().default("development"),
@@ -37,7 +60,7 @@ export type Config = z.infer<typeof schema>;
 
 let cached: Config | undefined;
 export function config(): Config {
-  if (!cached) cached = schema.parse(process.env);
+  if (!cached) { loadEnvFile(); cached = schema.parse(process.env); }
   return cached;
 }
 

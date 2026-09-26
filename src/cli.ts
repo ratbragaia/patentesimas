@@ -59,7 +59,12 @@ async function main() {
     }
     case "invoices issue": { const { issuePendingInvoices } = await import("./invoicing/nfeio.js"); console.log({ issued: await issuePendingInvoices() }); break; }
     case "report weekly": { const { sendWeeklyReport } = await import("./reporting/weekly.js"); await sendWeeklyReport(); break; }
-    case "tasks list": { const { db } = await import("./lib/db.js"); const { data } = await db().from("tasks").select("agent,title,status,priority,due_at").in("status", ["pending", "in_progress", "blocked"]).order("priority"); console.table(data); break; }
+    case "tasks list": {
+      const { db } = await import("./lib/db.js");
+      const { data, error } = await db().from("tasks").select("agent,title,status,priority,due_at").in("status", ["pending", "in_progress", "blocked"]).order("priority");
+      if (error) throw new Error(`tasks query failed: ${error.code} ${error.message}${error.hint ? ` (${error.hint})` : ""}`);
+      console.table(data ?? []); break;
+    }
     default: console.log(readFileSync(new URL(import.meta.url), "utf8").split("*/")[0]); process.exitCode = 1;
   }
 }

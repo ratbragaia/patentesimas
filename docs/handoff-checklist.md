@@ -5,9 +5,9 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | # | Item | Where it goes | Status |
 |---|---|---|---|
 | 1 | CNPJ opened (ME/EPP, Simples Nacional) + accountant's fiscal parameters for service export (NFS-e service code, ISS treatment, CNAE) | `docs/decisions/0002-fiscal-parameters.md` | ⬜ |
-| 2 | Hostinger VPS (dedicated, Ubuntu 24.04): **IP 2.25.249.69**, keys `founder-notebook` + `patentsonar-agent` installed. Agent private key still to be added as environment secret `VPS_SSH_PRIVATE_KEY` | `infra/vps/setup.sh` (ADR 0007) | ✅ bootstrapped + hardened 2026-09-25; both keys verified. Pending: agent key as env secret, `/etc/patentsonar/env` |
+| 2 | Hostinger VPS (dedicated, Ubuntu 24.04): **IP 2.25.249.69**, keys `founder-notebook` + `patentsonar-agent` installed. Agent private key still to be added as environment secret `VPS_SSH_PRIVATE_KEY` | `infra/vps/setup.sh` (ADR 0007) | ✅ bootstrapped + hardened 2026-09-25; both keys verified. `/etc/patentsonar/env` installed 2026-09-26. Pending: agent key as env secret (only needed for cloud sessions) |
 | 3 | Domain **patentsonar.com** bought at Cloudflare Registrar 2026-09-25 (+ .io/.ai/.co optional). DNS: A @ and A www → 2.25.249.69, DNS-only | `infra/dns-records.md` | ✅ bought, DNS pointed, env installed 2026-09-26 |
-| 4 | GitHub deploy key for the VPS agent: add the key printed by `infra/vps/github-deploy-key.sh` at repo → Settings → Deploy keys, **Allow write access** | `infra/vps/github-deploy-key.sh` | ⬜ |
+| 4 | GitHub deploy key for the VPS agent: add the key printed by `infra/vps/github-deploy-key.sh` at repo → Settings → Deploy keys, **Allow write access** | `infra/vps/github-deploy-key.sh` | ✅ 2026-09-26 (`ssh -T git@github.com` authenticates; pushes from the VPS work) |
 | 5 | Claude Code logged in on the VPS as user `patentsonar`. Account is on the **Max** plan (briefing assumed Pro), so 24/7 operation has far more headroom | VPS | ✅ 2026-09-26 |
 | 6 | Supabase project `patentsonar-prod` (us-east-1): URL, secret key, DB URL in `/etc/patentsonar/env`; schema applied | `SUPABASE_*` | ✅ 2026-09-26 |
 | 7 | PatentsView API key (free; request via the PatentsView support portal at patentsview-support.atlassian.net; 45 req/min) | `PATENTSVIEW_API_KEY` | ⬜ |

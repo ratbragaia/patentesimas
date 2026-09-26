@@ -15,6 +15,8 @@ echo "== migrations"
 for f in "$APP_DIR"/supabase/migrations/*.sql; do
   if psql "$DB" -X -q -v ON_ERROR_STOP=1 -f "$f"; then echo "ok $(basename "$f")"; else echo "FAILED $(basename "$f") — stopping"; exit 1; fi
 done
+echo "== reload PostgREST schema cache (new tables are 404 until this runs)"
+psql "$DB" -X -q -c "notify pgrst, 'reload schema'; notify pgrst, 'reload config';"
 echo "== tables in schema ps"
 psql "$DB" -X -q -t -c "select count(*) from information_schema.tables where table_schema='ps';" | tr -d ' '
-systemctl restart patentsonar-webhooks && echo "webhooks restarted"
+sudo systemctl restart patentsonar-webhooks && echo "webhooks restarted"
