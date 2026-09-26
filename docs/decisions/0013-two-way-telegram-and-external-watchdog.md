@@ -40,5 +40,6 @@ accounts). Realistic steady state: minutes per week on Telegram, about one inter
 ## Evidence
 
 - Tests: `tests/founder-inbox.test.ts` (command parsing, short codes, secret derivation), `tests/ops.test.ts`.
-- Live: `cli telegram setup` output and the founder's first `/status` reply are recorded in
-  `docs/runbooks/vps-agent-first-session.md` §5 once done.
+- Live 2026-09-26: `setWebhook` → `"Webhook was set"`, `getWebhookInfo` shows the VPS IP and 3 pending updates,
+  which were then delivered and stored (`ps.founder_messages` = 3; two became tasks). Routine id
+  `trig_01BrJWsNHhCRvRo4AJtksw3G` (daily 08:07 America/Sao_Paulo). See runbook §4b.

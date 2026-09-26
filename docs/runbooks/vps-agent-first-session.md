@@ -66,8 +66,10 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
       `sudo bash infra/vps/setup.sh` (idempotent) or `sudo systemctl start patentsonar-agent.timer` until next reboot.
 
 ## 4b. Founder channel and watchdog (ADR 0013)
-- [ ] `bash infra/vps/ops.sh cli telegram setup` → `"ok":true`; founder sends `/status` to @patentsonar_bot and gets the numbers back.
-- [ ] Cloud routine "PatentSonar watchdog" exists at claude.ai/code (daily, fresh session, runs `ops.sh status` + `ops.sh agent-health`).
+- [x] (2026-09-26) `cli telegram setup` → webhook set; 3 pending updates (old founder test messages) were processed into
+      `ps.founder_messages` and two "Fundador (Telegram)" tasks. Founder to confirm `/status` and cancel the two test tasks with `/nao <code>`.
+- [x] (2026-09-26) Cloud routine "PatentSonar watchdog (VPS e operador headless)", id `trig_01BrJWsNHhCRvRo4AJtksw3G`, daily 08:07
+      America/Sao_Paulo, fresh session, push + e-mail notification; uses the ops channel by curl (no repo needed).
 
 ## 5. Operating rhythm
 Once 1–3 are done, follow `docs/runbooks/weekly-cycle.md`. Report to the founder weekly via Telegram.
