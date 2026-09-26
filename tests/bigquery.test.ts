@@ -46,8 +46,14 @@ describe("bigquery REST client", () => {
     expect(convertRows(schema, rows)).toEqual([{ publication_number: "CN-118123456-A", cpc_codes: ["H01F1/06", "C22C22/00"], publication_date: "2026-08-12", n: 3, abstract_en: null }]);
     expect(convertRows(schema, undefined)).toEqual([]);
   });
-  it("strips DECLARE lines meant for the bq CLI and keeps the parameters", () => {
-    const sql = stripDeclares("DECLARE window_start DATE DEFAULT @window_start;\nDECLARE window_end   DATE DEFAULT @window_end;\nSELECT 1 WHERE d BETWEEN @window_start AND @window_end");
-    expect(sql).not.toMatch(/DECLARE/); expect(sql).toContain("@window_start");
+  it("strips DECLARE lines meant for the bq CLI and rebinds bare variable references to the parameters", () => {
+    const sql = stripDeclares("DECLARE window_start DATE DEFAULT @window_start;\nDECLARE window_end   DATE DEFAULT @window_end;\nSELECT 1 WHERE d BETWEEN FORMAT_DATE('%Y%m%d', window_start) AND CAST(window_end AS STRING) AND x = @window_start");
+    expect(sql).not.toMatch(/DECLARE/);
+    expect(sql).toBe("SELECT 1 WHERE d BETWEEN FORMAT_DATE('%Y%m%d', @window_start) AND CAST(@window_end AS STRING) AND x = @window_start");
+  });
+  it("rewrites the real niche query so no bare DECLARE variable remains", async () => {
+    const { nicheSql } = await import("../src/patents/bigquery.js");
+    const q = stripDeclares(nicheSql());
+    expect(q).not.toMatch(/(?<![@\w])window_(start|end)\b/); expect(q).toContain("@window_start"); expect(q).toContain("@window_end");
   });
 });

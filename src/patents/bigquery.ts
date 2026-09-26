@@ -117,9 +117,19 @@ function cell(field: BqField, v: unknown): unknown {
 export function convertRows(schema: { fields: BqField[] }, rows: BqRow[] | undefined): Record<string, unknown>[] {
   return (rows ?? []).map((r) => Object.fromEntries(schema.fields.map((f, i) => [f.name, cell(f, r.f[i]?.v)])));
 }
-/** The .sql file carries `DECLARE x DEFAULT @x;` lines for the bq CLI; the REST API binds @x directly. */
+/**
+ * The .sql file carries `DECLARE name TYPE DEFAULT @param;` lines for the bq CLI script mode and then uses
+ * `name` in the query. The REST API binds @param directly, so drop the DECLAREs and point the bare
+ * references at the parameters.
+ */
 export function stripDeclares(sql: string): string {
-  return sql.split("\n").filter((l) => !/^\s*DECLARE\s/i.test(l)).join("\n");
+  const vars: [string, string][] = [];
+  const body = sql.split("\n").filter((l) => {
+    const m = /^\s*DECLARE\s+(\w+)\s+\w+(?:\s+DEFAULT\s+@(\w+))?\s*;/i.exec(l);
+    if (!m) return true;
+    vars.push([m[1]!, m[2] ?? m[1]!]); return false;
+  }).join("\n");
+  return vars.reduce((q, [name, param]) => q.replace(new RegExp(`(?<![@\\w])${name}\\b`, "g"), `@${param}`), body);
 }
 
 export interface QueryParams { [name: string]: { type: "DATE" | "STRING" | "INT64"; value: string } }
