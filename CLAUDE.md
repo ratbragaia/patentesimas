@@ -95,7 +95,9 @@ Daily: process inbound replies, Paddle webhooks, task queue (`tasks` table).
 - Secrets only via environment variables (`.env.example` lists them). Never commit secrets.
 - Persist state in Supabase, never in the session. If a session dies, the `tasks` table is the
   source of truth for what to resume.
-- Prefer small commits with clear messages. Push to the designated branch only.
+- Branch policy: `main` is the company's official branch and what the VPS pulls. Cloud sessions work on
+  their own `claude/*` branch, keep `npm run typecheck && npm test` green, then fast-forward or merge
+  into `main` and push it. Never force-push `main`.
 - When a decision is made, write it down: `docs/decisions/NNNN-title.md` (context, options, decision, evidence).
 - Write everything customer-facing in clear, plain English. No hype. Analyst tone.
 
