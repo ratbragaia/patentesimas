@@ -10,6 +10,7 @@
  *   cli newsletter send <issue#>       send a QA-passed issue (idempotent)
  *   cli newsletter send-latest         send the most recent issue in status 'ready' 
  *   cli invoices issue                 issue pending NFS-e via NFe.io (one per Paddle payout, ADR 0002)
+ *   cli invoices preview [usd] [UK|US|IE]  print the NFS-e draft and the Notaas payload for a sample payout; sends nothing
  *   cli invoices enqueue-payout <payout_id> <UK|US|IE> <usd> <YYYY-MM-DD> [reverse_invoice_ref]   record a Paddle payout for NFS-e
  *   cli report weekly                  send founder report to Telegram (pt-BR)
  *   cli report resend                  re-send today's founder notices in pt-BR (one-off after the language rule)
@@ -64,6 +65,14 @@ async function main() {
       const { data } = await db().from("issues").select("issue_number").eq("status", "ready").eq("kind", "weekly").order("issue_number", { ascending: false }).limit(1).maybeSingle();
       if (!data) { log.info("no issue in status ready; nothing to send"); break; }
       console.log(await sendIssue(data.issue_number)); break;
+    }
+    case "invoices preview": {
+      const { buildNfseDraft, toNotaasPayload, ptaxRate } = await import("./invoicing/nfse.js");
+      const usd = Number(rest[0] ?? 100); const entity = (rest[1] ?? "UK") as any;
+      const today = new Date().toISOString().slice(0, 10);
+      const { rate, date } = await ptaxRate(today);
+      const draft = buildNfseDraft({ id: "preview", paddle_payout_id: "pay_PREVIEW", payer_entity: entity, amount_usd: usd, payout_date: today, reverse_invoice_ref: null, idempotency_key: "preview:do-not-send" }, rate, date);
+      console.log(JSON.stringify({ note: "PREVIEW ONLY. Nothing was sent to Notaas.", ptax: { rate, date }, draft, notaasPayload: toNotaasPayload(draft) }, null, 1)); break;
     }
     case "invoices enqueue-payout": {
       const { enqueuePayoutInvoice } = await import("./invoicing/nfse.js");
