@@ -12,7 +12,7 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 6 | Supabase project `patentsonar-prod` (us-east-1): URL, secret key, DB URL in `/etc/patentsonar/env`; schema applied | `SUPABASE_*` | ✅ 2026-09-26 |
 | 7 | ~~PatentsView API key~~ **Deferred** (portal offline; ODP key needs ID.me, see ADR 0008). US coverage via EPO OPS + BigQuery | `PATENTSVIEW_API_KEY` | ⏸ deferred |
 | 8 | EPO OPS consumer key/secret (register at developers.epo.org → My Apps; free tier ~4 GB/week) — **primary data source** | `EPO_OPS_*` | ⬜ |
-| 9 | GCP project with BigQuery enabled + service-account JSON (**priority raised**, ADR 0008; free tier is enough, card required by Google) | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | 🟡 2026-09-26: project `patentsonar-prod`, SA `patentsonar-bq` key installed, env set. Pending: grant **BigQuery Job User** to the SA (query fails with `bigquery.jobs.create` denied) |
+| 9 | GCP project with BigQuery enabled + service-account JSON (**priority raised**, ADR 0008; free tier is enough, card required by Google) | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | ✅ 2026-09-26: project `patentsonar-prod`, SA `patentsonar-bq` (BigQuery Job User), key `600`; first 90-day backfill loaded (ADR 0009) |
 | 10 | Paddle seller account (verify Brazil eligibility first — see research 04) + webhook secret | `PADDLE_*` | ⬜ |
 | 11 | USD receiving account (Wise Business or alternative per research 04) | Paddle payout settings | ⬜ |
 | 12 | NFe.io account + company registered | `NFEIO_*` | ⬜ |

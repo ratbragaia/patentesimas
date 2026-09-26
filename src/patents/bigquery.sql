@@ -1,5 +1,7 @@
--- Google Patents Public Data (BigQuery). Run weekly with the window parameters.
--- Free tier: 1 TB processed/month. Restrict columns + partition on publication_date to stay cheap.
+-- Google Patents Public Data (BigQuery). Run MONTHLY with the window parameters (see cost note below).
+-- Cost (measured 2026-09-26): ~268 GB per run regardless of window (table is not partitioned; the scan is
+-- driven by the columns read). Free tier 1 TB/month => run MONTHLY with a trailing window, never weekly.
+-- Dates are INT64 yyyymmdd with 0 for 'unknown' => NULLIF before parsing (see ADR 0009).
 -- Covers CN/JP/KR/WO with English `title_localized`/`abstract_localized` when available.
 DECLARE window_start DATE DEFAULT @window_start;
 DECLARE window_end   DATE DEFAULT @window_end;
@@ -12,10 +14,10 @@ WITH base AS (
     ARRAY(SELECT code FROM UNNEST(cpc)) AS cpc_codes,
     ARRAY(SELECT name FROM UNNEST(assignee_harmonized)) AS applicants,
     ARRAY(SELECT name FROM UNNEST(inventor_harmonized)) AS inventors,
-    PARSE_DATE('%Y%m%d', CAST(priority_date AS STRING))    AS priority_date,
-    PARSE_DATE('%Y%m%d', CAST(filing_date AS STRING))      AS filing_date,
-    PARSE_DATE('%Y%m%d', CAST(publication_date AS STRING)) AS publication_date,
-    PARSE_DATE('%Y%m%d', CAST(grant_date AS STRING))       AS grant_date,
+    SAFE.PARSE_DATE('%Y%m%d', CAST(NULLIF(priority_date, 0) AS STRING))    AS priority_date,
+    SAFE.PARSE_DATE('%Y%m%d', CAST(NULLIF(filing_date, 0) AS STRING))      AS filing_date,
+    SAFE.PARSE_DATE('%Y%m%d', CAST(NULLIF(publication_date, 0) AS STRING)) AS publication_date,
+    SAFE.PARSE_DATE('%Y%m%d', CAST(NULLIF(grant_date, 0) AS STRING))       AS grant_date,
     application_number
   FROM `patents-public-data.patents.publications`
   WHERE publication_date BETWEEN CAST(FORMAT_DATE('%Y%m%d', window_start) AS INT64)

@@ -28,17 +28,16 @@ Work through this list top to bottom; tick items by editing this file and commit
 - [ ] EPO OPS consumer key/secret (developers.epo.org → My Apps). Primary patent source.
 - [x] Telegram bot token (@BotFather) + founder chat id. Then `npm run report:weekly` must deliver.
       (done 2026-09-26: chat id captured from `getUpdates` after the founder's `/start`; test report delivered)
-- [ ] GCP project + service account for BigQuery (ADR 0008: now the second data source, needed for US claims text and back-fill).
-      (2026-09-26: key + env installed, `gcloud` activated as the SA. Blocked on IAM: SA needs `roles/bigquery.jobUser`;
-      the SA cannot self-grant. Retest: `bq --project_id=patentsonar-prod query --use_legacy_sql=false --dry_run
-      --parameter=window_start:DATE:<from> --parameter=window_end:DATE:<to> < src/patents/bigquery.sql`)
+- [x] GCP project + service account for BigQuery (ADR 0008: now the second data source, needed for US claims text and back-fill).
+      (done 2026-09-26: Job User granted, 90-day BigQuery backfill loaded; cadence and cost in ADR 0009)
 - [ ] Postmark server token + DNS records (`infra/dns-records.md`), Paddle sandbox, NFe.io, outreach mailbox.
 Append each as `KEY=value` to `/etc/patentsonar/env`, then `sudo systemctl restart patentsonar-webhooks`.
 Status 2026-09-26: all five requested from the founder (Portuguese message, first VPS session); each is a
 `blocked` row in `ps.tasks` (agent `orchestrator`) so the ask survives the session.
 
 ## 3. First product cycle (as soon as EPO OPS key exists)
-- [ ] Backfill: temporarily run `npm run ingest` with a 90-day window (edit `computeWindow` fallback or
+- [ ] (BigQuery half done 2026-09-26: 815 candidates → 81 on-topic, 76 families, CN 57 / US 10 / EP 8 / KR 4 / WO 2;
+      EPO OPS half waits for the key) Backfill: temporarily run `npm run ingest` with a 90-day window (edit `computeWindow` fallback or
       insert an `ingest_runs` row) and check `ps.patent_publications` counts by office.
 - [ ] Triage families (`production` agent instructions) and write analyst notes for `include` ones.
 - [ ] `npm run newsletter:build -- <from> <to>`; QA must pass. Save the markdown of issue #0 to

@@ -32,7 +32,9 @@ async function main() {
       const { upsertPublications, rebuildFamilies } = await import("./patents/ingest.js");
       const { classify } = await import("./patents/query.js");
       const { normalizePublicationNumber, normalizeCpc } = await import("./patents/normalize.js");
-      const rows = JSON.parse(readFileSync(rest[0]!, "utf8")) as any[];
+      // `bq query --format=json` on a multi-statement script (DECLARE ...) nests the last result set: [[{...}]]
+      let rows = JSON.parse(readFileSync(rest[0]!, "utf8")) as any[];
+      while (Array.isArray(rows) && rows.length === 1 && Array.isArray(rows[0])) rows = rows[0];
       const pubs = rows.map((r) => {
         const cpcs = (r.cpc_codes ?? []).map(normalizeCpc);
         const matched = classify({ title: r.title_en, abstract: r.abstract_en, cpc_codes: cpcs });
