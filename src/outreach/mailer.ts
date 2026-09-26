@@ -49,8 +49,12 @@ const fromAddress = () => { const m = /<([^>]+)>/.exec(config().OUTREACH_FROM ??
 
 interface Draft { id: string; lead_id: string | null; contact_id: string | null; subject: string; body: string; to_email: string | null; sequence_step: number | null; template: string | null; created_at: string }
 
-export async function sendBatch(limit?: number, today = new Date().toISOString().slice(0, 10)): Promise<{ sent: number; blocked: number; allowance: number }> {
+/** True once handoff item 14 (mailbox address + password) is in the environment; timers no-op until then. */
+export function mailboxConfigured(): boolean { const c = config(); return Boolean(c.OUTREACH_SMTP_HOST && c.OUTREACH_IMAP_HOST && c.OUTREACH_SMTP_USER && c.OUTREACH_SMTP_PASS); }
+
+export async function sendBatch(limit?: number, today = new Date().toISOString().slice(0, 10)): Promise<{ sent: number; blocked: number; allowance: number; skipped?: string }> {
   const c = config();
+  if (!mailboxConfigured()) { log.info("outreach send-batch skipped: mailbox not configured (handoff item 14)"); return { sent: 0, blocked: 0, allowance: 0, skipped: "mailbox not configured" }; }
   const { data: first } = await db().from("outreach_messages").select("sent_at").eq("direction", "outbound").not("sent_at", "is", null).order("sent_at").limit(1).maybeSingle();
   const { count: sentToday } = await db().from("outreach_messages").select("*", { count: "exact", head: true }).eq("direction", "outbound").gte("sent_at", `${today}T00:00:00Z`);
   const allowance = Math.max(0, dailyAllowance(first?.sent_at?.slice(0, 10) ?? null, today, c.OUTREACH_DAILY_CAP) - (sentToday ?? 0));
@@ -87,10 +91,10 @@ export async function sendBatch(limit?: number, today = new Date().toISOString()
 
 const OPTOUT_RE = /\b(unsubscribe|remove me|opt[ -]?out|stop emailing|do not contact|não quero|descadastr|no more emails)\b/i;
 
-export async function pollInbox(): Promise<{ fetched: number; stored: number; optouts: number }> {
+export async function pollInbox(): Promise<{ fetched: number; stored: number; optouts: number; skipped?: string }> {
   const c = config();
-  if (!c.OUTREACH_IMAP_HOST || !c.OUTREACH_SMTP_USER || !c.OUTREACH_SMTP_PASS) throw new Error("outreach mailbox not configured (OUTREACH_IMAP_HOST / OUTREACH_SMTP_USER / OUTREACH_SMTP_PASS)");
-  const client = new ImapFlow({ host: c.OUTREACH_IMAP_HOST, port: c.OUTREACH_IMAP_PORT, secure: true, auth: { user: c.OUTREACH_SMTP_USER, pass: c.OUTREACH_SMTP_PASS }, logger: false });
+  if (!mailboxConfigured()) { log.info("outreach poll skipped: mailbox not configured (handoff item 14)"); return { fetched: 0, stored: 0, optouts: 0, skipped: "mailbox not configured" }; }
+  const client = new ImapFlow({ host: c.OUTREACH_IMAP_HOST, port: c.OUTREACH_IMAP_PORT, secure: true, auth: { user: c.OUTREACH_SMTP_USER!, pass: c.OUTREACH_SMTP_PASS! }, logger: false });
   let fetched = 0, stored = 0, optouts = 0;
   await client.connect();
   const lock = await client.getMailboxLock("INBOX");
