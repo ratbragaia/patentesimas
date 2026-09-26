@@ -43,6 +43,9 @@ const schema = z.object({
 
   PADDLE_API_KEY: z.string().optional(),
   PADDLE_WEBHOOK_SECRET: z.string().optional(),
+  /** Optional sandbox account (sandbox-vendors.paddle.com): its webhooks are accepted too and tagged environment=sandbox. */
+  PADDLE_SANDBOX_API_KEY: z.string().optional(),
+  PADDLE_SANDBOX_WEBHOOK_SECRET: z.string().optional(),
   POSTMARK_WEBHOOK_SECRET: z.string().optional(),
   INBOUND_WEBHOOK_SECRET: z.string().optional(),
   CLOUDFLARE_API_TOKEN: z.string().optional(),

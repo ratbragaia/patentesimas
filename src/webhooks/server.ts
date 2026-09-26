@@ -6,7 +6,7 @@
 import { createServer } from "node:http";
 import { config, require } from "../lib/config.js";
 import { log } from "../lib/log.js";
-import { verifyPaddleSignature, handlePaddleEvent } from "../billing/paddle.js";
+import { resolvePaddleEnvironment, handlePaddleEvent } from "../billing/paddle.js";
 import { suppress } from "../email/postmark.js";
 import { db, audit } from "../lib/db.js";
 import { timingSafeEqual } from "node:crypto";
@@ -69,9 +69,12 @@ export function startServer(port = config().WEBHOOK_PORT) {
 
       if (req.method === "POST" && url.pathname === "/webhooks/paddle") {
         const raw = await readBody(req);
-        if (!verifyPaddleSignature(raw, req.headers["paddle-signature"] as string | undefined, require("PADDLE_WEBHOOK_SECRET"))) { res.writeHead(401); res.end("bad signature"); return; }
-        const processed = await handlePaddleEvent(JSON.parse(raw));
-        res.writeHead(200); res.end(processed ? "processed" : "duplicate"); return;
+        const { PADDLE_WEBHOOK_SECRET: production, PADDLE_SANDBOX_WEBHOOK_SECRET: sandbox } = config();
+        if (!production && !sandbox) { res.writeHead(503); res.end("paddle not configured"); return; }
+        const environment = resolvePaddleEnvironment(raw, req.headers["paddle-signature"] as string | undefined, { production, sandbox });
+        if (!environment) { res.writeHead(401); res.end("bad signature"); return; }
+        const processed = await handlePaddleEvent(JSON.parse(raw), environment);
+        res.writeHead(200); res.end(processed ? `processed:${environment}` : "duplicate"); return;
       }
 
       if (req.method === "POST" && url.pathname === "/webhooks/postmark") {

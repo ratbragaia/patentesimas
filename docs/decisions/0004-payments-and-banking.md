@@ -25,6 +25,14 @@ Paddle first, Wise later: Paddle holds the balance and only needs payout details
 on the 1st, sent by the 15th, US$100 minimum). Open Wise Business when the first payout approaches; its
 verification takes days, so start it as soon as the first sale lands, not on payout day.
 
+## Update 2026-09-26 (sandbox alongside live)
+The founder opted to test the full flow in Paddle's sandbox (a separate sign-up at sandbox-vendors.paddle.com,
+same e-mail allowed). Both accounts post to the same `/webhooks/paddle`; the server picks the environment by
+which secret verifies the signature (`PADDLE_SANDBOX_WEBHOOK_SECRET`). Sandbox customers, subscriptions and
+events are tagged `environment='sandbox'` (migration 0014) and excluded from `v_mrr` and
+`v_active_recipients`, so test data never reaches revenue numbers or the newsletter list; Telegram alerts
+from the sandbox are prefixed 🧪 [SANDBOX] and open no dunning tasks.
+
 ## Decision
 1. Apply to Paddle first; request **written confirmation** of Brazilian seller eligibility and payout
    route at onboarding. Sandbox integration is built and tested against signature verification.

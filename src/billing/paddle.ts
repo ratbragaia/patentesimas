@@ -22,10 +22,19 @@ export interface PaddleEvent { event_id: string; event_type: string; occurred_at
 
 const STATUS_MAP: Record<string, string> = { trialing: "trialing", active: "active", past_due: "past_due", paused: "paused", canceled: "canceled" };
 
+export type PaddleEnvironment = "production" | "sandbox";
+
+/** Pick the environment whose secret verifies the signature: live first, then sandbox. Null = no match. */
+export function resolvePaddleEnvironment(rawBody: string, header: string | undefined, secrets: { production?: string; sandbox?: string }, nowSec?: number): PaddleEnvironment | null {
+  if (secrets.production && verifyPaddleSignature(rawBody, header, secrets.production, nowSec)) return "production";
+  if (secrets.sandbox && verifyPaddleSignature(rawBody, header, secrets.sandbox, nowSec)) return "sandbox";
+  return null;
+}
+
 /** Returns true if the event was processed now, false if it was a duplicate. */
-export async function handlePaddleEvent(ev: PaddleEvent): Promise<boolean> {
+export async function handlePaddleEvent(ev: PaddleEvent, environment: PaddleEnvironment = "production"): Promise<boolean> {
   // 1) claim the event id first (idempotency). Unique violation => duplicate => stop.
-  const { error } = await db().from("billing_events").insert({ event_id: ev.event_id, event_type: ev.event_type, occurred_at: ev.occurred_at, payload: ev });
+  const { error } = await db().from("billing_events").insert({ event_id: ev.event_id, event_type: ev.event_type, occurred_at: ev.occurred_at, payload: ev, environment });
   if (error) { if (error.code === "23505") return false; throw new Error(error.message); }
   try {
     switch (ev.event_type) {
@@ -36,12 +45,12 @@ export async function handlePaddleEvent(ev: PaddleEvent): Promise<boolean> {
       case "subscription.paused":
       case "subscription.resumed":
       case "subscription.canceled":
-        await upsertSubscription(ev.data); break;
+        await upsertSubscription(ev.data, environment); break;
       case "transaction.completed":
-        await onTransactionCompleted(ev.data); break;
+        await onTransactionCompleted(ev.data, environment); break;
       case "transaction.payment_failed":
-        await notifyFounder(`⚠️ Pagamento falhou: cliente ${ev.data?.customer_id} (transação ${ev.data?.id}). Tarefa de cobrança criada para o agente finance.`);
-        await db().from("tasks").insert({ agent: "finance", title: `Dunning: transaction ${ev.data?.id}`, payload: { transaction_id: ev.data?.id, customer_id: ev.data?.customer_id }, priority: 2 });
+        await notifyFounder(`${environment === "sandbox" ? "🧪 [SANDBOX] " : ""}⚠️ Pagamento falhou: cliente ${ev.data?.customer_id} (transação ${ev.data?.id}).${environment === "sandbox" ? "" : " Tarefa de cobrança criada para o agente finance."}`);
+        if (environment === "production") await db().from("tasks").insert({ agent: "finance", title: `Dunning: transaction ${ev.data?.id}`, payload: { transaction_id: ev.data?.id, customer_id: ev.data?.customer_id }, priority: 2 });
         break;
       default: break;
     }
@@ -53,31 +62,31 @@ export async function handlePaddleEvent(ev: PaddleEvent): Promise<boolean> {
   }
 }
 
-async function ensureCustomer(paddleCustomerId: string, email?: string, name?: string, country?: string) {
+async function ensureCustomer(paddleCustomerId: string, environment: PaddleEnvironment, email?: string, name?: string, country?: string) {
   const { data } = await db().from("customers").select("id").eq("paddle_customer_id", paddleCustomerId).maybeSingle();
   if (data) return data.id as string;
-  const { data: created, error } = await db().from("customers").insert({ paddle_customer_id: paddleCustomerId, legal_name: name ?? email ?? paddleCustomerId, billing_email: email ?? "", country }).select("id").single();
+  const { data: created, error } = await db().from("customers").insert({ paddle_customer_id: paddleCustomerId, legal_name: name ?? email ?? paddleCustomerId, billing_email: email ?? "", country, environment }).select("id").single();
   if (error) throw new Error(error.message);
-  await notifyFounder(`🎉 Novo cliente pagante: ${name ?? email ?? paddleCustomerId}`);
+  await notifyFounder(environment === "sandbox" ? `🧪 [SANDBOX] Cliente de teste criado: ${name ?? email ?? paddleCustomerId}` : `🎉 Novo cliente pagante: ${name ?? email ?? paddleCustomerId}`);
   return created.id as string;
 }
 
-async function upsertSubscription(sub: any) {
-  const customerId = await ensureCustomer(sub.customer_id);
+async function upsertSubscription(sub: any, environment: PaddleEnvironment) {
+  const customerId = await ensureCustomer(sub.customer_id, environment);
   const item = sub.items?.[0];
   const priceId = item?.price?.id;
   const { data: plan } = await db().from("plans").select("code").or(`paddle_price_id_month.eq.${priceId},paddle_price_id_year.eq.${priceId}`).maybeSingle();
   await db().from("subscriptions").upsert({
-    paddle_subscription_id: sub.id, customer_id: customerId, plan_code: plan?.code ?? "analyst",
+    paddle_subscription_id: sub.id, customer_id: customerId, plan_code: plan?.code ?? "analyst", environment,
     status: STATUS_MAP[sub.status] ?? "active", seats: item?.quantity ?? 1,
     current_period_start: sub.current_billing_period?.starts_at ?? null, current_period_end: sub.current_billing_period?.ends_at ?? null,
   }, { onConflict: "paddle_subscription_id" });
   await audit("finance", "subscription_upsert", "subscriptions", sub.id, { status: sub.status });
 }
 
-async function onTransactionCompleted(tx: any) {
+async function onTransactionCompleted(tx: any, environment: PaddleEnvironment) {
   // Customer record only. No NFS-e per transaction: Paddle is the reseller, and the NFS-e is issued per Paddle
   // payout to the Paddle entity on the reverse invoice (ADR 0002 revised, `cli invoices enqueue-payout`).
-  await ensureCustomer(tx.customer_id);
-  await audit("finance", "transaction_completed", "billing_events", tx.id, { customer_id: tx.customer_id, total: tx.details?.totals?.total, subscription_id: tx.subscription_id ?? null });
+  await ensureCustomer(tx.customer_id, environment);
+  await audit("finance", "transaction_completed", "billing_events", tx.id, { environment, customer_id: tx.customer_id, total: tx.details?.totals?.total, subscription_id: tx.subscription_id ?? null });
 }
