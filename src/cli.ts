@@ -14,6 +14,7 @@
  *   cli report monthly [YYYY-MM] [print]  build the monthly landscape report (default: previous month); `print` = markdown only
  *   cli patents reclassify [apply]     re-run the niche classifier on stored rows; dry-run unless `apply`
  *   cli tasks list                     show open tasks
+ *   cli inbound list                   show inbound emails awaiting a reply
  *   cli samples list                   website sample requests not yet served (status new)
  */
 import { readFileSync } from "node:fs";
@@ -85,6 +86,12 @@ async function main() {
       const { data, error } = await db().from("sample_requests").select("email,company,status,request_count,source,last_requested_at").eq("status", "new").order("last_requested_at", { ascending: false });
       if (error) throw new Error(`sample_requests query failed: ${error.code} ${error.message}`);
       console.table(data ?? []); break;
+    }
+    case "inbound list": {
+      const { db } = await import("./lib/db.js");
+      const { data, error } = await db().from("inbound_emails").select("received_at,from_email,to_email,subject,status,task_id").eq("status", "new").order("received_at");
+      if (error) throw new Error(`inbound query failed: ${error.code} ${error.message}`);
+      console.table((data ?? []).map((r) => ({ ...r, received_at: String(r.received_at).slice(0, 16), subject: String(r.subject ?? "").slice(0, 60) }))); break;
     }
     default: console.log(readFileSync(new URL(import.meta.url), "utf8").split("*/")[0]); process.exitCode = 1;
   }

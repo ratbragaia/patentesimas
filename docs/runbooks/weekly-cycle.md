@@ -9,6 +9,7 @@
 | Thu | Prospecting + outreach batch | prospecting → sales agents | ≤ 25 compliant first-touch emails, all logged |
 | Fri | Reconciliation + report | `patentsonar-invoices` (daily) + `patentsonar-report.timer` | Telegram report delivered |
 | Daily 07:00 | Invoices | `patentsonar-invoices.timer` → `invoices issue` | no `pending` invoice older than 24h |
+| Weekdays 07/10/13/16/19 UTC | Headless operator | `patentsonar-agent.timer` → `infra/agent/run.sh` (`claude -p`, ADR 0012) | drains `ps.tasks`, answers `ps.inbound_emails`; log in `/var/log/patentsonar/agent/` |
 | Always | Webhooks | `patentsonar-webhooks.service` | `/healthz` 200 |
 | Daily | Sample requests | `cli samples list` → sales agent sends the current issue by hand, sets `sample_requests.status = sent` | no `new` request older than one business day |
 | Monthly (Tue after 1st Mon) | Landscape report | `ops.sh cli report monthly` (previous month; BigQuery data came in with Monday's ingest) | `ps.issues` has `kind = monthly_report` for the previous month in status `ready`; founder got the preview; `newsletter send YYYYMM` by hand after review |

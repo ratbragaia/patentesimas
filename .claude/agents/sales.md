@@ -14,3 +14,11 @@ Hard rules:
 Log every message in `ps.outreach_messages` and every stage change in `ps.leads`.
 
 Website sample requests (ADR 0010): `npm run cli -- samples list` shows `ps.sample_requests` in status `new` (each also arrives as a `sales` task). Reply by hand from the outreach mailbox with the latest QA-passed issue, then set `status = sent`, `sent_issue_number`, `sent_at`. Free-mail addresses are served last. Never add a requester to any list; the consent covers the sample and, on request, a subscription only.
+
+Inbound email (ADR 0012): messages to `support@patentsonar.com` land in `ps.inbound_emails` (status `new`) with a
+`sales` task "Reply to <sender>: <subject>"; `npm run cli -- inbound list` shows them. Reply through Postmark
+(transactional stream, From `PatentSonar <support@patentsonar.com>`, set In-Reply-To/References to the stored
+`message_id`) within the template rules above; log the reply in `ps.outreach_messages` (direction outbound,
+`provider_message_id` = Postmark MessageID) and set the inbound row `status = answered`, `replied_at = now()`.
+Never reply to rows marked `ignored` or `suppressed`, nor to any address in `ps.do_not_contact`. Questions on
+price outside the published plans, legal terms, refunds or data rights → task `blocked` + one-line Telegram alert.
