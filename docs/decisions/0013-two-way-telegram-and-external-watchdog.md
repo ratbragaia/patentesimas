@@ -17,12 +17,14 @@ timer), nothing outside the VPS would notice.
 1. **Two-way Telegram.** The bot registers a webhook to `POST /webhooks/telegram` (`cli telegram setup`).
    Telegram echoes a secret we derive from the bot token (`sha256(token|patentsonar-webhook)`), checked
    in constant time; no new credential. Only the founder's chat id is served. Every update is stored in
-   `ps.founder_messages` (unique `update_id`, migration 0009). Commands, in Portuguese with English
-   aliases: `/status`, `/tarefas`, `/ok <code> [note]` (a `blocked` task returns to `pending` with the
-   approval recorded), `/nao <code> [reason]` (canceled), `/ajuda`; any other text becomes an
-   `orchestrator` task "Fundador (Telegram): …" with priority 2. The headless prompt treats those tasks as
-   founder instructions inside the rules and names the task's short code (first 8 hex chars of the id)
-   whenever it escalates, so the founder can answer from the phone.
+   `ps.founder_messages` (unique `update_id`, migration 0009). **Buttons, not commands** (founder
+   feedback the same day): a persistent keyboard (📊 Status · 📋 Tarefas · ❓ Ajuda) and, on every
+   escalation, inline ✅ Aprovar / 🚫 Cancelar buttons (`callback_data` `ok:<code>` / `nao:<code>`, one-shot:
+   the message is rewritten with the outcome). Agents escalate with `cli tasks ask <task-id> "<question>"`,
+   which marks the task `blocked` and sends the buttons. Typed commands (`/status`, `/tarefas`,
+   `/ok <code>`, `/nao <code>`, `/ajuda`) still work. Any other text becomes an `orchestrator` task
+   "Fundador (Telegram): …" with priority 2, answered with a 🚫 button to withdraw it; the headless prompt
+   treats those tasks as founder instructions inside the rules.
 2. **External watchdog.** A claude.ai/code scheduled routine in the "PatentSonar" cloud environment runs
    every morning (fresh session), calls `ops.sh status` and the new read-only `ops.sh agent-health` job
    (timers, last headless runs and exit codes, failed units, disk, last ingest runs, blocked tasks), and
