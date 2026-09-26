@@ -33,7 +33,7 @@ export const NICHE = {
     "tetrataenite", "L10 FeNi", "L1 0 FeNi", "FeNi L10",
     "hexaferrite", "strontium ferrite", "barium ferrite", "La-Co ferrite", "lanthanum cobalt ferrite",
     "rare earth free", "rare-earth-free", "free of rare earth", "without rare earth", "rare earth-free",
-    "rare-earth-lean", "rare earth lean", "reduced dysprosium", "dysprosium-free", "heavy rare earth free",
+    "rare-earth-lean", "rare earth lean", "reduced dysprosium", "dysprosium-free", "heavy rare earth free", "heavy rare earth-free", "heavy rare-earth-free",
     "cerium magnet", "Ce-substituted", "cerium-substituted", "cerium substituted", "Ce-Fe-B", "La-Ce", "Dy-free",
     "Fe8N", "α″-Fe16N2", "Mn-Al-C", "tau phase", "τ-phase", "L1₀-FeNi", "FeNi ordered", "La-Co substituted",
     "magnet-free motor", "magnetless", "synchronous reluctance",
@@ -47,8 +47,8 @@ export const NICHE = {
     mnal: ["mnal", "manganese alumin", "tau-phase", "τ-mnal"],
     feni_l10: ["tetrataenite", "l10 feni", "feni l10", "l1 0 feni"],
     ferrite: ["ferrite"],
-    re_lean: ["rare-earth-lean", "rare earth lean", "reduced dysprosium", "dysprosium-free", "dy-free", "heavy rare earth free", "cerium", "ce-substituted", "ce-fe-b", "la-ce"],
-    motor_topology: ["reluctance", "wound rotor", "flux barrier", "induction motor", "magnet-free", "magnetless"],
+    re_lean: ["rare-earth-lean", "rare earth lean", "reduced dysprosium", "dysprosium-free", "dy-free", "heavy rare earth free", "heavy rare earth-free", "heavy rare-earth-free", "cerium", "ce-substituted", "ce-fe-b", "la-ce"],
+    motor_topology: ["reluctance", "wound rotor", "flux barrier", "induction motor", "magnet-free", "magnetless", "motor"],
   } as Record<string, string[]>,
 };
 
@@ -76,22 +76,32 @@ export function isIncludedCpc(code: string): boolean {
   return NICHE.cpcInclude.some((p) => code.startsWith(p));
 }
 
+/** Words that place a text in the magnet / electric-machine domain. Keyword-only hits need one of these. */
+export const MAGNET_CONTEXT_RE = /\b(magnet|magnets|magnetic|magnetism|magnetized|magnetised|permanent[- ]magnet|coerciv\w*|remanen\w*|\(bh\)max|energy product|hard[- ]magnetic|ferrite|ferrites|hexaferrite|motor|motors|rotor|stator|generator|actuator|electric machine|reluctance)\b/i;
+
 /**
  * Relevance decision. Returns matched terms if the record is on-topic, else null.
- * Rule: (RE-free keyword) OR (included CPC AND not (RE CPC without RE-free keyword) AND not pure noise).
+ * Rules (ADR 0011 tightened the keyword-only path after the five-year backfill):
+ *  - an RE-free / RE-lean phrase counts only in a magnet or electric-machine context (a "rare-earth-free
+ *    aluminium alloy" or catalyst is out), and then even under a rare-earth CPC (reduced-Dy, Ce-substituted work);
+ *  - a rare-earth CPC without such a phrase is out (plain NdFeB/SmCo);
+ *  - a material keyword (iron nitride, MnBi, ferrite...) counts with an included CPC, or with magnet context;
+ *  - noise terms (NdFeB, SmCo, Sm2Fe17...) veto the keyword paths.
  */
 export function classify(pub: { title?: string | null; abstract?: string | null; cpc_codes: string[] }): string[] | null {
   const text = `${pub.title ?? ""} \n ${pub.abstract ?? ""}`;
   const terms = matchTerms(text);
+  if (terms.length === 0) return null;
   const hasRe = pub.cpc_codes.some(isRareEarthCpc);
   const hasInc = pub.cpc_codes.some(isIncludedCpc);
   const lower = text.toLowerCase();
   const noisy = NICHE.noise.some((n) => lower.includes(n.toLowerCase()));
+  const magnetContext = MAGNET_CONTEXT_RE.test(text) || hasInc;
   const reFreeTerm = terms.some((k) => /rare|dysprosium|dy-free|cerium|ce-sub|ce-fe-b|la-ce/i.test(k));
-  if (reFreeTerm) return terms;
-  if (hasRe && !reFreeTerm) return null; // RE alloy patent that does not claim RE-free/lean
-  if (terms.length > 0 && !noisy) return terms;
-  if (hasInc && !noisy && terms.length > 0) return terms;
+  if (reFreeTerm) return magnetContext ? terms : null;
+  if (hasRe) return null; // RE alloy patent that does not claim RE-free/lean
+  if (noisy) return null;
+  if (hasInc || magnetContext) return terms;
   return null;
 }
 

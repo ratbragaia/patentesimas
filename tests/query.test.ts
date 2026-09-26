@@ -36,6 +36,21 @@ describe("token matching (landscape backfill findings, ADR 0011)", () => {
   });
 });
 
+describe("magnet context for keyword-only hits (ADR 0011)", () => {
+  it("rejects rare-earth-free alloys and catalysts with no magnet context", () => {
+    expect(classify({ title: "Rare earth-free high-strength heat-resistant aluminum alloy material", abstract: "An Al-Si-Cu alloy for engine blocks.", cpc_codes: ["C22C21/02"] })).toBeNull();
+    expect(classify({ title: "Hydroisomerization catalyst", abstract: "A rare-earth-free zeolite catalyst for aviation kerosene.", cpc_codes: ["B01J29/00"] })).toBeNull();
+    expect(classify({ title: "Vanadium nitride iron preparation", abstract: "Carbon-deficiency reduction and ammonia deoxidation of iron nitride precursors for steelmaking.", cpc_codes: ["C22C35/00"] })).toBeNull();
+  });
+  it("keeps rare-earth-free work in a magnet or motor context, and buckets it", () => {
+    const r = classify({ title: "Rare earth-free energy-saving motor", abstract: "A six-film integrated self-driven motor without permanent magnets.", cpc_codes: ["H02K1/00"] });
+    expect(r).not.toBeNull(); expect(bucketFor(r!, ["H02K1/00"])).toBe("motor_topology");
+    const h = classify({ title: "Heavy rare earth-free high-coercivity neodymium-iron-boron permanent magnet material", abstract: "", cpc_codes: ["H01F1/057"] });
+    expect(h).not.toBeNull(); expect(bucketFor(h!, ["H01F1/057"])).toBe("re_lean");
+    expect(classify({ title: "Bulk iron nitride magnet", abstract: "Fe16N2 with high coercivity", cpc_codes: [] })).not.toBeNull();
+  });
+});
+
 describe("research-driven edge cases", () => {
   it("rejects the Sm2Fe17Nx nitride trap", () => {
     expect(classify({ title: "Sm2Fe17N3 magnet powder", abstract: "A rare earth iron nitride Sm2Fe17Nx...", cpc_codes: ["H01F1/059"] })).toBeNull();
