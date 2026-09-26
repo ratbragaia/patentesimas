@@ -75,7 +75,8 @@ async function upsertSubscription(sub: any, environment: PaddleEnvironment) {
   const customerId = await ensureCustomer(sub.customer_id, environment);
   const item = sub.items?.[0];
   const priceId = item?.price?.id;
-  const { data: plan } = await db().from("plans").select("code").or(`paddle_price_id_month.eq.${priceId},paddle_price_id_year.eq.${priceId}`).maybeSingle();
+  const cols = environment === "sandbox" ? ["paddle_price_id_month_sandbox", "paddle_price_id_year_sandbox"] : ["paddle_price_id_month", "paddle_price_id_year"];
+  const { data: plan } = await db().from("plans").select("code").or(`${cols[0]}.eq.${priceId},${cols[1]}.eq.${priceId}`).maybeSingle();
   await db().from("subscriptions").upsert({
     paddle_subscription_id: sub.id, customer_id: customerId, plan_code: plan?.code ?? "analyst", environment,
     status: STATUS_MAP[sub.status] ?? "active", seats: item?.quantity ?? 1,

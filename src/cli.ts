@@ -9,6 +9,8 @@
  *   cli newsletter build-latest        build the issue for the last full Mon-Sun week
  *   cli newsletter send <issue#>       send a QA-passed issue (idempotent)
  *   cli newsletter send-latest         send the most recent issue in status 'ready' 
+ *   cli paddle plans-sync sandbox|production   create/reuse the 3 products and prices in Paddle, store ids in ps.plans
+ *   cli paddle simulate sandbox|production <event>   Paddle sends a signed test webhook to us; confirms it landed
  *   cli invoices issue                 issue pending NFS-e via NFe.io (one per Paddle payout, ADR 0002)
  *   cli invoices preview [usd] [UK|US|IE]  print the NFS-e draft and the Notaas payload for a sample payout; sends nothing
  *   cli invoices enqueue-payout <payout_id> <UK|US|IE> <usd> <YYYY-MM-DD> [reverse_invoice_ref]   record a Paddle payout for NFS-e
@@ -65,6 +67,18 @@ async function main() {
       const { data } = await db().from("issues").select("issue_number").eq("status", "ready").eq("kind", "weekly").order("issue_number", { ascending: false }).limit(1).maybeSingle();
       if (!data) { log.info("no issue in status ready; nothing to send"); break; }
       console.log(await sendIssue(data.issue_number)); break;
+    }
+    case "paddle plans-sync": {
+      const { ensurePlans } = await import("./billing/paddle-api.js");
+      const env = rest[0] === "production" ? "production" : "sandbox";
+      console.log(JSON.stringify({ env, plans: await ensurePlans(env) }, null, 1)); break;
+    }
+    case "paddle simulate": {
+      const { simulate, SIMULATION_TYPES } = await import("./billing/paddle-api.js");
+      const env = rest[0] === "production" ? "production" : "sandbox";
+      const type = (rest[1] ?? "subscription.created") as any;
+      if (!SIMULATION_TYPES.includes(type)) throw new Error(`event must be one of ${SIMULATION_TYPES.join(", ")}`);
+      console.log(JSON.stringify({ env, type, ...(await simulate(env, type)) }, null, 1)); break;
     }
     case "invoices preview": {
       const { buildNfseDraft, toNotaasPayload, ptaxRate } = await import("./invoicing/nfse.js");
