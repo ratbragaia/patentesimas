@@ -1,8 +1,7 @@
 -- PatentSonar — company memory schema
--- Apply with: psql "$SUPABASE_DB_URL" -f supabase/migrations/0001_init.sql
+-- Apply with: bash infra/vps/apply-migrations.sh (re-runnable: every statement is idempotent)
 -- All tables live in schema `ps`. Service-role key only; no anon access.
 
-create extension if not exists pgcrypto;
 create schema if not exists ps;
 set search_path to ps, public;
 
@@ -11,13 +10,21 @@ create or replace function ps.set_updated_at() returns trigger language plpgsql 
 begin new.updated_at = now(); return new; end $$;
 
 -- ---------- CRM: accounts, contacts, leads ----------
-create type ps.account_segment as enum (
+do $$ begin
+  if not exists (select 1 from pg_type t join pg_namespace n on n.oid = t.typnamespace where n.nspname = 'ps' and t.typname = 'account_segment') then
+    create type ps.account_segment as enum (
   'magnet_producer','automaker','emotor','wind','defense_aerospace','materials_chemicals',
   'consumer_electronics','industrial_motors','research_institute','investor','other');
-create type ps.lead_stage as enum (
+  end if;
+end $$;
+do $$ begin
+  if not exists (select 1 from pg_type t join pg_namespace n on n.oid = t.typnamespace where n.nspname = 'ps' and t.typname = 'lead_stage') then
+    create type ps.lead_stage as enum (
   'identified','researched','contacted','replied','qualified','trial','negotiation','won','lost','do_not_contact');
+  end if;
+end $$;
 
-create table ps.accounts (
+create table if not exists ps.accounts (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   domain text,
@@ -30,9 +37,9 @@ create table ps.accounts (
   updated_at timestamptz not null default now(),
   unique (name)
 );
-create trigger accounts_updated before update on ps.accounts for each row execute function ps.set_updated_at();
+create or replace trigger accounts_updated before update on ps.accounts for each row execute function ps.set_updated_at();
 
-create table ps.contacts (
+create table if not exists ps.contacts (
   id uuid primary key default gen_random_uuid(),
   account_id uuid references ps.accounts(id) on delete cascade,
   full_name text,
@@ -46,9 +53,9 @@ create table ps.contacts (
   updated_at timestamptz not null default now(),
   unique (email)
 );
-create trigger contacts_updated before update on ps.contacts for each row execute function ps.set_updated_at();
+create or replace trigger contacts_updated before update on ps.contacts for each row execute function ps.set_updated_at();
 
-create table ps.leads (
+create table if not exists ps.leads (
   id uuid primary key default gen_random_uuid(),
   account_id uuid not null references ps.accounts(id) on delete cascade,
   contact_id uuid references ps.contacts(id) on delete set null,
@@ -60,20 +67,20 @@ create table ps.leads (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger leads_updated before update on ps.leads for each row execute function ps.set_updated_at();
-create index on ps.leads (stage, next_action_at);
+create or replace trigger leads_updated before update on ps.leads for each row execute function ps.set_updated_at();
+create index if not exists leads_stage_next_action_at_idx on ps.leads (stage, next_action_at);
 
 -- Suppression list: honoured before ANY outbound email.
-create table ps.do_not_contact (
+create table if not exists ps.do_not_contact (
   email text primary key,
   domain text,
   reason text not null,      -- 'unsubscribed' | 'complaint' | 'bounce' | 'requested' | 'legal'
   created_at timestamptz not null default now()
 );
-create index on ps.do_not_contact (domain);
+create index if not exists do_not_contact_domain_idx on ps.do_not_contact (domain);
 
 -- ---------- Outreach ----------
-create table ps.outreach_messages (
+create table if not exists ps.outreach_messages (
   id uuid primary key default gen_random_uuid(),
   lead_id uuid references ps.leads(id) on delete cascade,
   contact_id uuid references ps.contacts(id) on delete cascade,
@@ -86,12 +93,16 @@ create table ps.outreach_messages (
   sent_at timestamptz,
   created_at timestamptz not null default now()
 );
-create index on ps.outreach_messages (contact_id, created_at);
+create index if not exists outreach_messages_contact_id_created_at_idx on ps.outreach_messages (contact_id, created_at);
 
 -- ---------- Customers & subscriptions ----------
-create type ps.subscription_status as enum ('trialing','active','past_due','paused','canceled');
+do $$ begin
+  if not exists (select 1 from pg_type t join pg_namespace n on n.oid = t.typnamespace where n.nspname = 'ps' and t.typname = 'subscription_status') then
+    create type ps.subscription_status as enum ('trialing','active','past_due','paused','canceled');
+  end if;
+end $$;
 
-create table ps.customers (
+create table if not exists ps.customers (
   id uuid primary key default gen_random_uuid(),
   account_id uuid references ps.accounts(id),
   legal_name text not null,
@@ -102,9 +113,9 @@ create table ps.customers (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger customers_updated before update on ps.customers for each row execute function ps.set_updated_at();
+create or replace trigger customers_updated before update on ps.customers for each row execute function ps.set_updated_at();
 
-create table ps.plans (
+create table if not exists ps.plans (
   code text primary key,                 -- 'analyst' | 'team' | 'enterprise'
   name text not null,
   price_usd_month numeric(10,2) not null,
@@ -116,7 +127,7 @@ create table ps.plans (
   active boolean not null default true
 );
 
-create table ps.subscriptions (
+create table if not exists ps.subscriptions (
   id uuid primary key default gen_random_uuid(),
   customer_id uuid not null references ps.customers(id) on delete cascade,
   plan_code text not null references ps.plans(code),
@@ -128,22 +139,22 @@ create table ps.subscriptions (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger subscriptions_updated before update on ps.subscriptions for each row execute function ps.set_updated_at();
+create or replace trigger subscriptions_updated before update on ps.subscriptions for each row execute function ps.set_updated_at();
 
 -- Recipients of the newsletter (customer seats). Suppression is checked at send time.
-create table ps.subscribers (
+create table if not exists ps.subscribers (
   id uuid primary key default gen_random_uuid(),
   subscription_id uuid not null references ps.subscriptions(id) on delete cascade,
   email text not null,
   full_name text,
   active boolean not null default true,
-  unsubscribe_token text not null unique default encode(gen_random_bytes(16),'hex'),
+  unsubscribe_token text not null unique default replace(gen_random_uuid()::text, '-', ''),
   created_at timestamptz not null default now(),
   unique (subscription_id, email)
 );
 
 -- ---------- Billing events (idempotency) ----------
-create table ps.billing_events (
+create table if not exists ps.billing_events (
   event_id text primary key,             -- Paddle event_id (or our idempotency key)
   event_type text not null,
   occurred_at timestamptz,
@@ -153,7 +164,7 @@ create table ps.billing_events (
   created_at timestamptz not null default now()
 );
 
-create table ps.invoices (
+create table if not exists ps.invoices (
   id uuid primary key default gen_random_uuid(),
   idempotency_key text not null unique,  -- e.g. paddle transaction id
   customer_id uuid not null references ps.customers(id),
@@ -170,9 +181,9 @@ create table ps.invoices (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger invoices_updated before update on ps.invoices for each row execute function ps.set_updated_at();
+create or replace trigger invoices_updated before update on ps.invoices for each row execute function ps.set_updated_at();
 
-create table ps.spend_approvals (
+create table if not exists ps.spend_approvals (
   id uuid primary key default gen_random_uuid(),
   description text not null,
   amount_usd numeric(12,2) not null,
@@ -183,7 +194,7 @@ create table ps.spend_approvals (
 );
 
 -- ---------- Patent data (the product) ----------
-create table ps.ingest_runs (
+create table if not exists ps.ingest_runs (
   id uuid primary key default gen_random_uuid(),
   source text not null check (source in ('patentsview','epo_ops','bigquery')),
   window_start date not null,
@@ -197,7 +208,7 @@ create table ps.ingest_runs (
 );
 
 -- One row per publication (application or grant), any office. Source of truth for QA.
-create table ps.patent_publications (
+create table if not exists ps.patent_publications (
   publication_number text primary key,        -- normalised: CC-NUMBER-KIND e.g. US-12345678-B2
   country_code char(2) not null,
   kind_code text,
@@ -217,12 +228,12 @@ create table ps.patent_publications (
   matched_terms text[] default '{}',           -- which niche terms/CPCs matched
   first_seen_at timestamptz not null default now()
 );
-create index on ps.patent_publications (publication_date desc);
-create index on ps.patent_publications (family_id);
-create index on ps.patent_publications using gin (cpc_codes);
+create index if not exists patent_publications_publication_date_desc_idx on ps.patent_publications (publication_date desc);
+create index if not exists patent_publications_family_id_idx on ps.patent_publications (family_id);
+create index if not exists patent_publications_cpc_codes_idx on ps.patent_publications using gin (cpc_codes);
 
 -- Deduplicated families with editorial layer.
-create table ps.patent_families (
+create table if not exists ps.patent_families (
   family_id text primary key,
   representative_publication text references ps.patent_publications(publication_number),
   earliest_priority_date date,
@@ -234,10 +245,10 @@ create table ps.patent_families (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger families_updated before update on ps.patent_families for each row execute function ps.set_updated_at();
+create or replace trigger families_updated before update on ps.patent_families for each row execute function ps.set_updated_at();
 
 -- ---------- Content ----------
-create table ps.issues (
+create table if not exists ps.issues (
   id uuid primary key default gen_random_uuid(),
   issue_number int not null unique,
   kind text not null default 'weekly' check (kind in ('weekly','monthly_report','special')),
@@ -254,9 +265,9 @@ create table ps.issues (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger issues_updated before update on ps.issues for each row execute function ps.set_updated_at();
+create or replace trigger issues_updated before update on ps.issues for each row execute function ps.set_updated_at();
 
-create table ps.deliveries (
+create table if not exists ps.deliveries (
   id uuid primary key default gen_random_uuid(),
   issue_id uuid not null references ps.issues(id) on delete cascade,
   subscriber_id uuid not null references ps.subscribers(id) on delete cascade,
@@ -267,7 +278,7 @@ create table ps.deliveries (
 );
 
 -- ---------- Task queue (orchestrator memory) ----------
-create table ps.tasks (
+create table if not exists ps.tasks (
   id uuid primary key default gen_random_uuid(),
   agent text not null,                          -- market-research | prospecting | sales | production | finance | reporting | orchestrator
   title text not null,
@@ -282,11 +293,11 @@ create table ps.tasks (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create trigger tasks_updated before update on ps.tasks for each row execute function ps.set_updated_at();
-create index on ps.tasks (status, priority, due_at);
+create or replace trigger tasks_updated before update on ps.tasks for each row execute function ps.set_updated_at();
+create index if not exists tasks_status_priority_due_at_idx on ps.tasks (status, priority, due_at);
 
 -- ---------- Audit log ----------
-create table ps.audit_log (
+create table if not exists ps.audit_log (
   id bigserial primary key,
   actor text not null,
   action text not null,
@@ -297,7 +308,7 @@ create table ps.audit_log (
 );
 
 -- ---------- Views ----------
-create view ps.v_active_recipients as
+create or replace view ps.v_active_recipients as
   select s.id as subscriber_id, s.email, s.full_name, s.unsubscribe_token, sub.plan_code, c.legal_name
   from ps.subscribers s
   join ps.subscriptions sub on sub.id = s.subscription_id
@@ -305,10 +316,10 @@ create view ps.v_active_recipients as
   where s.active and sub.status in ('trialing','active','past_due')
     and not exists (select 1 from ps.do_not_contact d where d.email = s.email);
 
-create view ps.v_funnel as
+create or replace view ps.v_funnel as
   select stage, count(*) as n from ps.leads group by stage;
 
-create view ps.v_mrr as
+create or replace view ps.v_mrr as
   select coalesce(sum(p.price_usd_month * sub.seats),0) as mrr_usd, count(*) as active_subscriptions
   from ps.subscriptions sub join ps.plans p on p.code = sub.plan_code
   where sub.status in ('active','past_due');
