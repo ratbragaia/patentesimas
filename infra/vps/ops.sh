@@ -12,7 +12,7 @@ curl -sS --max-time 1900 -X POST "https://${OPS_HOST:-patentsonar.com}/ops/run" 
   -d "{\"job\":\"$JOB\",\"args\":$ARGS}" | python3 -c '
 import json,sys
 r=json.load(sys.stdin)
-print(f"== {r[\"job\"]} ok={r[\"ok\"]} code={r[\"code\"]} {r[\"ms\"]}ms")
+print("== %s ok=%s code=%s %sms" % (r["job"], r["ok"], r["code"], r["ms"]))
 if r["stdout"].strip(): print(r["stdout"].rstrip())
 if r["stderr"].strip(): print("-- stderr --"); print(r["stderr"].rstrip())
 sys.exit(0 if r["ok"] else 1)'
