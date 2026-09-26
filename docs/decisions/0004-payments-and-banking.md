@@ -13,6 +13,13 @@ Date: 2026-09-25 · Status: accepted, with two confirmations pending
 - Fallbacks if Paddle declines the business: Dodo Payments (Brazil supported, 4% + US$0.40),
   FastSpring (custom). Stripe Brazil settles in BRL only and shifts foreign VAT duty to us.
 
+## Update 2026-09-26 (research 04 §7)
+- Paddle: re-checked; Brazil is not on Paddle's excluded-seller list, payouts by bank transfer / PayPal /
+  Payoneer, US$100 minimum, no Paddle payout fee. Written confirmation at onboarding still required.
+- Nomad (founder's question): **ruled out**. PF-only, no CNPJ account; paying company revenue into a
+  personal account would break the NFS-e export flow. Ranking stays Wise Business → Payoneer; Husky
+  (Nomad's PJ acquisition) only as a third check if both fail.
+
 ## Decision
 1. Apply to Paddle first; request **written confirmation** of Brazilian seller eligibility and payout
    route at onboarding. Sandbox integration is built and tested against signature verification.

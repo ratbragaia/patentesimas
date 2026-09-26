@@ -318,3 +318,43 @@ Secondary (fetched: EmailOctopus repo; others excerpt-only):
 - Colinear — exportação de serviços Simples (devs): https://colinear.com.br/exportacao-de-servicos-com-simples-nacional-guia-para-devs/ · Art Data Contábil: https://www.artdatacontabil.com.br/exportacao-servicos-simples-nacional/ · Grupo Módulos PGDAS-D: https://grupomodulos.com.br/centraldeajuda/pgdas-d-simples-nacional/ · Contabilidade Cidadã: https://contabilidadecidada.com.br/pgdas-do-simples-nacional/
 - SINDCONT-SP — Siscoserv extinto: https://www.sindcontsp.org.br/obrigatoriedade-de-entrega-do-siscoserv-e-extinta/ · Vieira Rezende: https://www.vieirarezende.com.br/newsletter/portaria-extingue-o-siscoserv · Thomson Reuters: https://www.thomsonreuters.com.br/pt/tax-accounting/comercio-exterior/blog/tudo-o-que-voce-precisa-saber-sobre-a-descontinuacao-do-siscoserv.html
 - RAG Repo — EPO Espacenet/OPS notes: https://rag-repo.org/source/epo-espacenet/
+
+## 7. Update 2026-09-26 — Paddle seller eligibility (Brazil) and USD receiving account (Nomad checked)
+
+Requested by the founder. Sources are web-search excerpts; paddle.com, wise.com and Nomad's help centre are
+blocked by the cloud session's egress proxy, so no page was read in full (**[excerpt-only]** throughout).
+
+### 7.1 Paddle — Brazilian company as seller
+- Paddle's help article "Which countries are supported by Paddle?" says Paddle supports sellers and can pay
+  out anywhere in the world except the sanctioned countries it lists; **Brazil is not on the excluded list**,
+  and Brazil also appears as a supported buyer country (Boleto at checkout). Unchanged from §3.2.
+  [Paddle help — supported countries](https://www.paddle.com/help/start/intro-to-paddle/which-countries-are-supported-by-paddle)
+- Payouts: bank transfer (ACH / SEPA / international wire), PayPal or Payoneer; minimum threshold US$100;
+  payout created on the 1st, sent by the 15th; Paddle adds no payout fee, the receiving bank or provider may.
+  A wire whose currency differs from the bank's country goes by SWIFT (so a USD wire to a BRL account is a
+  SWIFT transfer with the bank's spread).
+  [Paddle help — when and how do I get paid](https://www.paddle.com/help/manage/get-paid/when-and-how-do-i-get-paid),
+  [Paddle help — payout fees](https://www.paddle.com/help/manage/get-paid/is-there-a-fee-taken-for-payouts)
+- Still true: Paddle reviews each seller's business and product; a paid newsletter is a normal "digital
+  content / SaaS" category, but approval is manual. Ask for written confirmation at onboarding (ADR 0004).
+- Contrast: Stripe Managed Payments does **not** support Brazil as a merchant country, which removes the
+  main alternative MoR. [Paddle resource on Stripe Managed Payments](https://www.paddle.com/resources/stripe-managed-payments)
+
+### 7.2 Nomad — ruled out for the company
+- Nomad's international account is **for individuals (PF) only**; there is no CNPJ / PJ account. It receives
+  USD-only transfers by ACH or wire, which would suit a person, not the company.
+  [Wise blog — Nomad para PJ](https://wise.com/br/blog/nomad-para-pj),
+  [Nomad help — receiving transfers](https://benomad.zendesk.com/hc/pt-br/articles/16288049369367),
+  [Nomad — PF ou PJ](https://www.nomadglobal.com/conteudos/pf-ou-pj)
+- Receiving Paddle's payouts (owed to the CNPJ, invoiced by NFS-e as an export of services) into a personal
+  account would mix PF and PJ money and break the fiscal flow in ADR 0002/0004. Not an option even as a stopgap.
+- Nomad acquired **Husky** (2024), a multi-currency platform that does serve legal entities; worth a look
+  only if Wise Business and Payoneer both fail. **[unverified — not researched]**
+
+### 7.3 Options that do take a CNPJ (unchanged ranking)
+| Option | Fits a Paddle payout? | Cost signals (excerpts) |
+|---|---|---|
+| **Wise Business** | Yes: USD balance with US account details, ACH/wire in | Only EI/MEI, Ltda/SLU and single-lawyer firms; owner holds the personal Wise account; R$250 activation (§4.1) |
+| **Payoneer** (business account) | Yes, native Paddle payout method | Company registration + proof of address; 1% (min US$1) on receiving-account payments; 1–4% plus ~2% FX to withdraw to a Brazilian bank; US$50 minimum withdrawal. [Payoneer fees](https://payoneer.custhelp.com/app/answers/detail/a_id/40208), [Wise blog — Payoneer for companies](https://wise.com/br/blog/criar-conta-payoneer) |
+| C6 Bank / Inter international PJ account | Yes (wire in) | C6: US$15 opening, US$10 per receipt, US$20 per transfer (excerpt) — check current tables |
+| Nomad | **No** (PF only) | — |
