@@ -41,7 +41,7 @@ Patents Public Data and PatentsView.
    sanctions clause (Paddle also enforces), force majeure, assignment, notices, severability, entire
    agreement, survival, language clause.
 9. **Privacy policy.** Fixed LGPD article numbers (legitimate interest is Art. 7, IX; contract Art. 7, V);
-   replaced placeholders with the real processor list and locations (Supabase us-east-1, Postmark/ActiveCampaign,
+   replaced placeholders with the real processor list and locations (Supabase us-east-1, Hostinger VPS in Boston/US per `ops.sh host-info`, Postmark/ActiveCampaign,
    Paddle, Cloudflare, Google BigQuery, Anthropic, Telegram for internal alerts, Notaas); disclosed the hashed
    IP kept by the sample form and the AI-assisted drafting of replies; added transfer mechanisms (SCCs/DPF;
    ANPD clauses), the small-agent encarregado position, security and breach commitments, LGPD 15-day

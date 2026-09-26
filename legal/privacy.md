@@ -24,7 +24,7 @@ We do not use tracking pixels for individual open tracking, do not profile reade
 |---|---|---|
 | Paddle.com Market Ltd / Paddle.com Inc. | Merchant of Record: checkout, payment, receipts, taxes (independent controller for its own purposes) | UK / US |
 | Supabase Inc. (on Amazon Web Services) | Database hosting | US (us-east-1) |
-| Hostinger International Ltd | Application server hosting | Lithuania (data centre location as published in our security note) |
+| Hostinger International Ltd | Application server hosting | US (Boston, Massachusetts data centre) |
 | ActiveCampaign LLC (Postmark) | Newsletter and transactional email delivery, bounce handling | US |
 | Cloudflare Inc. | DNS, routing of inbound email to our server, edge security | US (global network) |
 | Google LLC (BigQuery) | Patent data processing; no reader or customer personal data | US |
@@ -32,7 +32,7 @@ We do not use tracking pixels for individual open tracking, do not profile reade
 | Telegram | Internal operational alerts to our founder, which may contain a prospect's name and email | EU / UAE |
 | Notaas / national NFS-e system | Brazilian tax invoices to Paddle; no subscriber personal data | Brazil |
 
-**International transfers.** We are established in Brazil; your data may be processed in Brazil, the US and the EU. For data of people in the EU/UK, transfers to our processors rely on the EU/UK Standard Contractual Clauses or the EU-US Data Privacy Framework where the processor is certified. For transfers out of Brazil, we use the standard contractual clauses approved by the ANPD (Resolução CD/ANPD 19/2024) or another mechanism under Art. 33 LGPD.
+**International transfers.** We are established in Brazil; our application server and database are in the United States, so your data is processed in Brazil, the US and, for some providers, the EU. For data of people in the EU/UK, transfers to our processors rely on the EU/UK Standard Contractual Clauses or the EU-US Data Privacy Framework where the processor is certified. For transfers out of Brazil, we use the standard contractual clauses approved by the ANPD (Resolução CD/ANPD 19/2024) or another mechanism under Art. 33 LGPD.
 
 **Security.** Data is encrypted in transit (TLS) and at rest by our hosting providers, access is limited to what operating the Service requires, credentials are segregated per service, and every automated action is logged. If a personal-data breach is likely to create risk to you, we will notify the competent authority and, where required, you, within the legal deadlines (Art. 48 LGPD; Art. 33–34 GDPR).
 
