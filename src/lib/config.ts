@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { existsSync, readFileSync } from "node:fs";
+import { COMPANY } from "./company.js";
 
 /**
  * systemd units get credentials via EnvironmentFile=/etc/patentsonar/env. Interactive runs
@@ -26,7 +27,7 @@ export function loadEnvFile(path = ENV_FILE, env: NodeJS.ProcessEnv = process.en
 const schema = z.object({
   NODE_ENV: z.string().default("development"),
   COMPANY_NAME: z.string().default("PatentSonar"),
-  COMPANY_POSTAL_ADDRESS: z.string().default(""),
+  COMPANY_POSTAL_ADDRESS: z.string().default(COMPANY.postalAddress),
   PUBLIC_SITE_URL: z.string().default("https://patentsonar.com"),
   SPEND_CAP_USD_PER_ACTION: z.coerce.number().default(50),
   SPEND_CAP_USD_PER_MONTH: z.coerce.number().default(300),

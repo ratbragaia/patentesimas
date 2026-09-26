@@ -1,5 +1,7 @@
 # Order Form (fixed template — sales agent fills only the bracketed fields)
 
+**Provider:** Rockfort Hub de Inovação Ltda (PatentSonar), CNPJ 40.435.866/0001-40, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil.
+
 **Customer:** [legal name], [address], [country], tax ID [●]. Billing contact: [name, email].
 **Plan:** [Analyst | Team | Enterprise] · Readers: [n] · Term: [monthly | annual] · Start date: [YYYY-MM-DD].
 **Fees:** USD [●] per [month | year], billed in advance via Paddle (merchant of record). Taxes per Paddle checkout.

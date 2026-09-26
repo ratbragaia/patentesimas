@@ -1,6 +1,6 @@
 # Privacy Policy — PatentSonar (DRAFT, under legal review)
 
-**Controller.** PatentSonar, CNPJ [●], [address], privacy@patentsonar.com. We have not appointed an EU representative or DPO; we will do so if our processing requires it under Art. 27 / Art. 37 GDPR.
+**Controller.** Rockfort Hub de Inovação Ltda (trading as PatentSonar), CNPJ 40.435.866/0001-40, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil, privacy@patentsonar.com. We have not appointed an EU representative or DPO; we will do so if our processing requires it under Art. 27 / Art. 37 GDPR.
 
 **What we process and why**
 

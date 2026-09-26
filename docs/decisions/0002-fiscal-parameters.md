@@ -2,6 +2,12 @@
 
 Date: 2026-09-25 · Status: **pending** — invoices stay `pending` in `ps.invoices` until filled.
 
+Update 2026-09-26: entity confirmed by the founder — **Rockfort Hub de Inovação Ltda**, CNPJ 40.435.866/0001-40,
+Av. Tiradentes 209, Centro, São João del Rei/MG, 36307-346 (`src/lib/company.ts`). A Ltda, so Wise Business is
+eligible for the USD account (ADR 0004). Still missing from the accountant: CNAE used for the service export,
+NFS-e service code (LC 116 item), ISS treatment for exports, Simples Nacional annex, and whether the NFS-e is
+issued to Paddle for the net payout or gross.
+
 Research (`docs/research/04-compliance-and-payments.md` §5): a Simples Nacional ME/EPP excludes
 ISS, PIS, COFINS, ICMS and IPI from the DAS on export revenue (LC 123 art. 18 §14); IRPJ/CSLL still
 apply; export revenue is segregated monthly in PGDAS-D; export sub-limit R$4.8M separate from the

@@ -1,6 +1,6 @@
 # Terms of Service — PatentSonar (DRAFT, under legal review)
 
-**Provider.** PatentSonar ("we"), a company organised under the laws of Brazil, CNPJ [●], address [●]. Contact: legal@patentsonar.com.
+**Provider.** Rockfort Hub de Inovação Ltda, trading as PatentSonar ("we"), a company organised under the laws of Brazil, CNPJ 40.435.866/0001-40, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil. Contact: legal@patentsonar.com.
 
 **1. Service.** We provide a subscription information service consisting of a weekly email briefing, periodic reports and, for certain plans, alerts and archive access (the "Service") concerning published patent documents in the field of rare-earth-free and rare-earth-lean permanent magnets.
 
@@ -28,6 +28,6 @@
 
 **13. Governing law and disputes.** [To be confirmed by counsel: Brazilian law with courts of [city], or an arbitration clause; consider English-law option for EU/US enterprise customers.]
 
-**14. Contact.** legal@patentsonar.com · [postal address].
+**14. Contact.** legal@patentsonar.com · Rockfort Hub de Inovação Ltda, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil.
 
 _Version 0.1 draft, 2026-09-25. Not yet reviewed by counsel._
