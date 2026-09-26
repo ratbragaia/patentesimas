@@ -1,0 +1,7 @@
+[Unit]
+Description=PatentSonar — poll the outreach mailbox every 20 minutes
+[Timer]
+OnCalendar=*:0/20
+Persistent=true
+[Install]
+WantedBy=timers.target

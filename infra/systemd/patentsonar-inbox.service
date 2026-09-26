@@ -1,0 +1,11 @@
+[Unit]
+Description=PatentSonar — poll the outreach mailbox (IMAP → ps.inbound_emails)
+After=network-online.target
+[Service]
+Type=oneshot
+User=patentsonar
+WorkingDirectory=/opt/patentsonar
+EnvironmentFile=/etc/patentsonar/env
+ExecStart=/bin/bash -lc 'npx tsx src/cli.ts outreach poll'
+StandardOutput=append:/var/log/patentsonar/inbox.log
+StandardError=append:/var/log/patentsonar/inbox.log

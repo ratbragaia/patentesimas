@@ -6,7 +6,7 @@
 | Mon | Triage + analyst notes | production agent | all `new` families have `triage_status` and `include` ones have `analyst_summary` |
 | Tue 06:00 | Build issue | `patentsonar-newsletter-build.timer` | `ps.issues.status = ready`, founder got preview |
 | Wed 13:00 UTC | Send | `patentsonar-newsletter-send.timer` (sends latest `ready`) | `deliveries` rows `sent`; failures < 2% |
-| Thu | Prospecting + outreach batch | prospecting → sales agents | ≤ 25 compliant first-touch emails, all logged |
+| Thu | Prospecting + outreach batch | prospecting → sales agents; drafts land in `ps.outreach_messages`, `patentsonar-outreach.timer` sends them (`cli outreach send-batch`, warm-up ramp 5/10/20/25 per day) | ≤ 25 compliant first-touch emails, all logged; replies pulled every 20 min by `patentsonar-inbox.timer` |
 | Fri | Reconciliation + report | `patentsonar-invoices` (daily) + `patentsonar-report.timer` | Telegram report delivered |
 | Daily 07:00 | Invoices | `patentsonar-invoices.timer` → `invoices issue` | no `pending` invoice older than 24h |
 | Weekdays 07/10/13/16/19 UTC | Headless operator | `patentsonar-agent.timer` → `infra/agent/run.sh` (`claude -p`, ADR 0012) | drains `ps.tasks`, answers `ps.inbound_emails`; log in `/var/log/patentsonar/agent/` |

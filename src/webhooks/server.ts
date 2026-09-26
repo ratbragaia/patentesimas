@@ -13,6 +13,7 @@ import { timingSafeEqual } from "node:crypto";
 import { runJob } from "../ops/jobs.js";
 import { parseSampleRequest, recordSampleRequest, hashIp, RateLimiter } from "../site/sample-request.js";
 import { handleTelegramUpdate } from "../reporting/founder-inbox.js";
+import { verifyOptout } from "../outreach/mailer.js";
 import { telegramWebhookSecret } from "../reporting/telegram.js";
 import { parseInbound, recordInbound } from "../email/inbound.js";
 
@@ -138,6 +139,14 @@ export function startServer(port = config().WEBHOOK_PORT) {
         if (parsed.bot) { log.info("sample request honeypot hit; dropped", { ipHash }); reply(200, "ok"); return; }
         await recordSampleRequest(parsed.value, { ipHash, userAgent: (req.headers["user-agent"] as string | undefined) ?? null, freemail: parsed.freemail });
         reply(200, "ok"); return;
+      }
+
+      if ((req.method === "GET" || req.method === "POST") && url.pathname === "/api/optout") {
+        // One-click opt-out for outreach (RFC 8058 POST from mail clients, or the link). Token = HMAC of the address.
+        const email = verifyOptout(url.searchParams.get("e"), url.searchParams.get("t"));
+        if (email) await suppress(email, "unsubscribed");
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end("<!doctype html><meta charset=utf-8><title>Opted out</title><p style='font-family:sans-serif'>" + (email ? "You will not hear from PatentSonar again. Thank you for telling us." : "This opt-out link is not valid. Email support@patentsonar.com and we will remove you by hand.") + "</p>"); return;
       }
 
       if (req.method === "GET" && url.pathname === "/unsubscribe") {

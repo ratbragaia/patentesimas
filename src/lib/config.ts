@@ -63,6 +63,16 @@ const schema = z.object({
   POSTMARK_TRANSACTIONAL_STREAM: z.string().default("outbound"),
   EMAIL_FROM: z.string().default("PatentSonar <newsletter@patentsonar.com>"),
   OUTREACH_FROM: z.string().optional(),
+  /** Outreach mailbox on the separate domain (Hostinger Business Email or similar), ADR 0003 amendment. */
+  OUTREACH_SMTP_HOST: z.string().optional(),
+  OUTREACH_SMTP_PORT: z.coerce.number().default(465),
+  OUTREACH_SMTP_USER: z.string().optional(),
+  OUTREACH_SMTP_PASS: z.string().optional(),
+  OUTREACH_IMAP_HOST: z.string().optional(),
+  OUTREACH_IMAP_PORT: z.coerce.number().default(993),
+  OUTREACH_DAILY_CAP: z.coerce.number().default(25),
+  OUTREACH_OPTOUT_SECRET: z.string().optional(),
+  OPS_TOKEN: z.string().optional(),
 
   TELEGRAM_BOT_TOKEN: z.string().optional(),
   TELEGRAM_FOUNDER_CHAT_ID: z.string().optional(),

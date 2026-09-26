@@ -19,6 +19,9 @@
  *   cli report monthly [YYYY-MM] [print]  build the monthly landscape report (default: previous month); `print` = markdown only
  *   cli patents reclassify [apply]     re-run the niche classifier on stored rows; dry-run unless `apply`
  *   cli telegram setup                 register the bot webhook (two-way Telegram, ADR 0013); `cli telegram info` to inspect; `cli telegram hello` sends the keyboard
+ *   cli outreach send-batch [n]        send queued outreach drafts within today's allowance (warm-up ramp, cap 25)
+ *   cli outreach poll                  read the outreach mailbox (IMAP) into ps.inbound_emails; opt-out replies suppress
+ *   cli outreach allowance             show today's remaining allowance
  *   cli tasks list                     show open tasks
  *   cli tasks ask <id-or-code> <text>  escalate a task to the founder on Telegram with ✅/🚫 buttons (marks it blocked)
  *   cli inbound list                   show inbound emails awaiting a reply
@@ -130,6 +133,15 @@ async function main() {
       const hit = (data ?? []).find((t: any) => t.id === ref || t.id.replace(/-/g, "").startsWith(ref.toLowerCase()));
       if (!hit) throw new Error(`no open task matches ${ref}`);
       await escalateTask(hit.id, text); console.log(`asked founder about ${hit.id}`); break;
+    }
+    case "outreach send-batch": { const { sendBatch } = await import("./outreach/mailer.js"); console.log(JSON.stringify(await sendBatch(rest[0] ? Number(rest[0]) : undefined))); break; }
+    case "outreach poll": { const { pollInbox } = await import("./outreach/mailer.js"); console.log(JSON.stringify(await pollInbox())); break; }
+    case "outreach allowance": {
+      const { dailyAllowance } = await import("./outreach/mailer.js"); const { db } = await import("./lib/db.js"); const { config } = await import("./lib/config.js");
+      const today = new Date().toISOString().slice(0, 10);
+      const { data: first } = await db().from("outreach_messages").select("sent_at").eq("direction", "outbound").not("sent_at", "is", null).order("sent_at").limit(1).maybeSingle();
+      const { count } = await db().from("outreach_messages").select("*", { count: "exact", head: true }).eq("direction", "outbound").gte("sent_at", `${today}T00:00:00Z`);
+      console.log(JSON.stringify({ today, firstSend: first?.sent_at ?? null, allowance: dailyAllowance(first?.sent_at?.slice(0, 10) ?? null, today, config().OUTREACH_DAILY_CAP), sentToday: count ?? 0 })); break;
     }
     case "samples list": {
       const { db } = await import("./lib/db.js");

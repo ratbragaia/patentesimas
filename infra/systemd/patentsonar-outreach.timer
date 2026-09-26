@@ -1,0 +1,8 @@
+[Unit]
+Description=PatentSonar — outreach batch, weekdays 13:30 UTC (morning in the US, afternoon in Europe)
+[Timer]
+OnCalendar=Mon..Fri 13:30 UTC
+RandomizedDelaySec=600
+Persistent=true
+[Install]
+WantedBy=timers.target

@@ -8,7 +8,7 @@ import { spawn } from "node:child_process";
 export interface JobResult { job: string; ok: boolean; code: number | null; stdout: string; stderr: string; ms: number }
 
 const APP_DIR = process.env["APP_DIR"] ?? "/opt/patentsonar";
-const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "report resend", "invoices issue", "telegram setup", "telegram info", "telegram hello", "newsletter build-latest", "newsletter send-latest", "ingest"]);
+const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "outreach poll", "outreach allowance", "report weekly", "report resend", "invoices issue", "telegram setup", "telegram info", "telegram hello", "newsletter build-latest", "newsletter send-latest", "ingest"]);
 // Parameterised subcommands: only these shapes, nothing free-form.
 const CLI_PATTERNS = [
   /^ingest bigquery( backfill)?( dry-run)?$/,          // ADR 0009/0011: live BigQuery run, dry-run first
@@ -16,6 +16,7 @@ const CLI_PATTERNS = [
   /^newsletter send \d{1,6}$/,                          // send a specific QA-passed issue (weekly # or YYYYMM report)
   /^patents reclassify( apply)?$/,                      // re-run the classifier on stored rows (dry-run unless apply)
   /^tasks ask [0-9a-f-]{6,36} [^;&|`$]{3,300}$/,
+  /^outreach send-batch( \d{1,2})?$/,
   /^paddle plans-sync (sandbox|production)$/,
   /^paddle simulate (sandbox|production)( [a-z_]+\.[a-z_]+)?$/,
   /^invoices preview( \d+(\.\d{1,2})?( (UK|US|IE))?)?$/,   // prints the NFS-e payload, sends nothing

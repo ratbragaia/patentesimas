@@ -1,0 +1,11 @@
+[Unit]
+Description=PatentSonar — outreach batch (queued drafts, warm-up ramp, cap 25/day)
+After=network-online.target
+[Service]
+Type=oneshot
+User=patentsonar
+WorkingDirectory=/opt/patentsonar
+EnvironmentFile=/etc/patentsonar/env
+ExecStart=/bin/bash -lc 'npx tsx src/cli.ts outreach send-batch'
+StandardOutput=append:/var/log/patentsonar/outreach.log
+StandardError=append:/var/log/patentsonar/outreach.log

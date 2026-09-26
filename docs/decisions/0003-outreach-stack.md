@@ -45,10 +45,14 @@ own code and a manual ramp at this scale.
   whichever is simpler to buy alongside the domain; the agent's SMTP/IMAP code is provider-agnostic.
   ([Hostinger email pricing](https://hostadvice.com/hosting-company/hostinger-reviews/hostinger-email-pricing/),
   [Hostinger SMTP/IMAP settings](https://smtpedia.com/hostinger-email-settings/))
-- Sending and replies by the agent through SMTP/IMAP (`src/outreach/`, to build: sender with
-  `checkOutreach()` gate, IMAP poll for replies into `ps.outreach_messages`, suppression on any
-  unsubscribe). SPF/DKIM/DMARC on the outreach domain configured by the agent.
-- Manual warm-up ramp: week 1 ≤ 5/day (mostly to our own and known addresses), week 2 ≤ 10, week 3 ≤ 20,
+- Sending and replies by the agent through SMTP/IMAP — **built 2026-09-26** (`src/outreach/mailer.ts`):
+  `cli outreach send-batch` sends queued drafts (`ps.outreach_messages`, `sent_at null`) after re-running
+  `checkOutreach()` against the live suppression list, with `List-Unsubscribe` one-click headers and an
+  HMAC-signed `/api/optout` link (no database lookup to verify); `cli outreach poll` reads unseen mail via
+  IMAP into `ps.inbound_emails` through the same pipeline as support@, suppresses opt-out replies and moves
+  leads to `replied`. Timers: `patentsonar-outreach` (weekdays 13:30 UTC) and `patentsonar-inbox` (every
+  20 min). Config: `OUTREACH_SMTP_*`, `OUTREACH_IMAP_*`, `OUTREACH_DAILY_CAP` (25). SPF/DKIM/DMARC on the outreach domain configured by the agent.
+- Warm-up ramp enforced in code (`dailyAllowance()`): week 1 ≤ 5/day (mostly to our own and known addresses), week 2 ≤ 10, week 3 ≤ 20,
   then the 25/day cap. Bounce rate > 3% or any spam complaint pauses sending for the week.
 
 **Upgrade trigger:** move to Instantly/Smartlead only when a second mailbox is needed (sustained > 25
