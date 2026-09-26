@@ -13,6 +13,7 @@ describe("ops job catalogue", () => {
     expect(resolveJob("cli", ["tasks", "list"])).not.toBeNull();
     expect(resolveJob("caddy-sync")!.argv.join(" ")).toContain("caddy validate");
     expect(resolveJob("site-check")).not.toBeNull();
+    expect(resolveJob("ssh-check")!.argv.join(" ")).toContain("sshd_config.d");
   });
   it("allows only the catalogued CLI shapes", () => {
     for (const ok of ["samples list", "ingest bigquery", "ingest bigquery dry-run", "ingest bigquery backfill dry-run", "report monthly", "report monthly 2026-08", "report monthly 2026-08 print", "newsletter send 202608", "patents reclassify", "patents reclassify apply"]) expect(cliAllowed(ok), ok).toBe(true);

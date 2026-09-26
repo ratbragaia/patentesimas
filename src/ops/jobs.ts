@@ -36,6 +36,9 @@ export function resolveJob(name: string, args: string[] = []): Job | null {
     case "migrate": return { argv: ["bash", `${APP_DIR}/infra/vps/apply-migrations.sh`], timeoutMs: 300_000 };
     // Copy the repo Caddyfile into place, validate, reload (each step is an explicit sudoers entry).
     case "caddy-sync": return { argv: ["bash", "-lc", `sudo cp ${APP_DIR}/infra/Caddyfile /etc/caddy/Caddyfile && sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo systemctl reload caddy && sudo systemctl is-active caddy`] };
+    // Read-only SSH diagnosis: effective password/root settings (main file + .d overrides), keys installed for the
+    // agent user (fingerprints only), and the last auth events for root from the journal (sudo journalctl is in sudoers).
+    case "ssh-check": return { argv: ["bash", "-lc", "echo '== sshd settings (last match wins per file; .d files are included first)'; grep -Hn -i -E '^\\s*(PasswordAuthentication|PermitRootLogin|PubkeyAuthentication|KbdInteractiveAuthentication)' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf 2>/dev/null; echo '== keys for user patentsonar'; ssh-keygen -lf /home/patentsonar/.ssh/authorized_keys 2>/dev/null || echo none; echo '== last ssh auth events (root/publickey/password)'; sudo journalctl -u ssh -n 400 --no-pager 2>/dev/null | grep -i -E 'root|publickey|password|invalid' | tail -25"] };
     case "site-check": return { argv: ["bash", "-lc", "curl -s -o /dev/null -w 'index %{http_code}\n' https://patentsonar.com/ && curl -s -o /dev/null -w 'thanks %{http_code}\n' https://patentsonar.com/sample-requested.html && curl -s -o /dev/null -w 'api-get %{http_code}\n' https://patentsonar.com/api/sample-request && curl -s -X POST -H 'Content-Type: application/json' -d '{\"email\":\"not-an-email\"}' -w ' api-invalid %{http_code}\n' https://patentsonar.com/api/sample-request"] };
     case "restart": {
       const unit = args[0] ?? "patentsonar-webhooks";
