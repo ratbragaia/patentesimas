@@ -16,6 +16,13 @@ Work through this list top to bottom; tick items by editing this file and commit
       `cat ~/.ssh/id_ed25519.pub` and ask the founder (Telegram once configured, else in the terminal).
 - [x] https://patentsonar.com serves the site (HTTP/2 200, 2026-09-26) (`curl -sI https://patentsonar.com | head -1`).
 
+## 1b. HTTPS ops channel for cloud sessions (do once)
+- [ ] `git pull`, `npm ci --omit=dev && npm install --no-save tsx`, then `openssl rand -hex 32` → append
+      `OPS_TOKEN=<value>` to `/etc/patentsonar/env`, `sudo cp infra/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy`,
+      `sudo systemctl restart patentsonar-webhooks`. Test: `curl -s -X POST https://patentsonar.com/ops/run -H "Authorization: Bearer $OPS_TOKEN" -H 'Content-Type: application/json' -d '{"job":"status"}'`.
+- [ ] Tell the founder (one line, Portuguese) to add the same `OPS_TOKEN=<value>` to the "PatentSonar" cloud
+      environment variables at claude.ai/code, so cloud sessions can run `infra/vps/ops.sh`.
+
 ## 2. Credentials still missing (ask the founder for each; they create the account, you configure)
 - [ ] EPO OPS consumer key/secret (developers.epo.org → My Apps). Primary patent source.
 - [ ] PatentsView API key (PatentsView support portal).

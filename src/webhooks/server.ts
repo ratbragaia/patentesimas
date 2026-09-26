@@ -7,7 +7,19 @@ import { config, require } from "../lib/config.js";
 import { log } from "../lib/log.js";
 import { verifyPaddleSignature, handlePaddleEvent } from "../billing/paddle.js";
 import { suppress } from "../email/postmark.js";
-import { db } from "../lib/db.js";
+import { db, audit } from "../lib/db.js";
+import { timingSafeEqual } from "node:crypto";
+import { runJob } from "../ops/jobs.js";
+
+function tokenOk(header: string | undefined): boolean {
+  const expected = process.env["OPS_TOKEN"];
+  if (!expected || expected.length < 32 || !header?.startsWith("Bearer ")) return false;
+  const a = Buffer.from(header.slice(7)); const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+// crude rate limit: max 30 ops calls per 10 minutes
+const opsCalls: number[] = [];
 
 function readBody(req: import("node:http").IncomingMessage): Promise<string> {
   return new Promise((res, rej) => { let b = ""; req.on("data", (c) => (b += c)); req.on("end", () => res(b)); req.on("error", rej); });
@@ -33,6 +45,18 @@ export function startServer(port = config().WEBHOOK_PORT) {
         if (ev.RecordType === "SpamComplaint") await suppress(ev.Email, "complaint");
         if (ev.RecordType === "SubscriptionChange" && ev.SuppressSending) await suppress(ev.Recipient, "unsubscribed");
         res.writeHead(200); res.end("ok"); return;
+      }
+
+      if (req.method === "POST" && url.pathname === "/ops/run") {
+        if (!tokenOk(req.headers["authorization"] as string | undefined)) { res.writeHead(401); res.end("unauthorized"); return; }
+        const now = Date.now(); while (opsCalls.length && opsCalls[0]! < now - 600_000) opsCalls.shift();
+        if (opsCalls.length >= 30) { res.writeHead(429); res.end("rate limited"); return; }
+        opsCalls.push(now);
+        const body = JSON.parse((await readBody(req)) || "{}");
+        const job = String(body.job ?? ""); const args = Array.isArray(body.args) ? body.args.map(String).slice(0, 4) : [];
+        const result = await runJob(job, args);
+        try { await audit("cloud-session", "ops_run", "ops", job, { args, ok: result.ok, code: result.code, ms: result.ms }); } catch { /* audit needs Supabase; never block ops */ }
+        res.writeHead(result.ok ? 200 : 500, { "Content-Type": "application/json" }); res.end(JSON.stringify(result)); return;
       }
 
       if (req.method === "GET" && url.pathname === "/unsubscribe") {
