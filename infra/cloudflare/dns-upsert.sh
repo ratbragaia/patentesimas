@@ -24,7 +24,7 @@ case "$ID" in ERROR:*) echo "lookup failed: ${ID#ERROR:}"; exit 2;; esac
 if [ "$CHECK" = 1 ]; then
   printf '%s' "$EXISTING" | python3 -c 'import sys,json
 r=(json.load(sys.stdin).get("result") or [])
-print(f"found {r[0][\"type\"]} {r[0][\"name\"]} -> {r[0][\"content\"]}" if r else "none")'
+print("found %s %s -> %s" % (r[0]["type"], r[0]["name"], r[0]["content"]) if r else "none")'
   exit 0
 fi
 if [ -n "$ID" ]; then
