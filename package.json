@@ -17,7 +17,8 @@
     "newsletter:build": "tsx src/cli.ts newsletter build",
     "newsletter:send": "tsx src/cli.ts newsletter send",
     "report:weekly": "tsx src/cli.ts report weekly",
-    "webhooks": "tsx src/webhooks/server.ts"
+    "webhooks": "tsx src/webhooks/server.ts",
+    "legal:build": "tsx scripts/build-legal-pages.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
