@@ -81,7 +81,7 @@ export const SIMULATION_TYPES = ["subscription.created", "subscription.activated
 export async function simulate(env: PaddleEnvironment, type: (typeof SIMULATION_TYPES)[number]): Promise<{ simulationId: string; runId: string; delivered: boolean; storedEventIds: string[] }> {
   const setting = await findNotificationSetting(env);
   if (!setting) throw new Error(`no Paddle notification destination for ${config().PUBLIC_SITE_URL}/webhooks/paddle in ${env}; create it in Developer Tools → Notifications first`);
-  const sim = await api<any>(env, "POST", "/simulations", { notification_setting_id: setting.id, type, name: `patentsonar ${type} ${new Date().toISOString().slice(0, 16)}` });
+  const sim = await api<any>(env, "POST", "/simulations", { notification_setting_id: setting.id, type, name: `ps ${type} ${new Date().toISOString().slice(5, 16)}`.slice(0, 50) });
   const run = await api<any>(env, "POST", `/simulations/${sim.id}/runs`, {});
   // Paddle delivers within seconds; poll our own table (environment=sandbox|production) for up to ~30s.
   const since = new Date(Date.now() - 60_000).toISOString();
