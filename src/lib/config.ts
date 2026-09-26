@@ -51,6 +51,8 @@ const schema = z.object({
   PADDLE_ENVIRONMENT: z.enum(["sandbox", "production"]).default("sandbox"),
   NFEIO_API_KEY: z.string().optional(),
   NFEIO_COMPANY_ID: z.string().optional(),
+  /** Municipal service code for LC 116 item 1.09 in São João del Rei (from NFe.io's table at onboarding, ADR 0002). */
+  NFEIO_CITY_SERVICE_CODE: z.string().optional(),
 
   POSTMARK_SERVER_TOKEN: z.string().optional(),
   POSTMARK_BROADCAST_STREAM: z.string().default("newsletter"),

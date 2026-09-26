@@ -6,7 +6,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { db, audit } from "../lib/db.js";
 import { notifyFounder } from "../reporting/telegram.js";
-import { enqueueInvoice } from "../invoicing/nfeio.js";
 
 export function verifyPaddleSignature(rawBody: string, header: string | undefined, secret: string, nowSec = Math.floor(Date.now() / 1000)): boolean {
   if (!header) return false;
@@ -77,8 +76,8 @@ async function upsertSubscription(sub: any) {
 }
 
 async function onTransactionCompleted(tx: any) {
-  const customerId = await ensureCustomer(tx.customer_id);
-  const amountUsd = Number(tx.details?.totals?.total ?? 0) / 100;
-  // Idempotency key = Paddle transaction id. A second completed event for the same tx is a no-op.
-  await enqueueInvoice({ idempotencyKey: `paddle:${tx.id}`, customerId, paddleTransactionId: tx.id, amountUsd, paddleSubscriptionId: tx.subscription_id ?? null });
+  // Customer record only. No NFS-e per transaction: Paddle is the reseller, and the NFS-e is issued per Paddle
+  // payout to the Paddle entity on the reverse invoice (ADR 0002 revised, `cli invoices enqueue-payout`).
+  await ensureCustomer(tx.customer_id);
+  await audit("finance", "transaction_completed", "billing_events", tx.id, { customer_id: tx.customer_id, total: tx.details?.totals?.total, subscription_id: tx.subscription_id ?? null });
 }

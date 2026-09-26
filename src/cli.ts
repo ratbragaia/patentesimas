@@ -9,7 +9,8 @@
  *   cli newsletter build-latest        build the issue for the last full Mon-Sun week
  *   cli newsletter send <issue#>       send a QA-passed issue (idempotent)
  *   cli newsletter send-latest         send the most recent issue in status 'ready' 
- *   cli invoices issue                 issue pending NFS-e via NFe.io
+ *   cli invoices issue                 issue pending NFS-e via NFe.io (one per Paddle payout, ADR 0002)
+ *   cli invoices enqueue-payout <payout_id> <UK|US|IE> <usd> <YYYY-MM-DD> [reverse_invoice_ref]   record a Paddle payout for NFS-e
  *   cli report weekly                  send founder report to Telegram (pt-BR)
  *   cli report resend                  re-send today's founder notices in pt-BR (one-off after the language rule)
  *   cli report monthly [YYYY-MM] [print]  build the monthly landscape report (default: previous month); `print` = markdown only
@@ -63,6 +64,12 @@ async function main() {
       const { data } = await db().from("issues").select("issue_number").eq("status", "ready").eq("kind", "weekly").order("issue_number", { ascending: false }).limit(1).maybeSingle();
       if (!data) { log.info("no issue in status ready; nothing to send"); break; }
       console.log(await sendIssue(data.issue_number)); break;
+    }
+    case "invoices enqueue-payout": {
+      const { enqueuePayoutInvoice } = await import("./invoicing/nfeio.js");
+      const [id, entity, usd, date, ref] = rest;
+      if (!id || !entity || !usd || !date) throw new Error("usage: invoices enqueue-payout <payout_id> <UK|US|IE> <usd> <YYYY-MM-DD> [reverse_invoice_ref]");
+      console.log(await enqueuePayoutInvoice({ paddlePayoutId: id, entity: entity as any, amountUsd: Number(usd), payoutDate: date, reverseInvoiceRef: ref ?? null })); break;
     }
     case "invoices issue": { const { issuePendingInvoices } = await import("./invoicing/nfeio.js"); console.log({ issued: await issuePendingInvoices() }); break; }
     case "report weekly": { const { sendWeeklyReport } = await import("./reporting/weekly.js"); await sendWeeklyReport(); break; }

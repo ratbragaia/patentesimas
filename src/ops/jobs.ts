@@ -15,7 +15,8 @@ const CLI_PATTERNS = [
   /^report monthly( \d{4}-\d{2})?( print)?$/,          // monthly landscape report (default: previous month)
   /^newsletter send \d{1,6}$/,                          // send a specific QA-passed issue (weekly # or YYYYMM report)
   /^patents reclassify( apply)?$/,                      // re-run the classifier on stored rows (dry-run unless apply)
-  /^tasks ask [0-9a-f-]{6,36} [^;&|`$]{3,300}$/,        // escalate a task to the founder with buttons (plain text only)
+  /^tasks ask [0-9a-f-]{6,36} [^;&|`$]{3,300}$/,
+  /^invoices enqueue-payout [A-Za-z0-9_-]{3,64} (UK|US|IE) \d+(\.\d{1,2})? \d{4}-\d{2}-\d{2}( [A-Za-z0-9_-]{1,64})?$/,        // escalate a task to the founder with buttons (plain text only)
 ];
 export function cliAllowed(sub: string): boolean { return CLI_SUBCOMMANDS.has(sub) || CLI_PATTERNS.some((re) => re.test(sub)); }
 
