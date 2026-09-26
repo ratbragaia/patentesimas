@@ -61,7 +61,7 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
 
 ## 4b. Autonomy (done 2026-09-26, ADR 0012)
 - [x] Inbound email: Cloudflare Email Worker `patentsonar-inbound-email` → `/webhooks/inbound` → `ps.inbound_emails` + `sales` task.
-      Founder routes `support@patentsonar.com` to the Worker in the Cloudflare dashboard (API token lacks the routing scope).
+      Rule `support@patentsonar.com` → Worker created via API 2026-09-26; end-to-end test delivered (Postmark → Cloudflare → Worker → webhook → task).
 - [x] Headless runs: `patentsonar-agent.timer` (weekdays 07/10/13/16/19 UTC) → `infra/agent/run.sh`. Enable with
       `sudo bash infra/vps/setup.sh` (idempotent) or `sudo systemctl start patentsonar-agent.timer` until next reboot.
 

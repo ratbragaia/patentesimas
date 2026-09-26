@@ -48,8 +48,11 @@ channel for everything). VPS timer chosen; routines stay a fallback.
 ## Consequences
 
 - Replies to customers arrive within hours on weekdays, not minutes. Stated plainly in templates.
-- The Cloudflare API token on the VPS is scoped to Workers Scripts edit only; Email Routing rules are
-  created by the founder in the dashboard (the token's routing scope returned an auth error).
+- The Cloudflare API token on the VPS (replaced 2026-09-26) covers DNS edit, Workers Scripts edit and
+  Email Routing rules edit, and is **IP-filtered to the VPS IPv4**: over IPv6 the API answers
+  9109 "Cannot use the access token from location", so every script uses `curl -4`. The `support@`
+  → Worker rule was created through the API; a message sent seconds after creation still went to the
+  catch-all (propagation), the next one reached the webhook (`inbound email stored`, task created).
 - When the outreach domain/mailbox exists (ADR 0003), its replies can take the same Worker → webhook
   path, or IMAP if the mailbox provider requires it; the storage and task flow do not change.
 
