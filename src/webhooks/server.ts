@@ -35,6 +35,14 @@ function readBody(req: import("node:http").IncomingMessage): Promise<string> {
   return new Promise((res, rej) => { let b = ""; req.on("data", (c) => (b += c)); req.on("end", () => res(b)); req.on("error", rej); });
 }
 
+/** Constant-time check of an HTTP Basic credential against the configured secret. Unset secret => reject. */
+export function basicAuthOk(header: string | undefined, user: string, secret: string | undefined): boolean {
+  if (!secret || !header?.startsWith("Basic ")) return false;
+  const expected = Buffer.from(`${user}:${secret}`);
+  const got = Buffer.from(header.slice(6), "base64");
+  return got.length === expected.length && timingSafeEqual(got, expected);
+}
+
 export function startServer(port = config().WEBHOOK_PORT) {
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://localhost");
@@ -49,7 +57,8 @@ export function startServer(port = config().WEBHOOK_PORT) {
       }
 
       if (req.method === "POST" && url.pathname === "/webhooks/postmark") {
-        // Protect with basic auth configured in Postmark webhook URL: https://user:pass@host/webhooks/postmark
+        // Postmark has no signature; the webhook URL carries basic auth (https://postmark:<secret>@host/webhooks/postmark).
+        if (!basicAuthOk(req.headers["authorization"] as string | undefined, "postmark", config().POSTMARK_WEBHOOK_SECRET)) { res.writeHead(401); res.end("unauthorized"); return; }
         const ev = JSON.parse(await readBody(req));
         if (ev.RecordType === "Bounce" && ev.Type === "HardBounce") await suppress(ev.Email, "bounce");
         if (ev.RecordType === "SpamComplaint") await suppress(ev.Email, "complaint");
