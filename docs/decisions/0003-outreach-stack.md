@@ -61,6 +61,7 @@ Research 05 (`docs/research/05-outreach-mailbox-providers.md`) compared Hostinge
 Google Workspace, Microsoft 365, Migadu, MXroute and Purelymail at **renewal** prices and on their
 cold-email policies. Zoho Mail's usage policy explicitly prohibits cold/bulk email and enforcement is
 reported at low volumes, so **Zoho is dropped**. HostGator resells the same Titan platform as
-Hostinger at 2–5× the renewal price. **Launch mailbox: Hostinger Business Starter**, budgeted at the
-renewal price (≈ US$1.59/mailbox/month), on a 12- or 24-month term; fallback if deliverability
+Hostinger at 2–5× the renewal price. **Launch mailbox: Hostinger Business Starter** (5 GB), budgeted at the
+renewal price verified on the vendor pages 2026-09-26 (R$6.99/month on 24 months, or US$1.59 on the
+US site), bought on a 24-month term; fallback if deliverability
 degrades: Google Workspace Business Starter (US$7/month annual).
