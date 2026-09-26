@@ -14,7 +14,8 @@ certificate itself. Turning the orange proxy on later is fine once SSL mode is "
 | MX | @ | `route1.mx.cloudflare.net` (27), `route2.mx.cloudflare.net` (91), `route3.mx.cloudflare.net` (2) | Cloudflare Email Routing (free): `founder@patentsonar.com` → founder's mailbox. Added 2026-09-26 |
 | TXT | `cf2024-1._domainkey` | value set by Cloudflare Email Routing | DKIM for Cloudflare forwarding (separate from Postmark's selector) |
 
-Inbound today: Cloudflare Email Routing forwards `founder@patentsonar.com` to the founder (used for vendor
+Inbound today: `support@patentsonar.com` → Email Worker `patentsonar-inbound-email` → VPS webhook (ADR 0012);
+Cloudflare Email Routing forwards `founder@patentsonar.com` (and the catch-all) to the founder (used for vendor
 sign-ups that reject public-domain addresses: Postmark, Paddle, NFe.io, Wise). Replies to outreach land in the
 outreach mailbox, not here.
 

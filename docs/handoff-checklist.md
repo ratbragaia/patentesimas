@@ -16,7 +16,7 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 10 | Paddle seller account (verify Brazil eligibility first — see research 04) + webhook secret | `PADDLE_*` | ⬜ |
 | 11 | USD receiving account (Wise Business or alternative per research 04) | Paddle payout settings | ⬜ |
 | 12 | NFe.io account + company registered | `NFEIO_*` | ⬜ |
-| 13 | Postmark server token, verified sender domain (DKIM/Return-Path) | `POSTMARK_*` | ✅ 2026-09-26: server `PatentSonar` (Free), domain verified, test email delivered, bounce/complaint webhooks registered. Pending: `_dmarc` TXT (see `infra/dns-records.md`) |
+| 13 | Postmark server token, verified sender domain (DKIM/Return-Path) | `POSTMARK_*` | ✅ 2026-09-26: server `PatentSonar` (Free), domain verified, test email delivered, bounce/complaint webhooks registered. DMARC `p=none` added 2026-09-26 |
 | 14 | Outreach mailbox on a separate domain (see research 04) | `OUTREACH_FROM` | ⬜ |
 | 15 | Telegram bot token + founder chat id | `TELEGRAM_*` | ✅ 2026-09-26 (bot `@patentsonar_bot`; chat id stored; test weekly report delivered) |
 | 16 | Lawyer review of `legal/` drafts + quick trademark clearance of "PatentSonar" (USPTO TESS, EUIPO, INPI) | `legal/REVIEW_STATUS.md` | ⬜ |
