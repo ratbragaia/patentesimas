@@ -11,17 +11,31 @@ pages surfaced by search; every price must be re-checked on the checkout page be
 
 ## 1. Price comparison (renewal, not promo)
 
-| Provider / plan | Promo (first term) | Renewal | Per year at renewal | Storage | Notes |
+Verified 2026-09-26 on the vendors' own price pages via the founder's browser (Remote Control),
+superseding the third-party figures first collected. Price pages do not state daily sending limits;
+those come from the help pages cited in §Sources. Per mailbox.
+
+| Provider / plan | Promo (first term) | Renewal per mailbox/month | Per year at renewal | Storage | Sends/day (help pages) |
 |---|---|---|---|---|---|
-| Hostinger Business Starter (Titan platform) | US$0.39–0.99/mo on 12–48-month terms; BR site shows R$2.49/mo | **US$1.59/mo** (Standard US$2.79, Premium US$3.99). One BR review claims "renews at purchase price"; conflicting, verify at checkout | ≈ US$19 | 10 GB | 1,000 sends/day per mailbox; IMAP/SMTP; SPF/DKIM/DMARC |
-| HostGator US "Professional Email" (Titan) | US$1.99/mo | **US$2.99/mo** | ≈ US$36 | 10 GB | Same Titan platform as Hostinger; renewal only shown in Customer Portal |
-| HostGator Brasil "E-mail Titan" (Essentials/Premium/Ultra) | — | **R$9.39–26.19/mo** | ≈ R$113–314 | 10 GB (Essentials) | Same Titan platform; ~5× Hostinger for the same product |
-| Zoho Mail Lite | US$1/mo (annual), 5 GB; 10 GB tier US$1.25 | **US$1/mo** (no promo/renewal gap; ~20 % more if monthly) | US$12 | 5 GB | IMAP/SMTP only on paid plans. **Usage policy explicitly forbids bulk/cold email; community reports of suspensions for small-volume cold outreach** |
-| Google Workspace Business Starter | — | **US$7/mo annual, US$8.40 flexible; Brazil R$32.72–40.90/mo** | ≈ US$84 / R$393–491 | 30 GB | 2,000 sends/day cap (new accounts ramp from ~500). Industry default for cold outreach; IMAP/SMTP via app password or OAuth |
-| Microsoft 365 Exchange Online Plan 1 | — | **US$4/mo annual** (Business Basic US$7 from Jul 2026) | US$48 | 50 GB | Basic-auth SMTP/IMAP retired; needs OAuth2 app registration (more integration work) |
-| Migadu Micro | — | **US$19/yr** flat (all domains/mailboxes) | US$19 | 5 GB pooled | **20 outbound/day** — below our 25/day cap |
-| MXroute Small | — | **US$59/yr** flat, unlimited mailboxes | US$59 | 10 GB | 400/h per account, but **cold outreach explicitly prohibited** ("It's not marketing, it's cold outreach" → still no; US$1/email penalty) |
-| Purelymail | — | **US$10/yr** flat | US$10 | fair use | **ToS forbids unsolicited/marketing email** |
+| Hostinger BR Business Starter | R$3.49 (12 m) · R$2.99 (24 m) · R$11.99 monthly | **R$7.99 (12 m) · R$6.99 (24 m)** | R$95.88 · R$83.88 | 5 GB | 1,000 |
+| Hostinger BR Standard | R$5.99 (12 m) · R$5.49 (24 m) | R$12.99 (12 m) · R$11.49 (24 m) | R$155.88 · R$137.88 | 20 GB | 1,000 |
+| Hostinger BR Premium | R$9.99 (12 m) · ~R$8.99 (24 m) | R$17.99 (12 m) · R$15.99 (24 m) | R$215.88 · R$191.88 | 50 GB | 1,000 |
+| Hostinger US Business Starter | US$0.59 (12 m) · US$0.49 (24 m) | **US$1.59** (12 and 24 m) | US$19.08 | 5 GB | 1,000 |
+| Hostinger US Standard / Premium | US$1.39 / US$2.99 (12 m) | US$2.79 / US$3.99 | US$33.48 / US$47.88 | 20 / 50 GB | 1,000 |
+| HostGator BR Titan Essentials | R$5.59/mo annual (R$66.05/yr) · R$10.49 monthly | Not shown on site; list price R$10.49 | R$125.88 at list | 10 GB | ~1,200 (Titan 50/h) |
+| HostGator BR Titan Premium / Ultra | R$13.29 / R$23.59/mo annual | List R$20.99 / R$31.49 | R$251.88 / R$377.88 | 50 / 100 GB | Titan tiers |
+| HostGator US Professional Email / Plus / Ultra | US$1.99 / 2.99 / 5.83 "introductory" | Not shown on site (Customer Portal only) | — | 10 / 50 / 100 GB | Titan tiers |
+| Zoho Mail Lite (BR page; USD page geo-redirects) | none | **R$5 (5 GB) · R$6.25 (10 GB)**, annual only | R$60 · R$75 | 5 / 10 GB | 50–500/h dynamic |
+| Google Workspace Business Starter (BR) | — | **R$32.72 annual · R$40.90 flexible** | R$392.64 · R$490.80 | 30 GB pooled | 2,000 (new accounts ramp from ~500) |
+| Microsoft Exchange Online Plan 1 (BR) | — | **R$22.90** annual, auto-renew (US$4 on the US page) | R$274.80 | 50 GB + 50 GB archive | high; OAuth2 required for SMTP/IMAP |
+| Migadu Micro | — | US$19/yr flat | US$19 | 5 GB pooled | **20 outbound** |
+| MXroute Small | — | US$59/yr flat | US$59 | 10 GB | 400/h, cold outreach prohibited |
+| Purelymail | — | US$10/yr flat | US$10 | fair use | ~3,000, unsolicited email prohibited |
+
+Corrections versus the first pass from third-party trackers: Hostinger Starter is 5 GB, not 10 GB;
+the Hostinger BR promo is R$2.99–3.49 (not R$2.49) and it does **not** renew at the purchase price
+(renewal is roughly double); HostGator BR list prices are R$10.49 / 20.99 / 31.49; HostGator US
+renewal is not published.
 
 ## 2. Policy fit for cold B2B outreach (the deciding factor)
 
@@ -42,10 +56,11 @@ Price differences are a few dollars a year; the real risk is losing the mailbox 
 
 ## 3. Recommendation
 
-1. **Keep Hostinger Business Starter** as the launch mailbox, bought on a 12- or 24-month term so the
-   cost is known: budget the **renewal price (≈ US$1.59/mailbox/month, ≈ US$19/year)**, not the promo.
-   Confirm the "renews at" figure on the checkout page; if the BR checkout really renews at R$2.49,
-   even better. Total outreach stack ≈ US$29/year (mailbox + domain).
+1. **Keep Hostinger Business Starter** as the launch mailbox, on a **24-month term**: first cycle
+   R$2.99/month (R$71.76 for two years), then **R$6.99/month (R$83.88/year)** at renewal. The US site
+   renews at US$1.59 (US$19.08/year), about the same after exchange; buy on whichever checkout is
+   cheaper in BRL that day. 5 GB is enough for a single outreach mailbox. Total outreach stack
+   ≈ R$85–100/year plus the domain (~US$10/year).
 2. **Drop Zoho** from ADR 0003: policy risk outweighs the US$7/year saving.
 3. **HostGator adds nothing**: same Titan platform, higher renewal (US$2.99 or R$9.39+).
 4. **Upgrade path if deliverability degrades** (bounces > 3 %, spam-folder placement in test sends):
