@@ -20,6 +20,11 @@ Date: 2026-09-25 · Status: accepted, with two confirmations pending
   personal account would break the NFS-e export flow. Ranking stays Wise Business → Payoneer; Husky
   (Nomad's PJ acquisition) only as a third check if both fail.
 
+## Update 2026-09-26 (sequencing)
+Paddle first, Wise later: Paddle holds the balance and only needs payout details when a payout is due (created
+on the 1st, sent by the 15th, US$100 minimum). Open Wise Business when the first payout approaches; its
+verification takes days, so start it as soon as the first sale lands, not on payout day.
+
 ## Decision
 1. Apply to Paddle first; request **written confirmation** of Brazilian seller eligibility and payout
    route at onboarding. Sandbox integration is built and tested against signature verification.
