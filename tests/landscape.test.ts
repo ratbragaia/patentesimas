@@ -22,23 +22,23 @@ const fams = [fam("F1", "CN-118000001-A", "iron_nitride", ["CN"]), fam("F2", "US
 describe("landscape statistics", () => {
   const s = computeLandscape(pubs, fams, "2026-08");
   it("counts the month by family (first publication) and by publication", () => {
-    expect(s.monthFamilies).toBe(3); // F1, F2, F5 (F5 excluded from the listing but still a family in scope)
-    expect(s.monthPubs).toBe(4); expect(s.monthOffices).toEqual(["CN", "EP", "US"]);
+    expect(s.monthFamilies).toBe(2); // F1, F2; F5 is triaged `exclude` and leaves every count
+    expect(s.monthPubs).toBe(3); expect(s.monthOffices).toEqual(["CN", "EP", "US"]);
     expect(s.monthFamilyRows.map((r) => r.family.family_id)).toEqual(["F1", "F2"]); // excluded family dropped, bucket order
   });
   it("computes trailing twelve months against the previous twelve", () => {
-    expect(s.families12).toBe(4); expect(s.familiesPrev12).toBe(1);
+    expect(s.families12).toBe(3); expect(s.familiesPrev12).toBe(1);
     expect(s.topApplicants[0]).toMatchObject({ label: "ZHEJIANG MAGNET CO LTD", current: 1, previous: 1 });
-    expect(s.byOffice.find((o) => o.key === "US")).toMatchObject({ current: 2, previous: 0 });
+    expect(s.byOffice.find((o) => o.key === "US")).toMatchObject({ current: 1, previous: 0 });
   });
   it("builds eight quarters ending with the report quarter and flags the partial one", () => {
-    expect(s.quarters).toHaveLength(8); expect(s.quarters.at(-1)).toMatchObject({ quarter: "2026-Q3", families: 4, publications: 5, partial: true });
+    expect(s.quarters).toHaveLength(8); expect(s.quarters.at(-1)).toMatchObject({ quarter: "2026-Q3", families: 3, publications: 4, partial: true });
     expect(s.lastQuarter).toMatchObject({ previousQuarter: "2026-Q2", previousFamilies: 0, complete: false });
   });
   it("renders markdown that passes the QA gate against the same rows", () => {
     const md = renderLandscapeMarkdown(s);
     expect(md).toContain("# PatentSonar · Rare-Earth-Free Magnets — Landscape Report, August 2026");
-    expect(md).toContain("| 2026-Q3* | 4 | 5 |");
+    expect(md).toContain("| 2026-Q3* | 3 | 4 |");
     expect(md).toContain("Claims a bulk α''-Fe16N2 body");
     expect(md).not.toContain("US-11000003-B2");
     const qa = runQa(md, pubs.map((p) => ({ publication_number: p.publication_number, publication_date: p.publication_date, applicants: p.applicants, family_id: p.family_id, title: p.title })));

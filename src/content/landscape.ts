@@ -69,9 +69,11 @@ export interface LandscapeStats {
 function familyKey(p: LandscapePub): string { return p.family_id ?? `PUB:${p.publication_number}`; }
 
 /** Pure aggregation over the rows, so it can be unit-tested with fixtures. */
-export function computeLandscape(pubs: LandscapePub[], fams: LandscapeFamily[], month: string): LandscapeStats {
+export function computeLandscape(allPubs: LandscapePub[], fams: LandscapeFamily[], month: string): LandscapeStats {
   const { start, end } = monthBounds(month);
   const famById = new Map(fams.map((f) => [f.family_id, f]));
+  // Analyst triage is authoritative: a family marked `exclude` leaves every count, not just the listing.
+  const pubs = allPubs.filter((p) => famById.get(p.family_id ?? `PUB:${p.publication_number}`)?.triage_status !== "exclude");
   const pubByNumber = new Map(pubs.map((p) => [p.publication_number, p]));
   // First publication date per family: a family counts in the period where it first published.
   const firstPub = new Map<string, LandscapePub>();
@@ -121,8 +123,7 @@ export function computeLandscape(pubs: LandscapePub[], fams: LandscapeFamily[], 
     const fam = famById.get(k) ?? { family_id: k, representative_publication: firstPub.get(k)!.publication_number, earliest_priority_date: firstPub.get(k)!.priority_date, offices: officesOf(k), technology_bucket: "other", triage_status: "new", analyst_summary: null };
     const pub = (fam.representative_publication && pubByNumber.get(fam.representative_publication)) || firstPub.get(k)!;
     return { family: fam, pub };
-  }).filter((r) => r.family.triage_status !== "exclude")
-    .sort((a, b) => (a.family.technology_bucket ?? "other").localeCompare(b.family.technology_bucket ?? "other") || a.pub.publication_date.localeCompare(b.pub.publication_date));
+  }).sort((a, b) => (a.family.technology_bucket ?? "other").localeCompare(b.family.technology_bucket ?? "other") || a.pub.publication_date.localeCompare(b.pub.publication_date));
 
   return {
     month, start, end, monthPubs: monthPubsList.length, monthFamilies: monthFamKeys.length, monthOffices: [...new Set(monthPubsList.map((p) => p.country_code))].sort(),

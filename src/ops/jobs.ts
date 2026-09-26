@@ -14,6 +14,7 @@ const CLI_PATTERNS = [
   /^ingest bigquery( backfill)?( dry-run)?$/,          // ADR 0009/0011: live BigQuery run, dry-run first
   /^report monthly( \d{4}-\d{2})?( print)?$/,          // monthly landscape report (default: previous month)
   /^newsletter send \d{1,6}$/,                          // send a specific QA-passed issue (weekly # or YYYYMM report)
+  /^patents reclassify( apply)?$/,                      // re-run the classifier on stored rows (dry-run unless apply)
 ];
 export function cliAllowed(sub: string): boolean { return CLI_SUBCOMMANDS.has(sub) || CLI_PATTERNS.some((re) => re.test(sub)); }
 

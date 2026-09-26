@@ -52,9 +52,20 @@ export const NICHE = {
   } as Record<string, string[]>,
 };
 
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+/**
+ * Short chemical tokens (MnAl, MnBi, Fe8N, ...) must match as tokens, not as substrings: "NiCoCuMnAl" is a
+ * high-entropy catalyst, not a Mn–Al magnet. A following "-C", "C" or digit is still allowed (MnAl-C, MnAlC).
+ */
+const TERM_RE = new Map(NICHE.keywords.map((k) => {
+  const body = escapeRe(k.toLowerCase());
+  const token = !k.includes(" ") && k.length <= 8;
+  return [k, new RegExp(token ? `(?<![a-z0-9])${body}(?![a-z]{2})` : body, "i")] as const;
+}));
+
 export function matchTerms(text: string): string[] {
   const t = text.toLowerCase();
-  return NICHE.keywords.filter((k) => t.includes(k.toLowerCase()));
+  return NICHE.keywords.filter((k) => TERM_RE.get(k)!.test(t));
 }
 
 export function isRareEarthCpc(code: string): boolean {

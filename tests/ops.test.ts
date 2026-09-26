@@ -15,7 +15,7 @@ describe("ops job catalogue", () => {
     expect(resolveJob("site-check")).not.toBeNull();
   });
   it("allows only the catalogued CLI shapes", () => {
-    for (const ok of ["samples list", "ingest bigquery", "ingest bigquery dry-run", "ingest bigquery backfill dry-run", "report monthly", "report monthly 2026-08", "report monthly 2026-08 print", "newsletter send 202608"]) expect(cliAllowed(ok), ok).toBe(true);
+    for (const ok of ["samples list", "ingest bigquery", "ingest bigquery dry-run", "ingest bigquery backfill dry-run", "report monthly", "report monthly 2026-08", "report monthly 2026-08 print", "newsletter send 202608", "patents reclassify", "patents reclassify apply"]) expect(cliAllowed(ok), ok).toBe(true);
     for (const bad of ["ingest bigquery /etc/passwd", "report monthly; rm -rf /", "newsletter send 1 2", "report monthly 2026-8", "ingest bigquery backfill dry-run extra"]) expect(cliAllowed(bad), bad).toBe(false);
   });
 });

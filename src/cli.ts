@@ -12,6 +12,7 @@
  *   cli invoices issue                 issue pending NFS-e via NFe.io
  *   cli report weekly                  send founder report to Telegram
  *   cli report monthly [YYYY-MM] [print]  build the monthly landscape report (default: previous month); `print` = markdown only
+ *   cli patents reclassify [apply]     re-run the niche classifier on stored rows; dry-run unless `apply`
  *   cli tasks list                     show open tasks
  *   cli samples list                   website sample requests not yet served (status new)
  */
@@ -73,6 +74,11 @@ async function main() {
       const { data, error } = await db().from("tasks").select("agent,title,status,priority,due_at").in("status", ["pending", "in_progress", "blocked"]).order("priority");
       if (error) throw new Error(`tasks query failed: ${error.code} ${error.message}${error.hint ? ` (${error.hint})` : ""}`);
       console.table(data ?? []); break;
+    }
+    case "patents reclassify": {
+      const { reclassifyStored } = await import("./patents/reclassify.js");
+      const out = await reclassifyStored(rest.includes("apply"));
+      console.log(JSON.stringify(out, null, 1)); break;
     }
     case "samples list": {
       const { db } = await import("./lib/db.js");

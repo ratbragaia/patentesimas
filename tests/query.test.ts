@@ -23,6 +23,19 @@ describe("niche classifier", () => {
   });
 });
 
+describe("token matching (landscape backfill findings, ADR 0011)", () => {
+  it("does not match MnAl inside a high-entropy alloy name", () => {
+    expect(matchTerms("TiO2-loaded NiCoCuMnAl high-entropy catalyst")).toEqual([]);
+    expect(classify({ title: "High-entropy single crystal cathode material", abstract: "LiNiCoMnAl oxide", cpc_codes: ["H01M4/00"] })).toBeNull();
+  });
+  it("still matches the legitimate forms", () => {
+    expect(matchTerms("τ-MnAl-C magnet")).toEqual(expect.arrayContaining(["MnAl", "τ-MnAl"]));
+    expect(matchTerms("MnAlC powder")).toContain("MnAl");
+    expect(matchTerms("bulk Fe16N2 magnet")).toContain("Fe16N2");
+    expect(matchTerms("MnBi/ferrite composite")).toContain("MnBi");
+  });
+});
+
 describe("research-driven edge cases", () => {
   it("rejects the Sm2Fe17Nx nitride trap", () => {
     expect(classify({ title: "Sm2Fe17N3 magnet powder", abstract: "A rare earth iron nitride Sm2Fe17Nx...", cpc_codes: ["H01F1/059"] })).toBeNull();
