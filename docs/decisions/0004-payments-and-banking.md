@@ -33,6 +33,14 @@ events are tagged `environment='sandbox'` (migration 0014) and excluded from `v_
 `v_active_recipients`, so test data never reaches revenue numbers or the newsletter list; Telegram alerts
 from the sandbox are prefixed 🧪 [SANDBOX] and open no dunning tasks.
 
+## Evidence 2026-09-26 (sandbox validation)
+`cli paddle plans-sync sandbox` created the 3 products / 5 prices; `cli paddle simulate sandbox <event>` for
+transaction.completed, subscription.created, subscription.activated, subscription.canceled and
+transaction.payment_failed: all delivered, signature verified, 5 rows in `ps.billing_events`
+(environment=sandbox), 1 sandbox customer + subscription, no dunning task from the sandbox failure, `v_mrr`
+unaffected. Paddle requires the destination's traffic source to include simulations and the API key to hold
+"Notification simulations: write" (founder set both).
+
 ## Decision
 1. Apply to Paddle first; request **written confirmation** of Brazilian seller eligibility and payout
    route at onboarding. Sandbox integration is built and tested against signature verification.
