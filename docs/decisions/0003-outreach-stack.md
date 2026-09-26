@@ -38,6 +38,13 @@ own code and a manual ramp at this scale.
   is the alternative at ~US$7–8.40/user/month, or BRL 33 in Brazil
   ([Google Workspace pricing](https://workspace.google.com/pricing)). Zoho's free plan is web-only (no
   IMAP/SMTP), so it cannot be driven by the agent.
+- **Hostinger Business Email is an equally valid choice** (founder's question, 2026-09-26): Business
+  Starter US$0.99/mailbox/month on a 2-year term (10 GB), full IMAP/SMTP (`imap.hostinger.com:993`,
+  `smtp.hostinger.com:465/587`), 1,000 outgoing emails/day, SPF/DKIM/DMARC supported. Same shared-IP
+  caveat as Zoho; the domain must still be the separate outreach domain, never patentsonar.com. Pick
+  whichever is simpler to buy alongside the domain; the agent's SMTP/IMAP code is provider-agnostic.
+  ([Hostinger email pricing](https://hostadvice.com/hosting-company/hostinger-reviews/hostinger-email-pricing/),
+  [Hostinger SMTP/IMAP settings](https://smtpedia.com/hostinger-email-settings/))
 - Sending and replies by the agent through SMTP/IMAP (`src/outreach/`, to build: sender with
   `checkOutreach()` gate, IMAP poll for replies into `ps.outreach_messages`, suppression on any
   unsubscribe). SPF/DKIM/DMARC on the outreach domain configured by the agent.
