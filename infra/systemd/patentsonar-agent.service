@@ -1,0 +1,15 @@
+[Unit]
+Description=PatentSonar — headless operator run (drains ps.tasks, answers inbound email)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=patentsonar
+WorkingDirectory=/opt/patentsonar
+EnvironmentFile=/etc/patentsonar/env
+Environment=HOME=/home/patentsonar
+ExecStart=/usr/bin/bash /opt/patentsonar/infra/agent/run.sh
+TimeoutStartSec=50min
+StandardOutput=append:/var/log/patentsonar/agent.log
+StandardError=append:/var/log/patentsonar/agent.log

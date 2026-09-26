@@ -12,6 +12,7 @@ import { db, audit } from "../lib/db.js";
 import { timingSafeEqual } from "node:crypto";
 import { runJob } from "../ops/jobs.js";
 import { parseSampleRequest, recordSampleRequest, hashIp, RateLimiter } from "../site/sample-request.js";
+import { parseInbound, recordInbound } from "../email/inbound.js";
 
 function tokenOk(header: string | undefined): boolean {
   const expected = process.env["OPS_TOKEN"];
@@ -29,6 +30,21 @@ function clientIp(req: import("node:http").IncomingMessage): string | undefined 
   const xff = req.headers["x-forwarded-for"];
   const first = (Array.isArray(xff) ? xff[0] : xff)?.split(",")[0]?.trim();
   return first || req.socket.remoteAddress || undefined;
+}
+
+function readRawBody(req: import("node:http").IncomingMessage, max = 5_000_000): Promise<Buffer> {
+  return new Promise((res, rej) => {
+    const chunks: Buffer[] = []; let size = 0;
+    req.on("data", (c: Buffer) => { size += c.length; if (size > max) { rej(new Error("body too large")); req.destroy(); return; } chunks.push(c); });
+    req.on("end", () => res(Buffer.concat(chunks))); req.on("error", rej);
+  });
+}
+
+/** Bearer token compared in constant time against a configured secret; unset secret => reject. */
+export function bearerOk(header: string | undefined, secret: string | undefined): boolean {
+  if (!secret || secret.length < 32 || !header?.startsWith("Bearer ")) return false;
+  const a = Buffer.from(header.slice(7)); const b = Buffer.from(secret);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 function readBody(req: import("node:http").IncomingMessage): Promise<string> {
@@ -64,6 +80,16 @@ export function startServer(port = config().WEBHOOK_PORT) {
         if (ev.RecordType === "SpamComplaint") await suppress(ev.Email, "complaint");
         if (ev.RecordType === "SubscriptionChange" && ev.SuppressSending) await suppress(ev.Recipient, "unsubscribed");
         res.writeHead(200); res.end("ok"); return;
+      }
+
+      if (req.method === "POST" && url.pathname === "/webhooks/inbound") {
+        // Raw RFC 822 message from the Cloudflare Email Worker (infra/cloudflare/inbound-email-worker.js).
+        if (!bearerOk(req.headers["authorization"] as string | undefined, config().INBOUND_WEBHOOK_SECRET)) { res.writeHead(401); res.end("unauthorized"); return; }
+        let raw: Buffer;
+        try { raw = await readRawBody(req); } catch { res.writeHead(413); res.end("too large"); return; }
+        const parsed = await parseInbound(raw, { from: req.headers["x-envelope-from"] as string | undefined, to: req.headers["x-envelope-to"] as string | undefined });
+        const outcome = await recordInbound(parsed);
+        res.writeHead(outcome === "duplicate" ? 409 : 200); res.end(outcome); return;
       }
 
       if (req.method === "POST" && url.pathname === "/ops/run") {

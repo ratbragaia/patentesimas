@@ -66,7 +66,7 @@ mkdir -p /etc/systemd/system/caddy.service.d
 cp $APP_DIR/infra/systemd/caddy-override.conf /etc/systemd/system/caddy.service.d/override.conf
 systemctl daemon-reload
 systemctl enable --now patentsonar-webhooks.service
-for t in patentsonar-ingest patentsonar-newsletter-build patentsonar-newsletter-send patentsonar-invoices patentsonar-report; do systemctl enable --now $t.timer; done
+for t in patentsonar-ingest patentsonar-newsletter-build patentsonar-newsletter-send patentsonar-invoices patentsonar-report patentsonar-agent; do systemctl enable --now $t.timer; done
 
 echo "== caddy reverse proxy"
 cp $APP_DIR/infra/Caddyfile /etc/caddy/Caddyfile

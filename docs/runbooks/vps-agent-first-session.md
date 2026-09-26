@@ -59,5 +59,11 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
       (2026-09-26, same migration; leads in stage `identified`, contact null until a public path is verified)
 - [x] Do not send any outreach until the outreach domain, mailbox and `legal/REVIEW_STATUS.md` allow it.
 
+## 4b. Autonomy (done 2026-09-26, ADR 0012)
+- [x] Inbound email: Cloudflare Email Worker `patentsonar-inbound-email` → `/webhooks/inbound` → `ps.inbound_emails` + `sales` task.
+      Founder routes `support@patentsonar.com` to the Worker in the Cloudflare dashboard (API token lacks the routing scope).
+- [x] Headless runs: `patentsonar-agent.timer` (weekdays 07/10/13/16/19 UTC) → `infra/agent/run.sh`. Enable with
+      `sudo bash infra/vps/setup.sh` (idempotent) or `sudo systemctl start patentsonar-agent.timer` until next reboot.
+
 ## 5. Operating rhythm
 Once 1–3 are done, follow `docs/runbooks/weekly-cycle.md`. Report to the founder weekly via Telegram.

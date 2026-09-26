@@ -1,0 +1,10 @@
+[Unit]
+Description=PatentSonar — headless operator runs (weekdays 07:00, 10:00, 13:00, 16:00, 19:00 UTC)
+
+[Timer]
+OnCalendar=Mon..Fri 07,10,13,16,19:05:00 UTC
+RandomizedDelaySec=300
+Persistent=true
+
+[Install]
+WantedBy=timers.target
