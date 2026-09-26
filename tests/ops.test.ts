@@ -13,6 +13,7 @@ describe("ops job catalogue", () => {
     expect(resolveJob("cli", ["tasks", "list"])).not.toBeNull();
     expect(resolveJob("caddy-sync")!.argv.join(" ")).toContain("caddy validate");
     expect(resolveJob("site-check")).not.toBeNull();
+    expect(resolveJob("dns-dmarc")!.argv).toContain("_dmarc");
     expect(resolveJob("agent-health")!.argv.join(" ")).toContain("/var/log/patentsonar/agent");
     expect(cliAllowed("telegram setup")).toBe(true); expect(cliAllowed("telegram setup x")).toBe(false);
     expect(resolveJob("ssh-check")!.argv.join(" ")).toContain("sshd_config.d");
