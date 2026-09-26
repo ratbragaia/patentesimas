@@ -8,6 +8,7 @@ export const COMPANY = {
   legalName: "Rockfort Hub de Inovação Ltda",
   cnpj: "40.435.866/0001-40",
   /** Main activity as registered (founder, 2026-09-26). */
+  taxRegime: "Lucro Presumido",
   cnae: "63.19-4-00",
   cnaeDescription: "Portais, provedores de conteúdo e outros serviços de informação na internet",
   street: "Av. Tiradentes 209, Centro",
