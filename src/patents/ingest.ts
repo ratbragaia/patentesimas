@@ -3,21 +3,23 @@ import { log } from "../lib/log.js";
 import { config } from "../lib/config.js";
 import { fetchPatentsViewGrants } from "./patentsview.js";
 import { fetchOpsPublications, lookupFamilyId } from "./epo-ops.js";
+import { fetchBigQueryPublications, BQ_LOOKBACK_DAYS } from "./bigquery.js";
 import { groupFamilies } from "./families.js";
 import type { Publication } from "./types.js";
 
 export interface IngestWindow { from: string; to: string }
 
 /**
- * Window = [min(last successful window_end, today-21d), today]. DOCDB loads some offices late, so we
- * always re-scan three weeks; upserts ignore duplicates, and "new" is decided by first_seen_at, not by
- * publication date (docs/research/03-patent-data-sources.md §6.3).
+ * Window = [min(last successful window_end, today-lookback), today]. DOCDB loads some offices late, so we
+ * always re-scan three weeks (45 days for BigQuery, whose public dataset lags 3-4 weeks for KR/WO/JP);
+ * upserts ignore duplicates, and "new" is decided by first_seen_at, not by publication date
+ * (docs/research/03-patent-data-sources.md §6.3, ADR 0009).
  */
-export async function computeWindow(source: string, today = new Date()): Promise<IngestWindow> {
+export async function computeWindow(source: string, today = new Date(), lookbackDays = 21): Promise<IngestWindow> {
   const { data } = await db().from("ingest_runs").select("window_end").eq("source", source).eq("status", "succeeded")
     .order("window_end", { ascending: false }).limit(1).maybeSingle();
   const to = today.toISOString().slice(0, 10);
-  const lookback = new Date(today); lookback.setDate(lookback.getDate() - 21);
+  const lookback = new Date(today); lookback.setDate(lookback.getDate() - lookbackDays);
   const lb = lookback.toISOString().slice(0, 10);
   const from = data?.window_end && data.window_end < lb ? data.window_end : lb;
   return { from, to };
@@ -32,8 +34,8 @@ export async function upsertPublications(pubs: Publication[]): Promise<number> {
   return count ?? 0;
 }
 
-async function runSource(source: "patentsview" | "epo_ops", fetcher: (w: IngestWindow) => Promise<Publication[]>) {
-  const w = await computeWindow(source);
+async function runSource(source: "patentsview" | "epo_ops" | "bigquery", fetcher: (w: IngestWindow) => Promise<Publication[]>, lookbackDays = 21) {
+  const w = await computeWindow(source, new Date(), lookbackDays);
   const { data: run } = await db().from("ingest_runs").insert({ source, window_start: w.from, window_end: w.to }).select("id").single();
   try {
     const pubs = await fetcher(w);
@@ -49,17 +51,22 @@ async function runSource(source: "patentsview" | "epo_ops", fetcher: (w: IngestW
 }
 
 /**
- * Weekly ingest. Source roles (ADR 0005): EPO OPS is the primary detector of new publications for
- * US/EP/WO/CN/JP/KR (DOCDB is weekly). PatentsView refreshes quarterly and is migrating to the USPTO
- * Open Data Portal, so it is enrichment/QA for US documents (assignee disambiguation, cpc_current,
- * claims), not the detector. BigQuery (quarterly) is back-fill and landscape counts.
+ * Weekly ingest. Source roles (ADR 0005, 0008, 0009): EPO OPS is the primary detector of new publications
+ * for US/EP/WO/CN/JP/KR (DOCDB is weekly). BigQuery (Google Patents public data) runs weekly too, with a
+ * 45-day trailing window: it is the only source with English text for CN today and catches late arrivals
+ * (~US$1/month above the free tier). PatentsView is deferred (ODP migration) and stays enrichment/QA.
+ * A failing source does not stop the others.
  */
 export async function ingestAll(): Promise<void> {
   const c = config();
   const all: Publication[] = [];
   if (c.EPO_OPS_CONSUMER_KEY) all.push(...(await runSource("epo_ops", (w) => fetchOpsPublications(w.from, w.to))));
   if (c.PATENTSVIEW_API_KEY) all.push(...(await runSource("patentsview", (w) => fetchPatentsViewGrants(w.from, w.to))));
-  // BigQuery results are loaded by `cli ingest bigquery <file.json>` because the bq CLI runs the SQL.
+  if (c.GCP_PROJECT_ID && c.GOOGLE_APPLICATION_CREDENTIALS) {
+    try { all.push(...(await runSource("bigquery", (w) => fetchBigQueryPublications(w.from, w.to), BQ_LOOKBACK_DAYS))); }
+    catch (err) { log.error("bigquery source failed; continuing with other sources", { err: String(err) }); }
+  }
+  // A JSON export from `bq query --format=json` can also be loaded by hand: `cli ingest bigquery <file.json>`.
 
   // Fill missing family ids via OPS (US grants from PatentsView have none).
   if (c.EPO_OPS_CONSUMER_KEY) {

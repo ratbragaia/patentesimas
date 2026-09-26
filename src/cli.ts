@@ -30,19 +30,9 @@ async function main() {
     case "ingest": { const { ingestAll } = await import("./patents/ingest.js"); await ingestAll(); break; }
     case "ingest bigquery": {
       const { upsertPublications, rebuildFamilies } = await import("./patents/ingest.js");
-      const { classify } = await import("./patents/query.js");
-      const { normalizePublicationNumber, normalizeCpc } = await import("./patents/normalize.js");
-      // `bq query --format=json` on a multi-statement script (DECLARE ...) nests the last result set: [[{...}]]
-      let rows = JSON.parse(readFileSync(rest[0]!, "utf8")) as any[];
-      while (Array.isArray(rows) && rows.length === 1 && Array.isArray(rows[0])) rows = rows[0];
-      const pubs = rows.map((r) => {
-        const cpcs = (r.cpc_codes ?? []).map(normalizeCpc);
-        const matched = classify({ title: r.title_en, abstract: r.abstract_en, cpc_codes: cpcs });
-        return matched && { publication_number: normalizePublicationNumber(r.publication_number), country_code: r.country_code, kind_code: r.kind_code ?? null,
-          family_id: r.family_id ?? null, title: r.title_en ?? null, abstract: r.abstract_en ?? null, applicants: r.applicants ?? [], inventors: r.inventors ?? [],
-          cpc_codes: cpcs, priority_date: r.priority_date ?? null, filing_date: r.filing_date ?? null, publication_date: r.publication_date, grant_date: r.grant_date ?? null,
-          application_number: r.application_number ?? null, source: "bigquery" as const, source_payload: r, matched_terms: matched };
-      }).filter(Boolean) as any[];
+      const { unwrapBqJson, mapBigQueryRows } = await import("./patents/bigquery.js");
+      const rows = unwrapBqJson(JSON.parse(readFileSync(rest[0]!, "utf8")));
+      const pubs = mapBigQueryRows(rows);
       const n = await upsertPublications(pubs); await rebuildFamilies(pubs);
       log.info("bigquery loaded", { rows: rows.length, onTopic: pubs.length, inserted: n }); break;
     }
