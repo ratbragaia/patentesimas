@@ -284,3 +284,163 @@ Google Patents limitations
 - https://patentpc.com/blog/how-to-use-google-patents-for-effective-patent-searches
 - https://www.drugpatentwatch.com/blog/using-google-patents-to-find-drug-patents-heres-15-reasons-why-you-shouldnt/
 - https://library.caltech.edu/c.php?g=512660&p=3503012
+
+## 8. Update 2026-09-26 — Scope per price: one technology area or many?
+
+**Question from the founder.** At the prices competitors charge, do they deliver curated intelligence on one technology area, or on many / the whole patent universe? Is PatentSonar's "one coverage stream per subscription" pricing (Analyst US$249/mo, Team US$750/mo, Enterprise from US$2,000/mo, ADR 0001) in line, over-priced or under-priced?
+
+**Method and caveats.** Web research on 2026-09-26. The egress proxy blocked every vendor domain tried (magicnumberip.com, patentforecast.com, knowmade.com, iam-media.com, lens.org, sdle.co.il, substack.com, idtechex.com, everestgrp.com, researchandmarkets.com, giiresearch.com, contractsfinder.service.gov.uk). All figures below are therefore from search-engine excerpts of those pages. Confidence scale: **High** = same figure on two or more independent excerpts or the vendor's own repeated wording; **Medium** = one vendor excerpt; **Low** = third-party or conflicting excerpts. Nothing here should be quoted externally without opening the linked page. No currency conversion has been applied; EUR figures are left in EUR.
+
+### 8.1 Comparison table
+
+Annualised = monthly price x 12 unless the vendor sells only annual. "Scope" is what one paid subscription/report covers.
+
+| Vendor / product | Price | Unit | Scope: one area / N areas / whole universe | Curated analysis? | Confidence | Source |
+|---|---|---|---|---|---|---|
+| **Magic Number — Patent Forecast** | US$500/month (US$6,000/yr) | per sector subscription; "enterprise pricing upon request"; "contact sales" for full-catalog access or "discount pricing for multiple sectors" (discount level not published) | **One area** per subscription; catalog of 74 sectors on the sectors page (older marketing says "40+"); no magnets, rare-earth or e-motor sector confirmed (Energy category lists 8 sub-sectors, not enumerated in excerpts) | Yes — interactive analysis, full document sets, weekly patent + market news email | Medium (vendor excerpts, consistent across 3 pages) | [magicnumberip.com/what-is-a-patent-forecast](https://www.magicnumberip.com/what-is-a-patent-forecast/), [thorium/subscribe](https://magicnumberip.com/patent-forecast/thorium/subscribe), [sectors.patentforecast.com/sectors](https://sectors.patentforecast.com/sectors) |
+| **Knowmade patent monitor** (SiC, solid-state batteries, RF front-end, advanced packaging) | Not published; "quote to issue a purchase order" | 12-month subscription per technology; quarterly report + quarterly-updated Excel database + interactive dashboard + analyst access | **One area** per subscription | Yes — "expert-curated patent data", quarterly analysis | High on scope; no price | [solid-state-batteries-patent-monitor](https://www.knowmade.com/patent-analytics-services/patent-monitor/energy-patent-monitor/solid-state-batteries-patent-monitor/), [SiC monitors press release](https://www.knowmade.com/technology-news/press-release/knowmade-launches-two-new-sic-technology-patent-monitors-with-interactive-dashboards/) |
+| **Knowmade patent landscape report** | **EUR 4,990** | per report, multi-user licence (one company; subsidiaries/JVs excluded; watermarked) | **One area** per report (GaN electronics, saRNA vaccines, allogeneic CAR, LMFP batteries, etc.) | Yes — analyst report + Excel database of families | High (same price on three flyers) | [GaN 2023 flyer](https://www.knowmade.com/wp-content/uploads/2023/11/GaN-Electronics-Patent-Landscape-Analysis-2023-FLYER.pdf), [saRNA 2023 flyer](https://www.knowmade.com/wp-content/uploads/2023/03/saRNA-Vaccines-Patent-Landscape-2023-FLYER.pdf), [Allogeneic CAR 2023 flyer](https://www.knowmade.com/wp-content/uploads/2023/09/Allogeneic-CAR-Patent-Landscape-2023-FLYER.pdf) |
+| **IPStudies** (CH) | Not published | per landscape (e.g., CRISPR); patent-analytics business transferred to Swiss Center for Business and Technology Intelligence (ex-Centredoc) on 2023-06-30 | **One area** per landscape | Yes | High on transfer; no price | [ipstudies.ch](https://www.ipstudies.ch/) |
+| **GreyB** (landscapes; Insights;Gate) | Custom quote; 6–8 weeks per landscape (10–12 multi-domain) | per project | **One area** per project | Yes (bespoke) | High on timeline; no price | [greyb.com technology landscape](https://greyb.com/services/open-innovation/technology-landscape-analysis/) |
+| **TechInsights** subscriptions (teardown channels, market-analysis subscriptions, battery) | Not published | per channel / subject subscription | **One area per channel**; multi-channel bundles sold | Yes — reverse engineering + analyst reports | No price | [techinsights.com market-analysis-subscriptions](https://www.techinsights.com/market-analysis-subscriptions) |
+| **Lux Research** membership | Not published (annual subscription fee per services agreement) | per company membership, custom | **N areas** (multi-domain membership) | Yes | No price | [luxresearchinc.com/services-agreement](https://luxresearchinc.com/services-agreement/) |
+| **IDTechEx** subscription / reports | Not published; "varies with the number of reports required, the number of users, and the amount of analyst or consulting time"; 1- or 2-year terms | per report or per domain bundle (e.g., Energy Market Intelligence Subscription) | **One area per report; N areas per subscription** | Yes | Medium on structure; no price | [idtechex.com market-intelligence-subscription](https://www.idtechex.com/en/research/market-intelligence-subscription), [faqs](https://www.idtechex.com/en/users/faqs), [report 1112](https://www.idtechex.com/en/research-report/rare-earth-magnets/1112) |
+| **Yole Group** reports / monitors | Not published; single purchase or "bundle offers … from 2 to 60 products, with an evolving discount policy" | per report / per bundle | **One area per report; N areas per bundle** | Yes | Medium (vendor excerpt) | [yolegroup.com/our-offers](https://www.yolegroup.com/our-offers/) |
+| **Everest Group** — "Rare-Earth-Free Permanent Magnets for Energy and Mobility Systems" (EGR-2025-79-R-7816) | Price shown on report page (blocked); reports sold via annual membership or individual purchase | per report or membership | **One area** per report; membership = N areas | Yes | Low (existence only) | [everestgrp.com report](https://www.everestgrp.com/report/egr-2025-79-r-7816/), [using the portal](https://www.everestgrp.com/using-the-research-portal/) |
+| **MarketsandMarkets** — Permanent Magnet Market to 2030 | US$4,950 single user / US$8,150 corporate | per report | **One area** (all permanent magnets, market sizing, not patents) | Market analysis, not patent analysis | High (Section 1.3) | [marketsandmarkets.com](https://www.marketsandmarkets.com/Market-Reports/permanent-magnet-market-806.html) |
+| **Patexia Concierge** | Not published; "no seat limit"; loyalty points "can drive the cost of membership to zero" | per firm/company membership | **Whole universe** (IP litigation/prosecution analytics, not technology-specific) | Custom analytics on request | No price | [patexia.com concierge](https://patexia.com/insight/patexia-concierge-2) |
+| **IAM** (Law Business Research) | Not found (a £250/yr hit in search is for "International Arts Manager", a different publication — do not use) | per subscriber | **Whole universe** (IP business news) | Journalism, not technical patent analysis | None | [iam-media.com/info/subscribe](https://www.iam-media.com/info/subscribe) |
+| **JUVE Patent** | Not found (only "Firm Profile" terms and ad rates retrievable) | per subscriber | **Whole universe** (European patent litigation market) | Journalism | None | [juve-patent.com PaceMaker terms](https://www.juve-patent.com/pacemaker-general-terms-conditions/) |
+| **Cypris** | Free tier; paid tiers custom. Cypris's own blog says specialised patent platforms "range from several hundred to several thousand dollars per user per month" (self-interested source) | per user per month | **Whole universe** | AI search; free one-off RE-free-magnet insight piece | Low | [capterra.com Cypris](https://www.capterra.com/p/248878/Cypris/), [cypris.ai buyer guide](https://www.cypris.ai/insights/best-ai-patent-search-tools-in-2026-the-definitive-guide-for-r-d-and-innovation-teams) |
+| **Lens.org** Professional / Institutional Toolkit | US$1,000/yr individual commercial; institutional tiers "fair, tiered pricing" (WIPO manual cites US$1,000–5,000/yr for the main interface) | per user / per institution | **Whole universe** | No — saved-search notifications only | High (US$1,000); Low (toolkit range) | [about.lens.org individual commercial use](https://about.lens.org/individual-commercial-use/), [WIPO manual ch. 9](https://wipo-analytics.github.io/manual/the-lens-1.html) |
+| **PatSnap** | Reported US$15K–30K/yr entry, US$50K+ with modules (Section 1.1) | per contract, few seats | **Whole universe** | No — classification-driven alerts, watchlists, dashboards; interpretation left to the user | Medium | [beyondelevation PatSnap pricing](https://beyondelevation.com/blog/posts/patsnap-pricing-2026/), [patsnap.com monitoring tools](https://www.patsnap.com/resources/blog/articles/competitor-patent-monitoring-tools-2025/) |
+| **Clarivate Derwent Innovation** | Reported US$2,400–3,600/user/yr low end; five figures per seat typical (Section 1.1) | per user per year | **Whole universe** | No — automated saved-search alerts, family- and legal-event-aware monitoring rules | Medium-low | [clarivate.com Derwent patent analytics](https://clarivate.com/intellectual-property/derwent/patent-analytics/), [inventionschool review](https://inventionschool.tech/clarivate_derwent_innovation_review/) |
+| **Questel Orbit Intelligence** | Reported US$20K+/yr basic (Section 1.1) | per contract | **Whole universe** | No — alerts | Low | [getapp Orbit pricing](https://www.getapp.com/legal-law-software/a/orbit-intelligence/pricing/) |
+| **Minesoft PatBase / Pat-KM** | ~US$10,500/yr average (Vendr, Section 1.1) | per contract | **Whole universe** | No — "customisable alerting" on filings, legal status, competitor activity; Pat-KM inspection folders | Medium | [minesoft.com monitoring & alerts](https://minesoft.com/solutions/patent-monitoring-alerts/), [minesoft.com Pat-KM](https://minesoft.com/our-products/pat-km/), [vendr Minesoft](https://www.vendr.com/buyer-guides/minesoft) |
+| **SDLE — Battery Patent Newsletter** (Shmuel De-Leon Energy) | **US$499/yr single user; US$999/yr five-reader licence** | per year, per reader count | **One area** (battery patents: Li-ion, solid-state, flow, Na, Zn, recycling, BMS) | Daily (Mon–Sat) digest of new patents; curation is selection, analysis is light (not verified — page blocked) | Medium (single vendor excerpt) | [sdle.co.il battery-patent-newsletters](https://www.sdle.co.il/battery-patent-newsletters/), [sdle.co.il weekly newsletter (free)](https://www.sdle.co.il/services/energy-storage-weekly-newsletters/) |
+| **SemiAnalysis** newsletter | US$500/yr (groups −20%; corporate discounts) | per reader per year | **One area** (semiconductors / AI infrastructure) | Yes — analyst-written | Medium (excerpt; page blocked) | [newsletter.semianalysis.com/subscribe](https://newsletter.semianalysis.com/subscribe), [semianalysis.com/faq](https://semianalysis.com/faq/) |
+| **Intercalation Station** | US$100/yr or US$10/mo (2026 excerpt); an earlier excerpt said US$150/yr | per reader | **One area** (batteries) | Yes — analyst-written, prosumer | Low (conflicting) | [intercalationstation.substack.com/p/coming-soon](https://intercalationstation.substack.com/p/coming-soon), [birthday2](https://intercalationstation.substack.com/birthday2) |
+| **The Information** | US$399/yr; Pro US$749/yr; monthly US$42.25 | per reader | **N areas** (whole tech industry) | Journalism | High (two sources) | [readless.app](https://www.readless.app/blog/the-information-price-per-month-2026), [digiday](https://digiday.com/media/information-launches-new-199-749-annual-subscription-tiers/) |
+| **Stratechery Plus** | US$15/mo or US$150/yr | per reader | **N areas** (tech strategy) | Analysis | Medium | [thetilt.com](https://www.thetilt.com/content-entrepreneur/ben-thompson-stratechery) |
+| **Doomberg** | US$400/yr; Pro US$1,200/yr | per reader | **One area** (energy / commodities finance) | Analysis | Medium | [newsletter.doomberg.com/p/doomberg-pro](https://newsletter.doomberg.com/p/doomberg-pro) |
+| **Not Boring** | US$20/mo (US$240/yr) per one source; US$100/yr per another | per reader | **N areas** | Analysis | Low (conflicting) | [notboring.co/subscribe](https://www.notboring.co/subscribe), [growthinreverse.com](https://growthinreverse.com/packy/) |
+| **Casey Handmer** | No paid newsletter found (free WordPress blog) | — | — | — | High (absence) | [caseyhandmer.wordpress.com](https://caseyhandmer.wordpress.com/) |
+| **Patent Drop** (Substack) | Price not retrieved | per reader | **N areas** (big-tech patents) | Summaries | None | [patentdrop.substack.com/about](https://patentdrop.substack.com/about) |
+| **Battery Vault** (Substack) | Appears free | — | One area (batteries) | News digest | Low | [batteryvault.substack.com](https://batteryvault.substack.com/) |
+| **Adamas Intelligence** — Rare Earth Minerals Monthly; Rare Earth Pricing Quarterly Outlook; Magnet Market Outlook to 2040 | "Contact for service pricing" | per subscription / per report | **One area** (rare earths and magnets; no patents) | Yes — analyst forecasts | No price | [adamasintel.com quarterly outlook](https://www.adamasintel.com/rare-earth/rare-earth-pricing-quarterly-outlook/), [minerals monthly](https://www.adamasintel.com/introducing-new-rare-earth-minerals-monthly/) |
+| **Benchmark Mineral Intelligence** — rare earths service | Not published; seat tiers 10 / 20 / unlimited | per seat tier | **One area** per service (rare earths) inside a multi-commodity house | Yes — prices and supply-chain analysis, no patents | No price | [benchmarkminerals.com/plans](https://www.benchmarkminerals.com/plans), [rare earths prices](https://www.benchmarkminerals.com/rare-earths/prices) |
+
+**Reference:** PatentSonar Analyst US$249/mo = US$2,988/yr billed monthly, US$2,490/yr prepaid; Team US$750/mo = US$9,000/yr monthly, US$7,500 prepaid; Enterprise from US$2,000/mo = US$24,000/yr, annual only (ADR 0001).
+
+### 8.2 Answers
+
+**(a) How many competitors sell ONE technology area for a price comparable to ours?**
+
+The market splits cleanly by business model, and the split answers the founder's question:
+
+- **Curated intelligence is sold per technology area.** Every vendor found that delivers analysis (not raw records) prices it per area: Magic Number (per sector, US$500/mo), Knowmade (per technology, monitor subscription or EUR 4,990 report), TechInsights (per channel), Yole and IDTechEx (per report; bundles with discounts), GreyB/IPStudies (per landscape project), SDLE (battery patents only), SemiAnalysis, Intercalation Station, Doomberg (one domain each), Adamas and Benchmark (rare earths only). Multi-area access is sold as a bundle or membership at an unpublished, higher price (Magic Number "full catalog", Yole 2–60-product bundles, IDTechEx domain subscriptions, Lux membership).
+- **Whole-universe access is sold only as a tool without curation.** Lens, PatSnap, Derwent, Orbit, PatBase cover all patents, but their "alerts" are saved-search notifications and legal-event triggers; no vendor excerpt claims analyst interpretation of the hits.
+- **With a published price and a per-area scope directly comparable to PatentSonar:** two — **Magic Number** (US$6,000/yr per sector, platform + weekly email) and **SDLE Battery Patent Newsletter** (US$499/yr single reader, US$999/yr five readers, daily digest). A third, **Knowmade's per-technology monitor**, is the closest product-for-product analog (quarterly curated updates + database + dashboard, 12-month term) but has no published price. Per-reader analyst newsletters at US$100–500/yr (SemiAnalysis, Intercalation Station) are one-area too, but are priced for individuals, not corporate IP budgets.
+
+So "one stream per subscription" is the market norm for curated intelligence, not an anomaly. Nobody sells curated coverage of "the whole patent universe" at any price.
+
+**(b) Where do US$249 / US$750 / US$2,000 sit?**
+
+| PatentSonar tier (annualised) | vs one-area curated products | vs multi-area bundles / whole-universe seats | vs per-report pricing (annualised, one report per year) |
+|---|---|---|---|
+| **Analyst** US$2,490–2,988/yr, 1 reader | About **half** of Magic Number's single sector (US$6,000/yr); **5–6x** SDLE's single-reader battery patent digest (US$499); **5–6x** SemiAnalysis (US$500) and above Doomberg Pro (US$1,200). It sits above the individual-newsletter band (US$100–1,200/yr) and below the corporate per-sector platform band (US$6,000+). | Roughly the reported low end of one Derwent seat (US$2,400–3,600/user/yr) and 2.5–3x a Lens Pro seat (US$1,000) — both whole-universe, uncurated. | About **half** of one Knowmade landscape (EUR 4,990) or one MarketsandMarkets single-user report (US$4,950), while delivering 52 issues + 12 reports instead of one PDF. |
+| **Team** US$7,500–9,000/yr, 5 readers | **1.25–1.5x** one Magic Number sector; **7.5–9x** SDLE's five-reader licence (US$999) — SDLE is the only five-reader comparator and it is a digest, not analysis. | Below a PatBase contract (~US$10,500), well below PatSnap entry (US$15–30K) and Orbit (US$20K+). Comparable to the whole-universe tool a small IP team already pays for. | About **1.5–1.8x** one Knowmade landscape or one MarketsandMarkets corporate licence (US$8,150). Team includes watchlists, quarterly briefing and CSV export on top of the periodic content. |
+| **Enterprise** from US$24,000/yr, unlimited readers, one entity | **4x** one Magic Number sector; Magic Number's own enterprise/full-catalog price is unpublished, so the multi-sector comparison cannot be made. No other one-area curated product with a published price reaches this level. | Inside the PatSnap entry band (US$15–30K) and above Orbit's reported floor (US$20K+) — i.e., priced like a whole-universe tool for one technology. The included bespoke mini-landscape alone lists at EUR 4,990 on Knowmade's price list, which is the tangible justification. | Equivalent to roughly **5** Knowmade landscapes or **3** MarketsandMarkets corporate licences per year. |
+
+Reading: Analyst and Team are **in line with or below** the only published per-area curated benchmark (Magic Number) and **below** every whole-universe tool seat except Lens. Enterprise is the tier where the "one area" scope is most exposed, because at US$24K+ the buyer's alternative is a whole-universe PatSnap/Orbit contract; it holds only if the bespoke landscape, portfolio watch and API are visibly worth the difference.
+
+**(c) Should the founder change anything now?**
+
+**Recommendation: keep the three list prices; repackage the wording; do not add a second-stream discount yet.**
+
+1. **Keep US$249 / US$750 / US$2,000+.** The per-area model matches how every curated vendor prices. Analyst at half of Magic Number is neither over- nor under-priced for a product that has no platform yet and no track record; raising it now would remove the only sub-US$3K corporate-card entry point. Lowering it would push PatentSonar into the individual-newsletter band (US$100–1,200) where the buyer is not the corporate IP team. The ADR 0001 trigger (revisit after 10 paying accounts or 2026-12-31) stands. No new ADR is required because no price changes.
+2. **Make "per coverage stream" explicit everywhere** (site pricing page, ToS order form, ADR 0001 wording): "Each subscription covers one coverage stream. Stream 01: rare-earth-free permanent magnets." Magic Number, Knowmade and TechInsights all state the scope unit on the page; buyers in this category expect it, and stating it pre-empts the "does this cover all of our technologies?" objection at Enterprise.
+3. **Pre-decide, but do not publish, a second-stream discount.** Magic Number ("discount pricing for multiple sectors") and Yole ("evolving discount policy" for 2–60 products) establish the precedent. A discounted second stream only matters once Stream 02 exists (CLAUDE.md: not before Stream 01 is profitable). Suggested placeholder for the future ADR: second stream at 60–70% of list, same tier, same entity — to be evidenced when the time comes, not now.
+4. **Enterprise: sell the bespoke deliverables, not the seats.** At US$24K+ for one area, the written proposal should itemise the annual mini-landscape (comparable list price EUR 4,990 at Knowmade), portfolio watch and API feed, so the buyer is not comparing US$24K against a whole-universe PatSnap seat on scope alone.
+5. **Open verification items** (carry to Section 6): Magic Number multi-sector discount level and whether any Energy sub-sector covers magnets or motors; Knowmade monitor annual price; IDTechEx report 1112 and Everest EGR-2025-79-R-7816 list prices; SDLE newsletter content depth (digest vs analysis). None of these would change the recommendation unless Knowmade's monitor turns out to be priced below US$5,000/yr, in which case Team's value story needs sharpening.
+
+No `tasks` row is created for a price change, because none is recommended. A task for the orchestrator to update site/ADR wording to "per coverage stream" is appropriate and is left to the orchestrator to open.
+
+### 8.3 Sources (Section 8)
+
+Curated per-technology products
+- https://www.magicnumberip.com/what-is-a-patent-forecast/
+- https://magicnumberip.com/patent-forecast/thorium/subscribe
+- https://magicnumberip.com/patent-forecast/v2x-communication/subscribe
+- https://www.magicnumberip.com/patent-forecast-sectors-for-ip-attorneys/
+- https://sectors.patentforecast.com/sectors
+- https://www.knowmade.com/patent-analytics-services/patent-monitor/energy-patent-monitor/solid-state-batteries-patent-monitor/
+- https://www.knowmade.com/technology-news/press-release/knowmade-launches-two-new-sic-technology-patent-monitors-with-interactive-dashboards/
+- https://www.knowmade.com/patent-analytics-services/patent-monitor/semiconductor-patent-monitor/rf-front-end-modules-components-patent-monitor/
+- https://www.knowmade.com/wp-content/uploads/2023/11/GaN-Electronics-Patent-Landscape-Analysis-2023-FLYER.pdf
+- https://www.knowmade.com/wp-content/uploads/2023/03/saRNA-Vaccines-Patent-Landscape-2023-FLYER.pdf
+- https://www.knowmade.com/wp-content/uploads/2023/09/Allogeneic-CAR-Patent-Landscape-2023-FLYER.pdf
+- https://www.knowmade.com/patent-analytics-services/patent-report/energy-storage-technologies-patent-landscape/battery-technologies-patent-landscape/lmfp-for-li-ion-batteries-patent-landscape-analysis-2026
+- https://www.ipstudies.ch/
+- https://greyb.com/services/open-innovation/technology-landscape-analysis/
+- https://insights.greyb.com/knowledge-base/
+- https://www.techinsights.com/market-analysis-subscriptions
+- https://www.techinsights.com/reverse-engineering-subscriptions/teardown-subscriptions
+- https://luxresearchinc.com/services-agreement/
+- https://www.idtechex.com/en/research/market-intelligence-subscription
+- https://www.idtechex.com/en/research/energy-market-intelligence-subscription
+- https://www.idtechex.com/en/users/faqs
+- https://www.idtechex.com/en/research-report/rare-earth-magnets/1112
+- https://www.yolegroup.com/our-offers/
+- https://www.everestgrp.com/report/egr-2025-79-r-7816/
+- https://www.everestgrp.com/using-the-research-portal/
+- https://www.marketsandmarkets.com/Market-Reports/permanent-magnet-market-806.html
+- https://patexia.com/insight/patexia-concierge-2
+- https://www.iam-media.com/info/subscribe
+- https://www.iam-media.com/account/subscribe/plans
+- https://www.juve-patent.com/pacemaker-general-terms-conditions/
+- https://www.capterra.com/p/248878/Cypris/
+- https://www.cypris.ai/insights/best-ai-patent-search-tools-in-2026-the-definitive-guide-for-r-d-and-innovation-teams
+
+Patent database seats and alerts
+- https://about.lens.org/individual-commercial-use/
+- https://wipo-analytics.github.io/manual/the-lens-1.html
+- https://www.lens.org/lens/institutions/faq
+- https://beyondelevation.com/blog/posts/patsnap-pricing-2026/
+- https://www.patsnap.com/resources/blog/articles/competitor-patent-monitoring-tools-2025/
+- https://clarivate.com/intellectual-property/derwent/patent-analytics/
+- https://inventionschool.tech/clarivate_derwent_innovation_review/
+- https://www.getapp.com/legal-law-software/a/orbit-intelligence/pricing/
+- https://minesoft.com/solutions/patent-monitoring-alerts/
+- https://minesoft.com/our-products/pat-km/
+- https://www.vendr.com/buyer-guides/minesoft
+
+Single-topic paid newsletters and commodity intelligence
+- https://www.sdle.co.il/battery-patent-newsletters/
+- https://www.sdle.co.il/services/energy-storage-weekly-newsletters/
+- https://newsletter.semianalysis.com/subscribe
+- https://semianalysis.com/faq/
+- https://intercalationstation.substack.com/p/coming-soon
+- https://intercalationstation.substack.com/birthday2
+- https://www.readless.app/blog/the-information-price-per-month-2026
+- https://digiday.com/media/information-launches-new-199-749-annual-subscription-tiers/
+- https://www.thetilt.com/content-entrepreneur/ben-thompson-stratechery
+- https://newsletter.doomberg.com/p/doomberg-pro
+- https://newsletter.doomberg.com/subscribe
+- https://www.notboring.co/subscribe
+- https://growthinreverse.com/packy/
+- https://caseyhandmer.wordpress.com/
+- https://patentdrop.substack.com/about
+- https://batteryvault.substack.com/
+- https://www.adamasintel.com/rare-earth/rare-earth-pricing-quarterly-outlook/
+- https://www.adamasintel.com/introducing-new-rare-earth-minerals-monthly/
+- https://www.adamasintel.com/rare-earth/rare-earth-magnet-market-outlook-to-2040/
+- https://www.benchmarkminerals.com/plans
+- https://www.benchmarkminerals.com/rare-earths/prices
+
+## 9. Changelog
+
+| Date | Change |
+|---|---|
+| 2026-09-25 | Initial report (Sections 0–7). |
+| 2026-09-26 | Added Section 8: scope-per-price comparison (one area vs many vs whole universe), answers (a)–(c), recommendation to keep prices and make "per coverage stream" explicit. Corrected Intercalation Station price to a US$100–150/yr range (conflicting excerpts). Noted that the £250/yr "IAM" search hit belongs to International Arts Manager, not IAM Media. |
