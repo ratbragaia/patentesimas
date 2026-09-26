@@ -25,9 +25,8 @@ Work through this list top to bottom; tick items by editing this file and commit
 
 ## 2. Credentials still missing (ask the founder for each; they create the account, you configure)
 - [ ] EPO OPS consumer key/secret (developers.epo.org → My Apps). Primary patent source.
-- [ ] PatentsView API key (PatentsView support portal).
 - [ ] Telegram bot token (@BotFather) + founder chat id. Then `npm run report:weekly` must deliver.
-- [ ] GCP project + service account for BigQuery (can wait until the first monthly report).
+- [ ] GCP project + service account for BigQuery (ADR 0008: now the second data source, needed for US claims text and back-fill).
 - [ ] Postmark server token + DNS records (`infra/dns-records.md`), Paddle sandbox, NFe.io, outreach mailbox.
 Append each as `KEY=value` to `/etc/patentsonar/env`, then `sudo systemctl restart patentsonar-webhooks`.
 Status 2026-09-26: all five requested from the founder (Portuguese message, first VPS session); each is a

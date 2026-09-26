@@ -10,9 +10,9 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 4 | GitHub deploy key for the VPS agent: add the key printed by `infra/vps/github-deploy-key.sh` at repo → Settings → Deploy keys, **Allow write access** | `infra/vps/github-deploy-key.sh` | ✅ 2026-09-26 (`ssh -T git@github.com` authenticates; pushes from the VPS work) |
 | 5 | Claude Code logged in on the VPS as user `patentsonar`. Account is on the **Max** plan (briefing assumed Pro), so 24/7 operation has far more headroom | VPS | ✅ 2026-09-26 |
 | 6 | Supabase project `patentsonar-prod` (us-east-1): URL, secret key, DB URL in `/etc/patentsonar/env`; schema applied | `SUPABASE_*` | ✅ 2026-09-26 |
-| 7 | PatentsView API key (free; request via the PatentsView support portal at patentsview-support.atlassian.net; 45 req/min) | `PATENTSVIEW_API_KEY` | ⬜ |
+| 7 | ~~PatentsView API key~~ **Deferred** (portal offline; ODP key needs ID.me, see ADR 0008). US coverage via EPO OPS + BigQuery | `PATENTSVIEW_API_KEY` | ⏸ deferred |
 | 8 | EPO OPS consumer key/secret (register at developers.epo.org → My Apps; free tier ~4 GB/week) — **primary data source** | `EPO_OPS_*` | ⬜ |
-| 9 | GCP project with BigQuery enabled + service-account JSON | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | ⬜ |
+| 9 | GCP project with BigQuery enabled + service-account JSON (**priority raised**, ADR 0008; free tier is enough, card required by Google) | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | ⬜ |
 | 10 | Paddle seller account (verify Brazil eligibility first — see research 04) + webhook secret | `PADDLE_*` | ⬜ |
 | 11 | USD receiving account (Wise Business or alternative per research 04) | Paddle payout settings | ⬜ |
 | 12 | NFe.io account + company registered | `NFEIO_*` | ⬜ |

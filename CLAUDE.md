@@ -23,7 +23,7 @@ Everything else — finding customers, selling, producing, invoicing, reconcilin
 
 1. **Never invent patent data.** Every patent/publication number, date, assignee, CPC or claim in
    any customer-facing text must exist in the `patent_publications` table, which is filled only
-   from official APIs (PatentsView, EPO OPS, Google Patents BigQuery). `src/content/qa.ts` enforces
+   from official APIs (EPO OPS, Google Patents BigQuery; PatentsView deferred, ADR 0008). `src/content/qa.ts` enforces
    this; a newsletter issue that fails QA is never sent.
 2. **Idempotent money.** Billing and invoicing operations are keyed by an idempotency key stored in
    `billing_events` / `invoices` before any external call. Re-running a job must never double-charge
