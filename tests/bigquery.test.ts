@@ -24,6 +24,11 @@ describe("bigquery source (row handling)", () => {
     expect(mapBigQueryRows([{ ...row, publication_number: "JP-2026000001-A", country_code: "JP", title_en: null, abstract_en: null, cpc_codes: [] }])).toEqual([]);
     expect(mapBigQueryRow({ publication_number: "US-1-A", country_code: "US", title_en: "Bicycle bell", abstract_en: "", cpc_codes: ["B62J3/00"], publication_date: "2026-08-04" })).toBeNull();
   });
+  it("skips rows it cannot normalise or date instead of aborting the run", () => {
+    expect(mapBigQueryRow({ ...row, publication_number: "??-garbage" })).toBeNull();
+    expect(mapBigQueryRow({ ...row, publication_date: null })).toBeNull();
+    expect(mapBigQueryRow({ ...row, publication_number: "US-PP33549-P2" })?.publication_number).toBe("US-PP33549-P2");
+  });
   it("window, cap and backfill horizon match ADR 0009/0011", () => { expect(BQ_LOOKBACK_DAYS).toBe(45); expect(BQ_MAX_BYTES_BILLED).toBe(300_000_000_000); expect(BQ_BACKFILL_YEARS).toBe(5); });
 });
 

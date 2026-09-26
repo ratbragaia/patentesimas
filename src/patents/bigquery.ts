@@ -42,13 +42,17 @@ export function unwrapBqJson(raw: unknown): Record<string, unknown>[] {
   return rows as Record<string, unknown>[];
 }
 
-/** One row of `bigquery.sql` → normalised Publication, or null if off-topic. */
+/** One row of `bigquery.sql` → normalised Publication, or null if off-topic or not normalisable (logged, never fatal). */
 export function mapBigQueryRow(r: Record<string, any>): Publication | null {
   const cpcs: string[] = (r.cpc_codes ?? []).map(normalizeCpc);
   const matched = classify({ title: r.title_en, abstract: r.abstract_en, cpc_codes: cpcs });
   if (!matched) return null;
+  let publication_number: string;
+  try { publication_number = normalizePublicationNumber(r.publication_number); }
+  catch (err) { log.warn("bigquery row skipped", { publication_number: r.publication_number, err: String(err) }); return null; }
+  if (!r.publication_date) { log.warn("bigquery row skipped: no publication_date", { publication_number }); return null; }
   return {
-    publication_number: normalizePublicationNumber(r.publication_number), country_code: r.country_code, kind_code: r.kind_code ?? null,
+    publication_number, country_code: r.country_code, kind_code: r.kind_code ?? null,
     family_id: r.family_id ?? null, title: r.title_en ?? null, abstract: r.abstract_en ?? null, applicants: r.applicants ?? [], inventors: r.inventors ?? [],
     cpc_codes: cpcs, priority_date: r.priority_date ?? null, filing_date: r.filing_date ?? null, publication_date: r.publication_date, grant_date: r.grant_date ?? null,
     application_number: r.application_number ?? null, source: "bigquery", source_payload: r, matched_terms: matched,
@@ -204,17 +208,19 @@ export interface BigQueryFetch { pubs: Publication[]; rows: number; bytes: numbe
  * client bug. Both are capped at BQ_MAX_BYTES_BILLED by the service itself.
  */
 export async function fetchBigQuery(from: string, to: string): Promise<BigQueryFetch> {
+  // Only the query itself is covered by the fallback: a mapping error must not trigger a second 268 GB scan.
+  let rows: Record<string, unknown>[]; let bytes: number | null; let path: BigQueryFetch["path"];
   try {
     const est = await estimateNicheBytes(from, to);
     if (est > BQ_MAX_BYTES_BILLED) throw new Error(`dry run estimates ${(est / 1e9).toFixed(0)} GB > cap ${(BQ_MAX_BYTES_BILLED / 1e9).toFixed(0)} GB (ADR 0009); not run`);
     const res = await runQuery(nicheSql(), windowParams(from, to), { maximumBytesBilled: BQ_MAX_BYTES_BILLED });
-    return { pubs: mapBigQueryRows(res.rows), rows: res.rows.length, bytes: res.totalBytesProcessed, path: "rest" };
+    rows = res.rows; bytes = res.totalBytesProcessed; path = "rest";
   } catch (err) {
     if (/not run|Missing credential/.test(String(err))) throw err; // a deliberate refusal or missing config is not something to route around
     log.warn("bigquery REST path failed; falling back to bq cli", { err: String(err) });
-    const rows = await runBigQuery(from, to);
-    return { pubs: mapBigQueryRows(rows), rows: rows.length, bytes: null, path: "bq-cli" };
+    rows = await runBigQuery(from, to); bytes = null; path = "bq-cli";
   }
+  return { pubs: mapBigQueryRows(rows), rows: rows.length, bytes, path };
 }
 
 export async function fetchBigQueryPublications(from: string, to: string): Promise<Publication[]> {
