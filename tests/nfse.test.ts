@@ -14,11 +14,15 @@ describe("NFS-e per Paddle payout (ADR 0002, national standard)", () => {
     expect(d.servico.descricao).toContain("pay_123"); expect(d.servico.descricao).toContain("RI-0001"); expect(d.servico.descricao).toContain("LC 116, art. 2º, I");
     expect(d.prestador.cnpj).toBe("40435866000140"); expect(d.externalId).toBe("paddle-payout:pay_123");
   });
-  it("maps the draft to a Notaas request with no ISS amounts (avoids national rejection E1303)", () => {
+  it("maps the draft to the documented Notaas schema: ISO2 country, uf EX, export block, ISS 0, no ISS amounts (E1303)", () => {
     const p = toNotaasPayload(buildNfseDraft(inv, 5, "2026-10-15"));
-    expect(p.tomador.estrangeiro).toBe(true); expect(p.servico.iss_aliquota).toBe(0); expect(p.servico.iss_exigibilidade).toBe("exportacao");
-    expect(p.referencia).toBe("paddle-payout:pay_123"); expect(JSON.stringify(p)).not.toContain("iss_valor");
+    expect(p.tomador.endereco.pais).toBe("GB"); expect(p.tomador.endereco.uf).toBe("EX"); expect(p.tomador).not.toHaveProperty("cnpj");
+    expect(p.servico.codigo).toBe("010901"); expect(p.valores.total).toBe(6172.5); expect(p.valores.aliquotaIss).toBe(0); expect(p.valores.tribISSQN).toBe(3);
+    expect(p.valores.exportacao).toMatchObject({ modoPrestacao: 1, vinculoPartes: 0, codigoMoeda: "220", valorServicoMoeda: 1234.5, paisResultado: "GB" });
+    expect(p.referencia).toBe("paddle-payout:pay_123"); expect(p.competencia).toBe("2026-10");
+    expect(JSON.stringify(p)).not.toMatch(/valorIss|iss_valor|issValor/);
   });
+  it("US entity maps to US", () => expect(toNotaasPayload(buildNfseDraft({ ...inv, payer_entity: "US" }, 5, "2026-10-15")).valores.exportacao.paisResultado).toBe("US"));
   it("rounds BRL to cents", () => { expect(toBrl(10, 5.4321)).toBe(54.32); expect(toBrl(0.01, 5)).toBe(0.05); });
   it("US entity is USA", () => expect(buildNfseDraft({ ...inv, payer_entity: "US" }, 5, "2026-10-15").tomador.pais).toBe("USA"));
   it("ops accepts only well-formed enqueue-payout calls", () => {
