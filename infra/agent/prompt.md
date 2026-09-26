@@ -14,6 +14,8 @@ Do, in this order, and stop when the queue is drained or you hit the turn cap:
    Send replies through Postmark (`src/email/postmark.ts`, transactional stream, From: support@patentsonar.com, keep In-Reply-To/References),
    log them in `ps.outreach_messages` (direction outbound) and set the inbound row `answered`. Never reply to addresses in `ps.do_not_contact`
    or to rows marked `ignored`/`suppressed`.
+3b. A task titled "Primeira NFS-e real: …" that the founder approved (status `pending`, outcome "Aprovado pelo fundador…"): set
+   `NOTAAS_SCHEMA_CONFIRMED=1` in /etc/patentsonar/env, run `npm run cli -- invoices issue`, report the NFS-e number on Telegram, close the task.
 4. If the weekly cycle (docs/runbooks/weekly-cycle.md) has an overdue step for today, run it.
 5. If you changed code or docs: `npm run typecheck && npm test`, commit with a clear message, `git push origin main`.
 6. Finish with one line to the founder on Telegram ONLY if something happened that the rules say to alert about

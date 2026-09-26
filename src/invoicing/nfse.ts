@@ -15,6 +15,7 @@ import { httpJson } from "../lib/http.js";
 import { db, audit } from "../lib/db.js";
 import { log } from "../lib/log.js";
 import { COMPANY, FISCAL, PADDLE_ENTITIES, type PaddleEntityCode } from "../lib/company.js";
+import { escalateTask } from "../reporting/founder-inbox.js";
 
 export interface PayoutInvoiceRequest { paddlePayoutId: string; entity: PaddleEntityCode; amountUsd: number; payoutDate: string; reverseInvoiceRef?: string | null }
 
@@ -142,9 +143,22 @@ export async function issuePendingInvoices(): Promise<number> {
     try {
       if (!inv.paddle_payout_id) throw new Error("legacy per-transaction invoice row; cancel it (ADR 0002 revised: NFS-e are per Paddle payout)");
       if (!c.NOTAAS_API_KEY) throw new Error("NOTAAS_API_KEY not set (handoff item 12: Notaas account + A1 certificate)");
-      if (!c.NOTAAS_SCHEMA_CONFIRMED) throw new Error("Notaas payload schema not yet confirmed by a homologação issue (NOTAAS_SCHEMA_CONFIRMED=0); refusing to issue");
       const { rate, date } = await ptaxRate(inv.payout_date);
       const draft = buildNfseDraft(inv, rate, date);
+      // First real NFS-e ever (no homologação project on the free Notaas plan, ADR 0002): the founder approves it on
+      // Telegram with the amounts in hand. After the first successful issue, later notes go out automatically.
+      if (!c.NOTAAS_SCHEMA_CONFIRMED) {
+        const { count } = await db().from("invoices").select("*", { count: "exact", head: true }).eq("status", "issued");
+        if ((count ?? 0) === 0) {
+          const title = `Primeira NFS-e real: emitir para ${PADDLE_ENTITIES[inv.payer_entity].name}, USD ${Number(inv.amount_usd).toFixed(2)} = R$ ${draft.servico.valorServicos.toFixed(2)} (PTAX ${rate} de ${date}), item 1.09, exportação; repasse Paddle ${inv.paddle_payout_id}`;
+          const { data: open } = await db().from("tasks").select("id,status").like("title", "Primeira NFS-e real:%").in("status", ["pending", "in_progress", "blocked"]).maybeSingle();
+          if (!open) {
+            const { data: t } = await db().from("tasks").insert({ agent: "finance", title, priority: 1, payload: { invoice_id: inv.id, on_approve: "set NOTAAS_SCHEMA_CONFIRMED=1 in /etc/patentsonar/env, then run `npm run cli -- invoices issue`" } }).select("id").single();
+            if (t) await escalateTask(t.id, `🧾 Primeira nota fiscal real está pronta para sair (Notaas, produção):\n${title}.\nAprovar emite agora; cancelar mantém a nota pendente.`);
+          }
+          throw new Error("aguardando aprovação do fundador para a primeira NFS-e (Telegram)");
+        }
+      }
       // Mark the provider call before making it: a crash after /emitir never re-issues (the row is no longer 'pending').
       await db().from("invoices").update({ status: "issuing", amount_brl: draft.servico.valorServicos, fx_rate: rate, error: null }).eq("id", inv.id).eq("status", "pending");
       const { invoiceId, final } = await notaasIssue(toNotaasPayload(draft), c.NOTAAS_API_KEY);

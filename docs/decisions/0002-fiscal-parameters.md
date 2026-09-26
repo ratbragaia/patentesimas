@@ -37,8 +37,10 @@ serviços de informação na internet). Constants in `src/lib/company.ts`.
   issued ↔ Wise credits. Every reverse invoice has exactly one issued NFS-e for the same amount.
 
 ## Residual checks (form-filling, not design)
-1. Confirm in the national NFS-e table the `cTribNac` for item 1.09 (expected 010901) and validate the
-   export payload in the Notaas sandbox (task in `ps.tasks` for the VPS session, which can read the docs).
+1. ~~Validate in a Notaas sandbox~~ Not possible: the free Notaas plan has a single project and it is the
+   founder's production project. Payload aligned to the documented `/emitir` schema (VPS session, 2026-09-26).
+   **The first real NFS-e is gated by the founder on Telegram** (✅/🚫 with amounts and tomador); after the first
+   successful issue, `NOTAAS_SCHEMA_CONFIRMED=1` and later notes go out automatically.
 2. Confirm with whoever files the ECF that the Wise Business USD balance is reported as export resources kept
    abroad. One paid hour of a tax professional is within the spend cap and recommended before the first NFS-e.
 
