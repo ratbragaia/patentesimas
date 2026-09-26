@@ -4,7 +4,7 @@ Only items requiring identity, card or legal signature. Status is updated by the
 
 | # | Item | Where it goes | Status |
 |---|---|---|---|
-| 1 | CNPJ opened (ME/EPP, Simples Nacional) + accountant's fiscal parameters for service export (NFS-e service code, ISS treatment, CNAE) | `docs/decisions/0002-fiscal-parameters.md` | 🟡 CNPJ 40.435.866/0001-40 (Rockfort Hub de Inovação Ltda) received 2026-09-26; fiscal parameters from the accountant still pending |
+| 1 | CNPJ opened (ME/EPP, Simples Nacional) + accountant's fiscal parameters for service export (NFS-e service code, ISS treatment, CNAE) | `docs/decisions/0002-fiscal-parameters.md` | 🟡 CNPJ 40.435.866/0001-40 (Rockfort Hub de Inovação Ltda) and CNAE 63.19-4-00 received 2026-09-26; still pending from the accountant: NFS-e service code, ISS export treatment, Simples annex, net-vs-gross invoice to Paddle |
 | 2 | Hostinger VPS (dedicated, Ubuntu 24.04): **IP 2.25.249.69**, keys `founder-notebook` + `patentsonar-agent` installed. Agent private key still to be added as environment secret `VPS_SSH_PRIVATE_KEY` | `infra/vps/setup.sh` (ADR 0007) | ✅ bootstrapped + hardened 2026-09-25; both keys verified. `/etc/patentsonar/env` installed 2026-09-26. Pending: agent key as env secret (only needed for cloud sessions) |
 | 3 | Domain **patentsonar.com** bought at Cloudflare Registrar 2026-09-25 (+ .io/.ai/.co optional). DNS: A @ and A www → 2.25.249.69, DNS-only | `infra/dns-records.md` | ✅ bought, DNS pointed, env installed 2026-09-26 |
 | 4 | GitHub deploy key for the VPS agent: add the key printed by `infra/vps/github-deploy-key.sh` at repo → Settings → Deploy keys, **Allow write access** | `infra/vps/github-deploy-key.sh` | ✅ 2026-09-26 (`ssh -T git@github.com` authenticates; pushes from the VPS work) |
