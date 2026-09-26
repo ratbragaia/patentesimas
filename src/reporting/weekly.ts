@@ -33,5 +33,5 @@ export async function buildWeeklyReport(): Promise<string> {
 }
 
 export async function sendWeeklyReport(): Promise<void> {
-  await notifyFounder(await buildWeeklyReport());
+  await notifyFounder(await buildWeeklyReport(), { keyboard: true });
 }

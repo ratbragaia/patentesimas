@@ -8,13 +8,14 @@ import { spawn } from "node:child_process";
 export interface JobResult { job: string; ok: boolean; code: number | null; stdout: string; stderr: string; ms: number }
 
 const APP_DIR = process.env["APP_DIR"] ?? "/opt/patentsonar";
-const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "report resend", "invoices issue", "telegram setup", "telegram info", "newsletter build-latest", "newsletter send-latest", "ingest"]);
+const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "report resend", "invoices issue", "telegram setup", "telegram info", "telegram hello", "newsletter build-latest", "newsletter send-latest", "ingest"]);
 // Parameterised subcommands: only these shapes, nothing free-form.
 const CLI_PATTERNS = [
   /^ingest bigquery( backfill)?( dry-run)?$/,          // ADR 0009/0011: live BigQuery run, dry-run first
   /^report monthly( \d{4}-\d{2})?( print)?$/,          // monthly landscape report (default: previous month)
   /^newsletter send \d{1,6}$/,                          // send a specific QA-passed issue (weekly # or YYYYMM report)
   /^patents reclassify( apply)?$/,                      // re-run the classifier on stored rows (dry-run unless apply)
+  /^tasks ask [0-9a-f-]{6,36} [^;&|`$]{3,300}$/,        // escalate a task to the founder with buttons (plain text only)
 ];
 export function cliAllowed(sub: string): boolean { return CLI_SUBCOMMANDS.has(sub) || CLI_PATTERNS.some((re) => re.test(sub)); }
 

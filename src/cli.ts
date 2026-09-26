@@ -14,8 +14,9 @@
  *   cli report resend                  re-send today's founder notices in pt-BR (one-off after the language rule)
  *   cli report monthly [YYYY-MM] [print]  build the monthly landscape report (default: previous month); `print` = markdown only
  *   cli patents reclassify [apply]     re-run the niche classifier on stored rows; dry-run unless `apply`
- *   cli telegram setup                 register the bot webhook (two-way Telegram, ADR 0013); `cli telegram info` to inspect
+ *   cli telegram setup                 register the bot webhook (two-way Telegram, ADR 0013); `cli telegram info` to inspect; `cli telegram hello` sends the keyboard
  *   cli tasks list                     show open tasks
+ *   cli tasks ask <id-or-code> <text>  escalate a task to the founder on Telegram with ✅/🚫 buttons (marks it blocked)
  *   cli inbound list                   show inbound emails awaiting a reply
  *   cli samples list                   website sample requests not yet served (status new)
  */
@@ -85,7 +86,20 @@ async function main() {
       console.log(JSON.stringify(out, null, 1)); break;
     }
     case "telegram setup": { const { setTelegramWebhook, getTelegramWebhookInfo } = await import("./reporting/telegram.js"); console.log(JSON.stringify(await setTelegramWebhook())); console.log(JSON.stringify(await getTelegramWebhookInfo())); break; }
+    case "telegram hello": {
+      const { notifyFounder } = await import("./reporting/telegram.js");
+      await notifyFounder("Agora dá para operar por botões. Use o teclado abaixo do campo de texto: 📊 Status, 📋 Tarefas, ❓ Ajuda. Quando eu precisar de uma decisão, a mensagem chega com ✅ Aprovar / 🚫 Cancelar. Qualquer texto que você escrever vira uma tarefa para mim.", { keyboard: true }); console.log("sent"); break;
+    }
     case "telegram info": { const { getTelegramWebhookInfo } = await import("./reporting/telegram.js"); console.log(JSON.stringify(await getTelegramWebhookInfo())); break; }
+    case "tasks ask": {
+      const { db } = await import("./lib/db.js"); const { escalateTask } = await import("./reporting/founder-inbox.js");
+      const [ref, ...words] = rest; const text = words.join(" ").trim();
+      if (!ref || !text) throw new Error("usage: tasks ask <id-or-code> <text>");
+      const { data } = await db().from("tasks").select("id").in("status", ["pending", "in_progress", "blocked"]);
+      const hit = (data ?? []).find((t: any) => t.id === ref || t.id.replace(/-/g, "").startsWith(ref.toLowerCase()));
+      if (!hit) throw new Error(`no open task matches ${ref}`);
+      await escalateTask(hit.id, text); console.log(`asked founder about ${hit.id}`); break;
+    }
     case "samples list": {
       const { db } = await import("./lib/db.js");
       const { data, error } = await db().from("sample_requests").select("email,company,status,request_count,source,last_requested_at").eq("status", "new").order("last_requested_at", { ascending: false });
