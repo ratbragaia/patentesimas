@@ -65,6 +65,10 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
 - [x] Headless runs: `patentsonar-agent.timer` (weekdays 07/10/13/16/19 UTC) → `infra/agent/run.sh`. Enable with
       `sudo bash infra/vps/setup.sh` (idempotent) or `sudo systemctl start patentsonar-agent.timer` until next reboot.
 
+## 4a. DNS (2026-09-26)
+- [x] `_dmarc` TXT added through the API with the founder's account token "ClaudePatentSonar" (`ops.sh dns-dmarc`). Raise to
+      `p=quarantine` around 2026-10-10 if the reports at dmarc@ show only our senders.
+
 ## 4b. Founder channel and watchdog (ADR 0013)
 - [x] (2026-09-26) `cli telegram setup` → webhook set; 3 pending updates (old founder test messages) were processed into
       `ps.founder_messages` and two "Fundador (Telegram)" tasks. Founder to confirm `/status` and cancel the two test tasks with `/nao <code>`.
