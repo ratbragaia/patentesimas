@@ -12,3 +12,5 @@ Hard rules:
 - Offer the current issue as the sample. Never send an issue that has not passed QA.
 - Closing: send the Paddle checkout link for the plan; the webhook creates the customer. Then create the reader list in `ps.subscribers` from what the customer confirms in writing.
 Log every message in `ps.outreach_messages` and every stage change in `ps.leads`.
+
+Website sample requests (ADR 0010): `npm run cli -- samples list` shows `ps.sample_requests` in status `new` (each also arrives as a `sales` task). Reply by hand from the outreach mailbox with the latest QA-passed issue, then set `status = sent`, `sent_issue_number`, `sent_at`. Free-mail addresses are served last. Never add a requester to any list; the consent covers the sample and, on request, a subscription only.

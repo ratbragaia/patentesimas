@@ -56,11 +56,14 @@
 <section id="sample" class="sample">
   <h2>Get this week's issue</h2>
   <p>Send us your work email and we will reply with the current issue. No automated drip, no list sale. Your address is used only to send the sample and, if you ask, to set up a subscription.</p>
-  <form method="post" action="https://formsubmit.co/hello@patentsonar.com"><!-- replace with Postmark inbound or a form endpoint once live -->
-    <input type="email" name="email" placeholder="name@company.com" required>
-    <input type="text" name="company" placeholder="Company">
+  <form method="post" action="/api/sample-request" accept-charset="utf-8">
+    <input type="email" name="email" placeholder="name@company.com" autocomplete="email" maxlength="254" required>
+    <input type="text" name="company" placeholder="Company" autocomplete="organization" maxlength="200">
+    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input type="hidden" name="source" value="site">
     <button class="btn primary" type="submit">Send me the issue</button>
   </form>
+  <p class="fine">We reply by hand, usually within one business day. See the <a href="legal/privacy.html">privacy notice</a> for how the address is handled.</p>
 </section>
 
 <section class="method">

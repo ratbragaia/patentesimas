@@ -44,6 +44,10 @@ Status 2026-09-26: all five requested from the founder (Portuguese message, firs
       `docs/samples/issue-000.md` and commit: it is the sales sample.
 - [ ] Send issue #0 to the founder's own address only (create a test customer/subscriber) once Postmark exists.
 
+## 3b. Monthly landscape report (ADR 0011)
+- [ ] `bash infra/vps/ops.sh cli ingest bigquery backfill dry-run` then without `dry-run` (one-off five-year history, ~268 GB, free tier).
+- [ ] `bash infra/vps/ops.sh cli report monthly 2026-08 print` → review → `cli report monthly 2026-08`; commit the markdown to `docs/samples/`.
+
 ## 4. Go-to-market prep (in parallel, no credentials needed)
 - [x] Load the 38 verified accounts from `docs/research/02-target-accounts.md` into `ps.accounts`. (2026-09-26,
       `supabase/migrations/0004_seed_accounts.sql`, idempotent)

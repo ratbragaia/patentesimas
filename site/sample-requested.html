@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PatentSonar — Sample request received</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="/">Patent<span>Sonar</span></a>
+  <nav><a href="/#what">What you get</a><a href="/#pricing">Pricing</a></nav>
+</header>
+<main>
+<section class="hero">
+  <p class="eyebrow">PatentSonar · Sample issue</p>
+  <h1 id="h-ok">Thank you. The current issue is on its way.</h1>
+  <p class="lead" id="p-ok">An analyst sends the sample by hand, usually within one business day. If it does not arrive, check your spam folder or write to hello@patentsonar.com.</p>
+  <h1 id="h-invalid" hidden>We could not read that address.</h1>
+  <p class="lead" id="p-invalid" hidden>Please go back and enter a valid work email address, or write to hello@patentsonar.com.</p>
+  <h1 id="h-rate" hidden>Too many requests from this connection.</h1>
+  <p class="lead" id="p-rate" hidden>Please try again in a few minutes, or write to hello@patentsonar.com.</p>
+  <div class="cta"><a class="btn" href="/">Back to the site</a><a class="btn primary" href="/#pricing">See pricing</a></div>
+</section>
+</main>
+<footer>
+  <p>© 2026 PatentSonar · <a href="legal/terms.html">Terms</a> · <a href="legal/privacy.html">Privacy</a> · <a href="legal/refunds.html">Refunds</a> · hello@patentsonar.com</p>
+</footer>
+<script>
+  (function () {
+    var o = new URLSearchParams(location.search).get("outcome");
+    var k = o === "invalid" ? "invalid" : o === "rate_limited" ? "rate" : "ok";
+    ["ok", "invalid", "rate"].forEach(function (x) {
+      document.getElementById("h-" + x).hidden = x !== k;
+      document.getElementById("p-" + x).hidden = x !== k;
+    });
+  })();
+</script>
+</body>
+</html>

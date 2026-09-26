@@ -8,7 +8,14 @@ import { spawn } from "node:child_process";
 export interface JobResult { job: string; ok: boolean; code: number | null; stdout: string; stderr: string; ms: number }
 
 const APP_DIR = process.env["APP_DIR"] ?? "/opt/patentsonar";
-const CLI_SUBCOMMANDS = new Set(["tasks list", "report weekly", "invoices issue", "newsletter build-latest", "newsletter send-latest", "ingest"]);
+const CLI_SUBCOMMANDS = new Set(["tasks list", "samples list", "report weekly", "invoices issue", "newsletter build-latest", "newsletter send-latest", "ingest"]);
+// Parameterised subcommands: only these shapes, nothing free-form.
+const CLI_PATTERNS = [
+  /^ingest bigquery( backfill)?( dry-run)?$/,          // ADR 0009/0011: live BigQuery run, dry-run first
+  /^report monthly( \d{4}-\d{2})?( print)?$/,          // monthly landscape report (default: previous month)
+  /^newsletter send \d{1,6}$/,                          // send a specific QA-passed issue (weekly # or YYYYMM report)
+];
+export function cliAllowed(sub: string): boolean { return CLI_SUBCOMMANDS.has(sub) || CLI_PATTERNS.some((re) => re.test(sub)); }
 
 type Job = { argv: string[]; timeoutMs?: number };
 
@@ -26,6 +33,9 @@ export function resolveJob(name: string, args: string[] = []): Job | null {
     case "npm-ci": return { argv: ["bash", "-lc", `cd ${APP_DIR} && npm ci --omit=dev --no-audit --no-fund && npm install --no-save tsx`], timeoutMs: 300_000 };
     case "test": return { argv: ["bash", "-lc", `cd ${APP_DIR} && npm run typecheck && npm test`], timeoutMs: 300_000 };
     case "migrate": return { argv: ["bash", `${APP_DIR}/infra/vps/apply-migrations.sh`], timeoutMs: 300_000 };
+    // Copy the repo Caddyfile into place, validate, reload (each step is an explicit sudoers entry).
+    case "caddy-sync": return { argv: ["bash", "-lc", `sudo cp ${APP_DIR}/infra/Caddyfile /etc/caddy/Caddyfile && sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo systemctl reload caddy && sudo systemctl is-active caddy`] };
+    case "site-check": return { argv: ["bash", "-lc", "curl -s -o /dev/null -w 'index %{http_code}\n' https://patentsonar.com/ && curl -s -o /dev/null -w 'thanks %{http_code}\n' https://patentsonar.com/sample-requested.html && curl -s -o /dev/null -w 'api-get %{http_code}\n' https://patentsonar.com/api/sample-request && curl -s -X POST -H 'Content-Type: application/json' -d '{\"email\":\"not-an-email\"}' -w ' api-invalid %{http_code}\n' https://patentsonar.com/api/sample-request"] };
     case "restart": {
       const unit = args[0] ?? "patentsonar-webhooks";
       if (!/^(patentsonar-[a-z-]+|caddy)$/.test(unit)) return null;
@@ -33,7 +43,7 @@ export function resolveJob(name: string, args: string[] = []): Job | null {
     }
     case "cli": {
       const sub = args.join(" ");
-      if (!CLI_SUBCOMMANDS.has(sub)) return null;
+      if (!cliAllowed(sub)) return null;
       return { argv: ["bash", "-lc", `cd ${APP_DIR} && npx tsx src/cli.ts ${sub}`], timeoutMs: 1_800_000 };
     }
     case "sql-count": {

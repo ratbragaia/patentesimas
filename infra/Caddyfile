@@ -16,6 +16,9 @@
 	handle /ops/* {
 		reverse_proxy 127.0.0.1:8787
 	}
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8787
+	}
 	handle {
 		file_server
 	}

@@ -28,6 +28,7 @@ h3{font-size:18px;margin:0 0 8px}
 .alt{margin:0 0 12px;color:var(--muted);font-size:14px}
 .plan ul{padding-left:18px;margin:0 0 18px}
 .sample form{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.sample .hp{position:absolute;left:-10000px;width:1px;height:1px;opacity:0}
 .sample input{padding:10px 12px;border:1px solid var(--line);border-radius:6px;min-width:240px;font-size:15px}
 .method{background:var(--soft);margin:0 -20px;padding:48px 20px}
 footer{max-width:1040px;margin:0 auto;padding:28px 20px;color:var(--muted);font-size:14px}

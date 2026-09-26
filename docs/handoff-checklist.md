@@ -27,4 +27,5 @@ Only items requiring identity, card or legal signature. Status is updated by the
 2. `psql "$SUPABASE_DB_URL" -f supabase/migrations/0001_init.sql` then `-f supabase/migrations/0002_seed_plans.sql`.
 3. `npm run ingest` for a 90-day backfill (set `from` manually once), triage, build issue #1, QA.
 4. Point DNS, verify Postmark DKIM, send issue #1 to the founder's test address.
+   (Site form already stores requests in `ps.sample_requests` and alerts Telegram — ADR 0010; no credential needed.)
 5. Start the Thursday prospecting cycle.

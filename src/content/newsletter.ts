@@ -24,11 +24,22 @@ export async function loadIssueFamilies(periodStart: string, periodEnd: string):
     .eq("triage_status", "include");
   if (error) throw new Error(error.message);
   // A family is "new" if no member was cited in an already-sent issue (first-seen rule, research 03 §6.3).
-  const { data: sent } = await db().from("issues").select("family_ids").eq("status", "sent");
+  const { data: sent } = await db().from("issues").select("family_ids").eq("status", "sent").eq("kind", "weekly");
   const cited = new Set((sent ?? []).flatMap((i: any) => i.family_ids ?? []));
   const lateCutoff = new Date(periodStart); lateCutoff.setDate(lateCutoff.getDate() - 21);
   const late = lateCutoff.toISOString().slice(0, 10);
   return (data as unknown as FamilyRow[]).filter((f) => f.pub && !cited.has(f.family_id) && f.pub.publication_date >= late && f.pub.publication_date <= periodEnd);
+}
+
+/** Every publication we hold, for the QA gate. Paginated: PostgREST caps a single response at 1000 rows. */
+export async function loadKnownPublications(): Promise<KnownPublication[]> {
+  const out: KnownPublication[] = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await db().from("patent_publications").select("publication_number,publication_date,applicants,family_id,title").order("publication_number").range(from, from + 999);
+    if (error) throw new Error(`patent_publications: ${error.message}`);
+    out.push(...((data ?? []) as KnownPublication[])); if (!data || data.length < 1000) break;
+  }
+  return out;
 }
 
 const BUCKET_LABEL: Record<string, string> = {
@@ -71,16 +82,29 @@ export function renderIssueHtml(markdown: string, unsubscribeUrl: string): strin
     .replace("{{SITE_URL}}", config().PUBLIC_SITE_URL);
 }
 
-/** Minimal, dependency-free markdown → HTML for our controlled skeleton (headings, paragraphs, lists, hr, links). */
+/** Minimal, dependency-free markdown → HTML for our controlled skeleton (headings, paragraphs, lists, tables, hr, links). */
 export function markdownToHtml(md: string): string {
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const inline = (s: string) => esc(s)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/_(.+?)_/g, "<em>$1</em>")
     .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2">$1</a>')
     .replace(/\b(US|EP|WO|CN|JP|KR)-(\d{5,13})(?:-([A-Z]\d?))?\b/g, (m, cc, n, k) => `<a href="https://patents.google.com/patent/${cc}${n}${k ?? ""}">${m}</a>`);
-  const out: string[] = []; let inList = false;
+  const out: string[] = []; let inList = false; let table: string[][] | null = null;
+  const flushTable = () => {
+    if (!table) return;
+    const [head, ...body] = table;
+    out.push("<table>", `<thead><tr>${(head ?? []).map((c) => `<th>${inline(c)}</th>`).join("")}</tr></thead>`,
+      `<tbody>${body.map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`).join("")}</tbody>`, "</table>");
+    table = null;
+  };
   for (const raw of md.split("\n")) {
     const line = raw.trimEnd();
+    if (line.startsWith("|") && line.endsWith("|")) {
+      const cells = line.slice(1, -1).split("|").map((c) => c.trim());
+      if (cells.every((c) => /^:?-{3,}:?$/.test(c))) continue; // header separator row
+      (table ??= []).push(cells); continue;
+    }
+    flushTable();
     if (line.startsWith("- ")) { if (!inList) { out.push("<ul>"); inList = true; } out.push(`<li>${inline(line.slice(2))}</li>`); continue; }
     if (inList) { out.push("</ul>"); inList = false; }
     if (line === "") continue;
@@ -89,6 +113,7 @@ export function markdownToHtml(md: string): string {
     if (h) { out.push(`<h${h[1]!.length}>${inline(h[2]!)}</h${h[1]!.length}>`); continue; }
     out.push(`<p>${inline(line)}</p>`);
   }
+  flushTable();
   if (inList) out.push("</ul>");
   return out.join("\n");
 }
@@ -96,13 +121,12 @@ export function markdownToHtml(md: string): string {
 /** Build (or rebuild) a weekly issue, run QA, persist. Never marks ready when QA fails. */
 export async function buildWeeklyIssue(periodStart: string, periodEnd: string): Promise<{ issueNumber: number; qaPassed: boolean }> {
   const fams = await loadIssueFamilies(periodStart, periodEnd);
-  const { data: last } = await db().from("issues").select("issue_number").order("issue_number", { ascending: false }).limit(1).maybeSingle();
-  const { data: existing } = await db().from("issues").select("issue_number").eq("period_start", periodStart).eq("period_end", periodEnd).maybeSingle();
+  const { data: last } = await db().from("issues").select("issue_number").eq("kind", "weekly").order("issue_number", { ascending: false }).limit(1).maybeSingle();
+  const { data: existing } = await db().from("issues").select("issue_number").eq("kind", "weekly").eq("period_start", periodStart).eq("period_end", periodEnd).maybeSingle();
   const issueNumber = existing?.issue_number ?? (last?.issue_number ?? 0) + 1;
   const markdown = renderIssueMarkdown(issueNumber, periodStart, periodEnd, fams);
 
-  const { data: known } = await db().from("patent_publications").select("publication_number,publication_date,applicants,family_id,title");
-  const qa = runQa(markdown, (known ?? []) as KnownPublication[]);
+  const qa = runQa(markdown, await loadKnownPublications());
   const html = renderIssueHtml(markdown, "{{UNSUBSCRIBE_URL}}"); // per-recipient substitution at send time
   await db().from("issues").upsert({
     issue_number: issueNumber, kind: "weekly", title: `PatentSonar · ${STREAM_NAME} #${issueNumber}`,
