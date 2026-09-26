@@ -1,0 +1,6 @@
+# Installed at /etc/sudoers.d/patentsonar by infra/vps/setup.sh (mode 440).
+# The agent runs as `patentsonar`. It may manage the company's own services and re-run the
+# repository's infra scripts as root, and nothing else.
+Cmnd_Alias PS_SERVICES = /usr/bin/systemctl restart patentsonar-*, /usr/bin/systemctl start patentsonar-*, /usr/bin/systemctl stop patentsonar-*, /usr/bin/systemctl status *, /usr/bin/systemctl is-active *, /usr/bin/systemctl list-timers *, /usr/bin/systemctl daemon-reload, /usr/bin/systemctl restart caddy, /usr/bin/systemctl reload caddy, /usr/bin/journalctl *
+Cmnd_Alias PS_SCRIPTS  = /usr/bin/bash /opt/patentsonar/infra/vps/setup.sh, /usr/bin/bash /opt/patentsonar/infra/vps/harden.sh, /usr/bin/caddy validate *, /usr/bin/cp /opt/patentsonar/infra/Caddyfile /etc/caddy/Caddyfile, /usr/bin/cp /opt/patentsonar/infra/systemd/* /etc/systemd/system/
+patentsonar ALL=(root) NOPASSWD: PS_SERVICES, PS_SCRIPTS

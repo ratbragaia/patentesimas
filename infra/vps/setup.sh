@@ -45,8 +45,17 @@ echo "== clone / update repo"
 if [ ! -d $APP_DIR/.git ]; then sudo -u $APP_USER git clone --branch "$BRANCH" "$REPO_URL" $APP_DIR; fi
 cd $APP_DIR && sudo -u $APP_USER git pull --ff-only && sudo -u $APP_USER npm ci --omit=dev --no-audit --no-fund && sudo -u $APP_USER npm install --no-save tsx >/dev/null
 
-echo "== env file (fill in from the handoff package)"
-[ -f /etc/patentsonar/env ] || { cp $APP_DIR/.env.example /etc/patentsonar/env; chown root:$APP_USER /etc/patentsonar/env; chmod 640 /etc/patentsonar/env; }
+echo "== env file (owned by the agent user; it edits credentials itself)"
+[ -f /etc/patentsonar/env ] || cp $APP_DIR/infra/env.template /etc/patentsonar/env
+chown $APP_USER:$APP_USER /etc/patentsonar/env; chmod 600 /etc/patentsonar/env
+chown $APP_USER:$APP_USER /etc/patentsonar
+
+echo "== sudo rights for the agent user (services + infra scripts only)"
+install -m 440 -o root -g root $APP_DIR/infra/vps/sudoers-patentsonar /etc/sudoers.d/patentsonar
+visudo -cf /etc/sudoers.d/patentsonar >/dev/null || { echo "sudoers invalid, removing"; rm -f /etc/sudoers.d/patentsonar; }
+
+echo "== agent deploy key for GitHub"
+sudo -u $APP_USER -H bash $APP_DIR/infra/vps/github-deploy-key.sh || true
 
 echo "== claude code (agent runtime)"
 sudo -u $APP_USER npm install -g @anthropic-ai/claude-code 2>/dev/null || npm install -g @anthropic-ai/claude-code

@@ -7,9 +7,9 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 1 | CNPJ opened (ME/EPP, Simples Nacional) + accountant's fiscal parameters for service export (NFS-e service code, ISS treatment, CNAE) | `docs/decisions/0002-fiscal-parameters.md` | ⬜ |
 | 2 | Hostinger VPS (dedicated, Ubuntu 24.04): **IP 2.25.249.69**, keys `founder-notebook` + `patentsonar-agent` installed. Agent private key still to be added as environment secret `VPS_SSH_PRIVATE_KEY` | `infra/vps/setup.sh` (ADR 0007) | ✅ bootstrapped + hardened 2026-09-25; both keys verified. Pending: agent key as env secret, `/etc/patentsonar/env` |
 | 3 | Domain **patentsonar.com** bought at Cloudflare Registrar 2026-09-25 (+ .io/.ai/.co optional). DNS: A @ and A www → 2.25.249.69, DNS-only | `infra/dns-records.md` | ✅ bought, DNS pointed, env installed 2026-09-26 |
-| 4 | GitHub organisation + this repo transferred/mirrored; deploy key on VPS | `infra/vps/setup.sh` REPO_URL | ⬜ |
-| 5 | Claude Code credentials on the VPS (Pro now; enable extra usage) | `/etc/patentsonar/env` | ⬜ |
-| 6 | Supabase project (dedicated): URL, service role key, DB connection string | `SUPABASE_*` | ⬜ |
+| 4 | GitHub deploy key for the VPS agent: add the key printed by `infra/vps/github-deploy-key.sh` at repo → Settings → Deploy keys, **Allow write access** | `infra/vps/github-deploy-key.sh` | ⬜ |
+| 5 | Claude Code logged in on the VPS as user `patentsonar` (Pro; enable extra usage at claude.ai/settings/usage) | VPS | ✅ 2026-09-26 |
+| 6 | Supabase project `patentsonar-prod` (us-east-1): URL, secret key, DB URL in `/etc/patentsonar/env`; schema applied | `SUPABASE_*` | ✅ 2026-09-26 |
 | 7 | PatentsView API key (free; request via the PatentsView support portal at patentsview-support.atlassian.net; 45 req/min) | `PATENTSVIEW_API_KEY` | ⬜ |
 | 8 | EPO OPS consumer key/secret (register at developers.epo.org → My Apps; free tier ~4 GB/week) — **primary data source** | `EPO_OPS_*` | ⬜ |
 | 9 | GCP project with BigQuery enabled + service-account JSON | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | ⬜ |

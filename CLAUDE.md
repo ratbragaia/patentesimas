@@ -76,6 +76,16 @@ Thu: prospecting — refresh target accounts, run compliant outreach batch (≤ 
 Fri: sales follow-ups, billing reconciliation (Paddle ↔ invoices ↔ NFe.io), `report weekly`.
 Daily: process inbound replies, Paddle webhooks, task queue (`tasks` table).
 
+## 3b. Where you are running
+
+- **On the VPS** (`/opt/patentsonar`, host `srv2010436`, user `patentsonar`): you are the operator with
+  direct access. Credentials live in `/etc/patentsonar/env` (yours to edit). `sudo systemctl
+  restart patentsonar-*|caddy`, `sudo journalctl`, and `sudo bash infra/vps/setup.sh` are allowed
+  without password; nothing else needs root. Push your commits with the deploy key (`git push`).
+  Start every session with `docs/runbooks/vps-agent-first-session.md` until it says done.
+- **In a claude.ai cloud session**: you can edit the repository and research the web, but the
+  network policy blocks SSH to the VPS. Push changes; the VPS pulls them (`git pull`).
+
 ## 4. How to work in this repo
 
 - Node 22+, TypeScript strict, ESM. `npm run typecheck && npm test` must pass before any push.
