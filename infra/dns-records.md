@@ -7,10 +7,10 @@ certificate itself. Turning the orange proxy on later is fine once SSL mode is "
 |---|---|---|---|
 | A | @ | `<VPS IP>` | site + webhooks (Caddy) |
 | A | www | `<VPS IP>` | |
-| TXT | @ | `v=spf1 include:_spf.mx.cloudflare.net include:spf.mtasv.net ~all` | SPF: Cloudflare Email Routing (forwarding) + Postmark. One TXT only; merge, never two SPF records |
-| CNAME | `<postmark-dkim-selector>._domainkey` | value from Postmark "Sender Signatures → DKIM" | DKIM |
-| CNAME | pm-bounces | `pm.mtasv.net` | Postmark custom return-path |
-| TXT | _dmarc | `v=DMARC1; p=quarantine; rua=mailto:dmarc@patentsonar.com; fo=1` | DMARC (start `p=none` for 2 weeks, then quarantine) |
+| TXT | @ | `v=spf1 include:_spf.mx.cloudflare.net ~all` | SPF for Cloudflare forwarding. Postmark needs no SPF entry (custom Return-Path covers it, confirmed in its DNS panel) |
+| TXT | `20260926021414pm._domainkey` | `k=rsa;p=MIGf...` (value from Postmark → Sender Signatures → patentsonar.com) | Postmark DKIM. Verified 2026-09-26 |
+| CNAME | pm-bounces | `pm.mtasv.net` | Postmark custom return-path. Verified 2026-09-26 |
+| TXT | _dmarc | `v=DMARC1; p=none; rua=mailto:dmarc@patentsonar.com; fo=1` | DMARC. **Still to add** (2026-09-26). Start `p=none`; move to `p=quarantine` after 2 clean weeks. Reports land in the catch-all → founder |
 | MX | @ | `route1.mx.cloudflare.net` (27), `route2.mx.cloudflare.net` (91), `route3.mx.cloudflare.net` (2) | Cloudflare Email Routing (free): `founder@patentsonar.com` → founder's mailbox. Added 2026-09-26 |
 | TXT | `cf2024-1._domainkey` | value set by Cloudflare Email Routing | DKIM for Cloudflare forwarding (separate from Postmark's selector) |
 

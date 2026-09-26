@@ -30,7 +30,8 @@ Work through this list top to bottom; tick items by editing this file and commit
       (done 2026-09-26: chat id captured from `getUpdates` after the founder's `/start`; test report delivered)
 - [x] GCP project + service account for BigQuery (ADR 0008: now the second data source, needed for US claims text and back-fill).
       (done 2026-09-26: Job User granted, 90-day BigQuery backfill loaded; cadence and cost in ADR 0009)
-- [ ] Postmark server token + DNS records (`infra/dns-records.md`), Paddle sandbox, NFe.io, outreach mailbox.
+- [ ] Postmark server token + DNS records (`infra/dns-records.md`) ✅ 2026-09-26 (Free plan, domain verified, test
+      email delivered, webhooks registered); Paddle sandbox, NFe.io, outreach mailbox still pending.
 Append each as `KEY=value` to `/etc/patentsonar/env`, then `sudo systemctl restart patentsonar-webhooks`.
 Status 2026-09-26: all five requested from the founder (Portuguese message, first VPS session); each is a
 `blocked` row in `ps.tasks` (agent `orchestrator`) so the ask survives the session.

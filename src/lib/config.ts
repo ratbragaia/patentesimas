@@ -42,6 +42,7 @@ const schema = z.object({
 
   PADDLE_API_KEY: z.string().optional(),
   PADDLE_WEBHOOK_SECRET: z.string().optional(),
+  POSTMARK_WEBHOOK_SECRET: z.string().optional(),
   PADDLE_ENVIRONMENT: z.enum(["sandbox", "production"]).default("sandbox"),
   NFEIO_API_KEY: z.string().optional(),
   NFEIO_COMPANY_ID: z.string().optional(),
