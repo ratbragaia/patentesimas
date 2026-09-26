@@ -4,7 +4,7 @@
 
 These Terms govern the PatentSonar subscription service. By requesting a sample issue, creating an account or completing a purchase, you accept them on behalf of the organisation you represent and confirm you are authorised to do so.
 
-**Provider.** Rockfort Hub de Inovação Ltda, trading as PatentSonar ("PatentSonar", "we"), a limited company organised under the laws of Brazil, CNPJ 40.435.866/0001-40, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil. Contact: legal@patentsonar.com (legal), support@patentsonar.com (support), billing@patentsonar.com (billing).
+**Provider.** Rockfort Hub de Inovação Ltda, trading as PatentSonar ("PatentSonar", "we"), a limited company organised under the laws of Brazil, CNPJ 40.435.866/0001-40, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil. Contact: legal@patentsonar.com (legal), support@patentsonar.com or +55 32 93618-2698 (support), billing@patentsonar.com (billing).
 
 **1. Definitions.** "Service": the subscription described in Section 2. "Content": every issue, report, alert, archive page, dataset extract and analyst note we deliver. "Subscriber" or "you": the legal entity named at checkout or on an Order Form. "Reader": a named individual authorised by the Subscriber to receive Content within the seat limit of the plan. "Order Form": our written order document for Enterprise plans. "Coverage Stream": one technology area; Stream 01 is rare-earth-free and rare-earth-lean permanent magnets.
 
@@ -42,6 +42,6 @@ These Terms govern the PatentSonar subscription service. By requesting a sample 
 
 **18. General.** These Terms, the Refund Policy, the Privacy Policy, the Data Processing Addendum where signed, and any Order Form form the entire agreement and supersede prior discussions; in case of conflict an Order Form prevails, then these Terms. Neither party is liable for delay caused by events beyond its reasonable control. You may not assign this agreement without our consent, not unreasonably withheld; we may assign it to a successor of our business on notice. Notices to us go to legal@patentsonar.com; notices to you go to the billing contact's email. If a provision is unenforceable, the rest remains in force. No waiver is implied from delay. These Terms are written in English; the English text prevails over any translation.
 
-**19. Contact.** legal@patentsonar.com · support@patentsonar.com · Rockfort Hub de Inovação Ltda, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil.
+**19. Contact.** legal@patentsonar.com · support@patentsonar.com · +55 32 93618-2698 · Rockfort Hub de Inovação Ltda, Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil.
 
-_Version 1.0, effective 2026-09-26. Reviewed and adopted at the founder's direction (legal/REVIEW_STATUS.md)._
+_Version 1.0.1, effective 2026-09-26 (support phone added). Reviewed and adopted at the founder's direction (legal/REVIEW_STATUS.md)._

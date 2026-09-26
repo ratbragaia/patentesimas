@@ -73,5 +73,5 @@ hundred reais and is worth doing once revenue starts.
 ## Follow-ups queued
 - Cloudflare Email Routing rules for billing@, legal@, privacy@ and support@ → inbound worker (task in
   `ps.tasks`; the Cloudflare token now allows it).
-- Paddle asks for a support phone number on the site; a virtual number is a founder item (optional until
-  Paddle's review asks for it).
+- Support phone +55 32 93618-2698 provided by the founder on 2026-09-26 and published on the site, Terms
+  and Refund Policy.

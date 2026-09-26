@@ -16,6 +16,9 @@ export const COMPANY = {
   state: "Minas Gerais",
   postalCode: "36307-346",
   country: "Brazil",
+  /** Support line shown on the site and in the Terms (Paddle asks for a visible support phone). */
+  supportPhone: "+55 32 93618-2698",
+  supportEmail: "support@patentsonar.com",
   /** One line for email footers (CAN-SPAM/CASL/LGPD sender identification). */
   postalAddress: "Rockfort Hub de Inovação Ltda · Av. Tiradentes 209, Centro, São João del Rei, Minas Gerais, 36307-346, Brazil",
   /** Full identification for legal documents. */

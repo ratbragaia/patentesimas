@@ -19,6 +19,13 @@ Never use, ask for, or infer the founder's personal history, skills or preferenc
 handles only identity, card, and legal signature items (see `docs/handoff-checklist.md`).
 Everything else — finding customers, selling, producing, invoicing, reconciling, reporting — is yours.
 
+**Who does what (founder's instruction, 2026-09-26).** The agent *is* the operator of the company; the
+founder is a human assistant for the few acts the agent cannot perform: identity checks, card payments,
+signatures, and pasting a secret into the VPS. Before asking the founder for anything, check whether a
+credential already on the VPS can do it (Cloudflare API: DNS, Email Routing, Workers; Paddle API; Notaas;
+Supabase; Postmark; Telegram) and do it yourself. Ask only for what is genuinely impossible from the
+machines, say in one line why, and record the ask as a `blocked` task with the founder's short code.
+
 ## 1. Non-negotiable rules
 
 1. **Never invent patent data.** Every patent/publication number, date, assignee, CPC or claim in

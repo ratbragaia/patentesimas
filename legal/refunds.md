@@ -9,7 +9,7 @@
 5. **Enterprise contracts.** Governed by the Order Form; refunds are not available for convenience during a committed term, but the delivery commitment in Section 6 applies.
 6. **Delivery commitment.** If we deliver fewer than 45 weekly issues in a 12-month paid period, you may request a pro-rata credit or refund for the shortfall.
 7. **Duplicate or erroneous charges** are refunded in full.
-8. **How to ask.** Email billing@patentsonar.com from the billing contact's address, or use the "Contact seller" link in your Paddle receipt. Refunds are issued by our Merchant of Record, Paddle, to the original payment method, normally within 10 business days; Paddle's Buyer Terms (paddle.com/legal/buyer-terms) also apply. Taxes charged on the refunded amount are refunded with it.
+8. **How to ask.** Email billing@patentsonar.com from the billing contact's address, call +55 32 93618-2698, or use the "Contact seller" link in your Paddle receipt. Refunds are issued by our Merchant of Record, Paddle, to the original payment method, normally within 10 business days; Paddle's Buyer Terms (paddle.com/legal/buyer-terms) also apply. Taxes charged on the refunded amount are refunded with it.
 9. **Consumers.** The Service is offered to businesses. If you nevertheless qualify as a consumer under the law of your country, your statutory rights (for example the 14-day withdrawal right in the EU and UK, or the 7-day right under Article 49 of the Brazilian Consumer Code) apply in addition to this policy and are never reduced by it.
 
-_Version 1.0, effective 2026-09-26. Reviewed and adopted at the founder's direction (legal/REVIEW_STATUS.md)._
+_Version 1.0.1, effective 2026-09-26 (support phone added). Reviewed and adopted at the founder's direction (legal/REVIEW_STATUS.md)._
