@@ -83,8 +83,10 @@ Daily: process inbound replies, Paddle webhooks, task queue (`tasks` table).
   restart patentsonar-*|caddy`, `sudo journalctl`, and `sudo bash infra/vps/setup.sh` are allowed
   without password; nothing else needs root. Push your commits with the deploy key (`git push`).
   Start every session with `docs/runbooks/vps-agent-first-session.md` until it says done.
-- **In a claude.ai cloud session**: you can edit the repository and research the web, but the
-  network policy blocks SSH to the VPS. Push changes; the VPS pulls them (`git pull`).
+- **In a claude.ai cloud session** (environment "PatentSonar"): `bash infra/vps/agent-ssh.sh "<cmd>"`
+  reaches the VPS as root through the session proxy using `VPS_SSH_PRIVATE_KEY`. If the proxy
+  refuses port 22, you can still edit the repository and research the web; push changes and let
+  the VPS agent pull them (`git pull`).
 
 ## 4. How to work in this repo
 
