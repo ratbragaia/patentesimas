@@ -29,6 +29,8 @@ export const FISCAL = {
   federalServiceCode: "1.09",
   /** NFe.io taxation type for a foreign tomador (export of services, ISS not due: LC 116 art. 2, I). */
   exportTaxationType: "Export",
+  /** Código de tributação nacional (NFS-e padrão nacional) for LC 116 item 1.09; confirm the 6-digit code in the national table at onboarding. */
+  cTribNac: "010901",
   /** Description prefix on the NFS-e (Portuguese, as municipal systems expect). */
   serviceDescription: "Disponibilização de conteúdo de inteligência de patentes por assinatura via internet (LC 116 item 1.09). Exportação de serviço: tomador no exterior, ISS não incidente (LC 116, art. 2º, I); PIS/COFINS isentos (MP 2.158-35/2001, art. 14, III e §1º).",
 } as const;

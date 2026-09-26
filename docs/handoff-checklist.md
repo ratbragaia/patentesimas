@@ -15,7 +15,7 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 9 | GCP project with BigQuery enabled + service-account JSON (**priority raised**, ADR 0008; free tier is enough, card required by Google) | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | ✅ 2026-09-26: project `patentsonar-prod`, SA `patentsonar-bq` (BigQuery Job User), key `600`; first 90-day backfill loaded (ADR 0009) |
 | 10 | Paddle seller account (verify Brazil eligibility first — see research 04) + webhook secret | `PADDLE_*` | ⬜ |
 | 11 | USD receiving account (Wise Business or alternative per research 04) | Paddle payout settings | ⬜ |
-| 12 | NFe.io account + company registered | `NFEIO_*` | ⬜ |
+| 12 | ~~NFe.io~~ **Notaas** account (free tier, 50 NFS-e/month; research 06) + **e-CNPJ A1 certificate** uploaded there; access to nfse.gov.br with the same certificate as fallback | `NOTAAS_API_KEY` | ⬜ (NFe.io dropped 2026-09-26: R$190/month for 1–2 notes; São João del Rei is on the national NFS-e since 2026-01-01) |
 | 13 | Postmark server token, verified sender domain (DKIM/Return-Path) | `POSTMARK_*` | ✅ 2026-09-26: server `PatentSonar` (Free), domain verified, test email delivered, bounce/complaint webhooks registered. DMARC `p=none` added 2026-09-26 |
 | 14 | Outreach mailbox on a separate domain (see research 04) | `OUTREACH_FROM` | ⬜ |
 | 15 | Telegram bot token + founder chat id | `TELEGRAM_*` | ✅ 2026-09-26 (bot `@patentsonar_bot`; chat id stored; test weekly report delivered) |

@@ -66,12 +66,12 @@ async function main() {
       console.log(await sendIssue(data.issue_number)); break;
     }
     case "invoices enqueue-payout": {
-      const { enqueuePayoutInvoice } = await import("./invoicing/nfeio.js");
+      const { enqueuePayoutInvoice } = await import("./invoicing/nfse.js");
       const [id, entity, usd, date, ref] = rest;
       if (!id || !entity || !usd || !date) throw new Error("usage: invoices enqueue-payout <payout_id> <UK|US|IE> <usd> <YYYY-MM-DD> [reverse_invoice_ref]");
       console.log(await enqueuePayoutInvoice({ paddlePayoutId: id, entity: entity as any, amountUsd: Number(usd), payoutDate: date, reverseInvoiceRef: ref ?? null })); break;
     }
-    case "invoices issue": { const { issuePendingInvoices } = await import("./invoicing/nfeio.js"); console.log({ issued: await issuePendingInvoices() }); break; }
+    case "invoices issue": { const { issuePendingInvoices } = await import("./invoicing/nfse.js"); console.log({ issued: await issuePendingInvoices() }); break; }
     case "report weekly": { const { sendWeeklyReport } = await import("./reporting/weekly.js"); await sendWeeklyReport(); break; }
     case "report resend": { const { resendFounderNotices } = await import("./reporting/resend.js"); console.log((await resendFounderNotices()).length + " mensagens enviadas"); break; }
     case "report monthly": {

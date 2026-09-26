@@ -49,10 +49,11 @@ const schema = z.object({
   CLOUDFLARE_ACCOUNT_ID: z.string().optional(),
   CLOUDFLARE_ZONE_ID: z.string().optional(),
   PADDLE_ENVIRONMENT: z.enum(["sandbox", "production"]).default("sandbox"),
-  NFEIO_API_KEY: z.string().optional(),
-  NFEIO_COMPANY_ID: z.string().optional(),
-  /** Municipal service code for LC 116 item 1.09 in São João del Rei (from NFe.io's table at onboarding, ADR 0002). */
-  NFEIO_CITY_SERVICE_CODE: z.string().optional(),
+  /** NFS-e provider: Notaas (REST over the national NFS-e API; free tier). Research 06 / ADR 0002. */
+  NOTAAS_API_KEY: z.string().optional(),
+  NOTAAS_SANDBOX: z.coerce.boolean().default(false),
+  /** Set to 1 once the payload field names were checked against docs.notaas.com.br (VPS session). */
+  NOTAAS_SCHEMA_CONFIRMED: z.coerce.boolean().default(false),
 
   POSTMARK_SERVER_TOKEN: z.string().optional(),
   POSTMARK_BROADCAST_STREAM: z.string().default("newsletter"),

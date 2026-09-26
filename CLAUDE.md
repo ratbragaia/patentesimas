@@ -65,7 +65,7 @@ Everything else — finding customers, selling, producing, invoicing, reconcilin
 | `src/email/` | Postmark delivery (broadcast stream) |
 | `src/outreach/` | ABM sequences, compliance checker, suppression |
 | `src/billing/` | Paddle webhooks, subscription state, idempotency |
-| `src/invoicing/` | NFe.io export-service invoices |
+| `src/invoicing/` | NFS-e for the service export (Notaas over the national NFS-e API; one per Paddle payout) |
 | `src/reporting/` | Telegram alerts and weekly founder report |
 | `src/cli.ts` | Entry point used by systemd timers |
 | `infra/` | VPS setup/hardening scripts, systemd units, DNS records |
@@ -79,7 +79,7 @@ Mon: `ingest` (new publications since last watermark, all sources) → family de
 Tue: `newsletter build` → QA gate → founder gets a preview link via Telegram (FYI).
 Wed: `newsletter send` to active subscribers (Postmark broadcast stream).
 Thu: prospecting — refresh target accounts, run compliant outreach batch (≤ 25 emails/day).
-Fri: sales follow-ups, billing reconciliation (Paddle ↔ invoices ↔ NFe.io), `report weekly`.
+Fri: sales follow-ups, billing reconciliation (Paddle payouts ↔ invoices ↔ NFS-e ↔ Wise), `report weekly`.
 Daily: process inbound replies, Paddle webhooks, task queue (`tasks` table).
 
 ## 3b. Where you are running
