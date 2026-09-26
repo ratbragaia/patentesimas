@@ -7,6 +7,7 @@ describe("publication number normalisation", () => {
     expect(normalizePublicationNumber("US-PP33549-P2")).toBe("US-PP33549-P2");
     expect(normalizePublicationNumber("US-RE49123-E")).toBe("US-RE49123-E");
     expect(normalizePublicationNumber("US-D1000000-S")).toBe("US-D1000000-S");
+    expect(normalizePublicationNumber("TW-I844296-B")).toBe("TW-I844296-B");
   });
   it("handles epodoc form", () => expect(normalizePublicationNumber("EP4123456A1")).toBe("EP-4123456-A1"));
   it("handles WO with kind", () => expect(normalizePublicationNumber("WO2026123456A1")).toBe("WO-2026123456-A1"));
