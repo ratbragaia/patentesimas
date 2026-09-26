@@ -54,3 +54,13 @@ own code and a manual ramp at this scale.
 **Upgrade trigger:** move to Instantly/Smartlead only when a second mailbox is needed (sustained > 25
 qualified first touches per day) or after the first paying customer, whichever comes first. Recorded as a
 future `spend_approvals`-free change (below the per-action cap) but decided by the founder, not the agent.
+
+## Amendment 2026-09-26 (b) — provider comparison at renewal prices
+
+Research 05 (`docs/research/05-outreach-mailbox-providers.md`) compared Hostinger, HostGator, Zoho,
+Google Workspace, Microsoft 365, Migadu, MXroute and Purelymail at **renewal** prices and on their
+cold-email policies. Zoho Mail's usage policy explicitly prohibits cold/bulk email and enforcement is
+reported at low volumes, so **Zoho is dropped**. HostGator resells the same Titan platform as
+Hostinger at 2–5× the renewal price. **Launch mailbox: Hostinger Business Starter**, budgeted at the
+renewal price (≈ US$1.59/mailbox/month), on a 12- or 24-month term; fallback if deliverability
+degrades: Google Workspace Business Starter (US$7/month annual).
