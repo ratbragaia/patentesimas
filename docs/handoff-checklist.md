@@ -18,7 +18,7 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 12 | NFe.io account + company registered | `NFEIO_*` | ⬜ |
 | 13 | Postmark server token, verified sender domain (DKIM/Return-Path) | `POSTMARK_*` | ⬜ |
 | 14 | Outreach mailbox on a separate domain (see research 04) | `OUTREACH_FROM` | ⬜ |
-| 15 | Telegram bot token + founder chat id | `TELEGRAM_*` | ⬜ |
+| 15 | Telegram bot token + founder chat id | `TELEGRAM_*` | 🟡 token stored 2026-09-26 (bot `@patentsonar_bot`); chat id pending: founder sends `/start` to the bot |
 | 16 | Lawyer review of `legal/` drafts + quick trademark clearance of "PatentSonar" (USPTO TESS, EUIPO, INPI) | `legal/REVIEW_STATUS.md` | ⬜ |
 | 17 | Company postal address for email footers | `COMPANY_POSTAL_ADDRESS` | ⬜ |
 
