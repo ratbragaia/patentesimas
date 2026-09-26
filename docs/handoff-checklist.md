@@ -19,7 +19,7 @@ Only items requiring identity, card or legal signature. Status is updated by the
 | 13 | Postmark server token, verified sender domain (DKIM/Return-Path) | `POSTMARK_*` | ✅ 2026-09-26: server `PatentSonar` (Free), domain verified, test email delivered, bounce/complaint webhooks registered. DMARC `p=none` added 2026-09-26 |
 | 14 | Outreach mailbox on a separate domain (see research 04) | `OUTREACH_FROM` | ⬜ |
 | 15 | Telegram bot token + founder chat id | `TELEGRAM_*` | ✅ 2026-09-26 (bot `@patentsonar_bot`; chat id stored; test weekly report delivered) |
-| 16 | Lawyer review of `legal/` drafts + quick trademark clearance of "PatentSonar" (USPTO TESS, EUIPO, INPI) | `legal/REVIEW_STATUS.md` | ⬜ |
+| 16 | Lawyer review of `legal/` drafts + quick trademark clearance of "PatentSonar" (USPTO, EUIPO, INPI) | `legal/REVIEW_STATUS.md` | ✅ 2026-09-26: legal templates v1.0 reviewed by the agent at the founder's direction and published (ADR 0014); trademark search running on the VPS (task, output `docs/research/07-trademark-clearance.md`). Founder later: INPI filing needs gov.br login + GRU payment |
 | 17 | Company postal address for email footers | `COMPANY_POSTAL_ADDRESS` | ✅ 2026-09-26: Rockfort Hub de Inovação Ltda, Av. Tiradentes 209, Centro, São João del Rei/MG, 36307-346 (`src/lib/company.ts`) |
 
 ## First-run sequence once items arrive
