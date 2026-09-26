@@ -41,6 +41,9 @@ export function resolveJob(name: string, args: string[] = []): Job | null {
     case "test": return { argv: ["bash", "-lc", `cd ${APP_DIR} && npm run typecheck && npm test`], timeoutMs: 300_000 };
     case "migrate": return { argv: ["bash", `${APP_DIR}/infra/vps/apply-migrations.sh`], timeoutMs: 300_000 };
     // Copy the repo Caddyfile into place, validate, reload (each step is an explicit sudoers entry).
+    // Copy unit files and start the timers (both already permitted by sudoers). Persisting them across a reboot
+    // (systemctl enable) is done by `sudo bash infra/vps/setup.sh`, run by the VPS agent.
+    case "units-sync": return { argv: ["bash", "-lc", `sudo cp ${APP_DIR}/infra/systemd/patentsonar-*.service ${APP_DIR}/infra/systemd/patentsonar-*.timer /etc/systemd/system/ && sudo systemctl daemon-reload && for t in ingest newsletter-build newsletter-send invoices report agent outreach inbox; do sudo systemctl start patentsonar-$t.timer; done; sudo systemctl list-timers 'patentsonar-*' --no-pager`] };
     case "caddy-sync": return { argv: ["bash", "-lc", `sudo cp ${APP_DIR}/infra/Caddyfile /etc/caddy/Caddyfile && sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo systemctl reload caddy && sudo systemctl is-active caddy`] };
     // Read-only SSH diagnosis: effective password/root settings (main file + .d overrides), keys installed for the
     // agent user (fingerprints only), and the last auth events for root from the journal (sudo journalctl is in sudoers).
